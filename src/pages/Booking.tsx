@@ -37,8 +37,8 @@ const Booking = () => {
         {/* Car Image - Positioned to appear behind and extending from the form */}
         <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
           <img
-            src="/lovable-uploads/e4a05aab-e6a9-4e4f-8c18-0d17496ae374.png"
-            alt="Luxury black limousine"
+            src="/lovable-uploads/ef093fe4-551a-4289-814e-cda095220354.png"
+            alt="Luxury black Cadillac Escalade"
             className="w-auto h-96 object-contain drop-shadow-2xl transform translate-x-32"
             style={{
               filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.3))'
