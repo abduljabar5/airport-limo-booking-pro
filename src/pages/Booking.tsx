@@ -19,7 +19,7 @@ const Booking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-200 via-blue-200 to-pink-200">
+    <div className="min-h-screen bg-gradient-to-br from-purple-200 via-blue-200 to-pink-200 relative overflow-hidden">
       {/* Minimal Navigation */}
       <nav className="absolute top-0 w-full z-50 px-8 py-6">
         <div className="flex items-center justify-between">
@@ -32,18 +32,34 @@ const Booking = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Main Content Container */}
+      <div className="min-h-screen flex items-center justify-center px-4 relative">
+        {/* Car Image - Positioned to appear behind and extending from the form */}
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
+          <img
+            src="/lovable-uploads/e4a05aab-e6a9-4e4f-8c18-0d17496ae374.png"
+            alt="Luxury black limousine"
+            className="w-auto h-96 object-contain drop-shadow-2xl transform translate-x-32"
+            style={{
+              filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.3))'
+            }}
+          />
+        </div>
+
+        {/* Content Grid */}
+        <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-20">
           
           {/* Left Side - Booking Form */}
-          <div className="order-2 lg:order-1">
+          <div className="order-2 lg:order-1 relative z-30">
             <h1 className="text-5xl lg:text-6xl font-bold text-slate-800 mb-8 leading-tight">
               Book a limo ride
             </h1>
             
-            {/* Frosted Glass Form Container */}
-            <div className="bg-white/30 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20">
+            {/* Frosted Glass Form Container with enhanced styling for 3D effect */}
+            <div className="bg-white/40 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 relative z-40" 
+                 style={{
+                   boxShadow: '0 25px 50px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                 }}>
               <div className="space-y-6">
                 
                 {/* Pickup Location */}
@@ -53,7 +69,7 @@ const Booking = () => {
                     placeholder="Pickup location"
                     value={pickupLocation}
                     onChange={(e) => setPickupLocation(e.target.value)}
-                    className="pl-12 h-14 bg-white/50 border-0 rounded-2xl text-lg placeholder:text-slate-500 focus:bg-white/70 transition-all"
+                    className="pl-12 h-14 bg-white/60 border-0 rounded-2xl text-lg placeholder:text-slate-500 focus:bg-white/80 transition-all backdrop-blur-sm"
                   />
                 </div>
 
@@ -64,7 +80,7 @@ const Booking = () => {
                     placeholder="Drop-off location"
                     value={dropoffLocation}
                     onChange={(e) => setDropoffLocation(e.target.value)}
-                    className="pl-12 h-14 bg-white/50 border-0 rounded-2xl text-lg placeholder:text-slate-500 focus:bg-white/70 transition-all"
+                    className="pl-12 h-14 bg-white/60 border-0 rounded-2xl text-lg placeholder:text-slate-500 focus:bg-white/80 transition-all backdrop-blur-sm"
                   />
                 </div>
 
@@ -78,7 +94,7 @@ const Booking = () => {
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full h-14 justify-start text-left font-normal bg-white/50 border-0 rounded-2xl pl-12 text-lg hover:bg-white/70 transition-all",
+                            "w-full h-14 justify-start text-left font-normal bg-white/60 border-0 rounded-2xl pl-12 text-lg hover:bg-white/80 transition-all backdrop-blur-sm",
                             !date && "text-slate-500"
                           )}
                         >
@@ -104,7 +120,7 @@ const Booking = () => {
                       type="time"
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="pl-12 h-14 bg-white/50 border-0 rounded-2xl text-lg focus:bg-white/70 transition-all"
+                      className="pl-12 h-14 bg-white/60 border-0 rounded-2xl text-lg focus:bg-white/80 transition-all backdrop-blur-sm"
                     />
                   </div>
                 </div>
@@ -120,15 +136,10 @@ const Booking = () => {
             </div>
           </div>
 
-          {/* Right Side - Car Image */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-            <div className="relative">
-              <img
-                src="/lovable-uploads/e4a05aab-e6a9-4e4f-8c18-0d17496ae374.png"
-                alt="Luxury black limousine"
-                className="w-full max-w-2xl h-auto object-contain drop-shadow-2xl"
-              />
-            </div>
+          {/* Right Side - Spacer for car positioning */}
+          <div className="order-1 lg:order-2 flex justify-center lg:justify-end relative">
+            {/* This div helps with spacing but the car is positioned absolutely */}
+            <div className="w-full max-w-2xl h-96"></div>
           </div>
         </div>
       </div>
