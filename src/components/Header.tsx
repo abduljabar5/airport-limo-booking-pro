@@ -14,6 +14,11 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const navigateToBooking = () => {
+    window.location.href = '/booking';
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
       <div className="container mx-auto px-4">
@@ -61,7 +66,7 @@ const Header = () => {
               <span>(612) 555-1234</span>
             </a>
             <Button 
-              onClick={() => scrollToSection('booking')}
+              onClick={navigateToBooking}
               className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
             >
               Book Now
@@ -111,7 +116,7 @@ const Header = () => {
                   <span>(612) 555-1234</span>
                 </a>
                 <Button 
-                  onClick={() => scrollToSection('booking')}
+                  onClick={navigateToBooking}
                   className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
                 >
                   Book Now
