@@ -26,12 +26,12 @@ const Booking = () => {
       
       {/* Main Content */}
       <div className="min-h-screen bg-gradient-to-br from-purple-200 via-blue-200 to-pink-200 relative overflow-hidden pt-16">
-        {/* Main Content Container */}
-        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 relative">
+        {/* Main Content Container with extra padding for car spillout */}
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 lg:pr-64 relative">
           
-          {/* Outer Container with frosted glass effect */}
-          <div className="relative w-full max-w-6xl">
-            <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 relative overflow-hidden"
+          {/* Outer Container with extended width to accommodate car spillout */}
+          <div className="relative w-full max-w-6xl lg:max-w-7xl">
+            <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 relative overflow-visible"
                  style={{
                    boxShadow: '0 25px 50px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                  }}>
@@ -138,7 +138,7 @@ const Booking = () => {
                   <img
                     src="/lovable-uploads/ef093fe4-551a-4289-814e-cda095220354.png"
                     alt="Luxury black limousine"
-                    className="w-auto h-80 object-contain transform translate-x-32"
+                    className="w-auto h-80 object-contain transform translate-x-24"
                     style={{
                       filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.3))',
                       transformStyle: 'preserve-3d',
