@@ -127,21 +127,34 @@ const Booking = () => {
                 </div>
 
                 {/* Right Side - Car positioning area */}
-                <div className="relative flex justify-end">
+                <div className="relative flex justify-end hidden lg:block">
                   <div className="w-full max-w-lg h-96"></div>
                 </div>
               </div>
 
-              {/* Car Image - Positioned to stick out from the container */}
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20">
-                <img
-                  src="/lovable-uploads/ef093fe4-551a-4289-814e-cda095220354.png"
-                  alt="Luxury black limousine"
-                  className="w-auto h-80 object-contain drop-shadow-2xl transform translate-x-24"
-                  style={{
-                    filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.3))'
-                  }}
-                />
+              {/* Car Image - Positioned to stick out from the container with 3D effect */}
+              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 hidden lg:block">
+                <div className="relative">
+                  <img
+                    src="/lovable-uploads/ef093fe4-551a-4289-814e-cda095220354.png"
+                    alt="Luxury black limousine"
+                    className="w-auto h-80 object-contain transform translate-x-32"
+                    style={{
+                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.3))',
+                      transformStyle: 'preserve-3d',
+                      perspective: '1000px'
+                    }}
+                  />
+                  {/* 3D effect overlay for the front portion */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent 60%, rgba(255, 255, 255, 0.1) 70%, rgba(255, 255, 255, 0.2) 80%, transparent 100%)',
+                      transform: 'perspective(1000px) rotateY(-5deg)',
+                      transformOrigin: 'center right'
+                    }}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
