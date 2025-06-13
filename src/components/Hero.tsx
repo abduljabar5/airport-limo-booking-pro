@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-white overflow-hidden">
-      <div className="absolute inset-0 bg-black/20"></div>
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden">
+      <div className="absolute inset-0 bg-black/40"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             Luxury Transportation
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-300">
+            <span className="block luxury-text-gradient">
               Redefined
             </span>
           </h1>
@@ -25,7 +25,7 @@ const Hero = () => {
             <Link to="/booking">
               <Button 
                 size="lg" 
-                className="bg-gold hover:bg-gold/90 text-black font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105"
+                className="bg-gold hover:bg-gold-600 text-black font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 border-0"
               >
                 Book Now
               </Button>
@@ -33,7 +33,7 @@ const Hero = () => {
             <Button 
               variant="outline" 
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-full transition-all duration-300"
+              className="border-gold text-gold hover:bg-gold hover:text-black px-8 py-4 text-lg rounded-full transition-all duration-300"
             >
               View Fleet
             </Button>
@@ -43,7 +43,7 @@ const Hero = () => {
       
       {/* Decorative elements */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-gold/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold/20 rounded-full blur-3xl"></div>
     </section>
   );
 };

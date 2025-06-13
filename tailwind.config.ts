@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Luxury color palette
+				gold: {
+					DEFAULT: 'hsl(45, 100%, 51%)',
+					50: 'hsl(48, 100%, 96%)',
+					100: 'hsl(48, 95%, 88%)',
+					200: 'hsl(48, 95%, 76%)',
+					300: 'hsl(47, 95%, 61%)',
+					400: 'hsl(45, 93%, 47%)',
+					500: 'hsl(45, 100%, 51%)',
+					600: 'hsl(38, 92%, 45%)',
+					700: 'hsl(32, 81%, 40%)',
+					800: 'hsl(28, 73%, 35%)',
+					900: 'hsl(27, 69%, 29%)',
 				}
 			},
 			borderRadius: {
