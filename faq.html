@@ -115,124 +115,82 @@
                 
                 <!-- FAQ Categories -->
                 <div class="mb-12 border-b border-slate-200">
-                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                        <button @click="open = 'booking'" :class="{ 'border-gold text-gold': open === 'booking', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'booking' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Booking &amp; Payments</button>
-                        <button @click="open = 'airport'" :class="{ 'border-gold text-gold': open === 'airport', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'airport' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Airport Services</button>
-                        <button @click="open = 'services'" :class="{ 'border-gold text-gold': open === 'services', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'services' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Our Services &amp; Fleet</button>
+                    <nav class="-mb-px flex flex-wrap space-x-8" aria-label="Tabs">
+                        <button @click="open = 'booking'" :class="{ 'border-gold text-gold': open === 'booking', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'booking' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">General &amp; Booking</button>
+                        <button @click="open = 'airport'" :class="{ 'border-gold text-gold': open === 'airport', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'airport' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">MSP Airport Services</button>
+                        <button @click="open = 'services'" :class="{ 'border-gold text-gold': open === 'services', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'services' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Fleet &amp; Services</button>
+                        <button @click="open = 'corporate'" :class="{ 'border-gold text-gold': open === 'corporate', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'corporate' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Corporate &amp; Events</button>
+                        <button @click="open = 'safety'" :class="{ 'border-gold text-gold': open === 'safety', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'safety' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Safety &amp; Policies</button>
                     </nav>
                 </div>
 
-                <!-- Booking Questions -->
+                <!-- General & Booking Questions -->
                 <div x-show="open === 'booking'" class="space-y-6">
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            How do I book a limo or black car service?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>Booking with us is simple. You can use the secure online form on our <a href="book-a-ride.html" class="text-gold hover:underline">Book Now</a> page. Simply enter your pickup/drop-off locations, date, and time to get started. For immediate assistance or special requests for our limo service, you can also call us directly at (612) 555-1234.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">How do I book a limo or black car service?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>Booking your ride is easy. The quickest method is to use the secure form on our <a href="book-a-ride.html" class="text-gold hover:underline">Book Now</a> page. For more complex itineraries or to speak with a representative about our limo service, please call us directly.</p></div>
                     </div>
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            What is your cancellation policy?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                           <p>We understand that plans can change. We offer a flexible cancellation policy. For our standard black car and taxi service, we request a minimum of 4 hours notice. For specialty vehicles like our airport limo, a 24-hour notice is required. Please contact us for details regarding special events or corporate bookings.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">How far in advance should I book my limo?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>For standard black car or taxi service, we recommend booking at least 24 hours in advance. For specialty vehicles like a stretch limo or for major events, we suggest booking 1-2 weeks ahead to ensure availability.</p></div>
                     </div>
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            What payment methods do you accept?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                           <p>We accept all major credit cards, including Visa, MasterCard, American Express, and Discover. You can pay securely online when you book your black car service or choose to pay in the vehicle. Corporate accounts with monthly invoicing are also available upon request.</p>
-                        </div>
-                    </div>
-                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            Is gratuity included in the fare?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                           <p>Gratuity is not automatically included in the quoted fare. We believe in letting our customers decide on the amount based on the quality of service received. You have the option to add a tip during the online booking process or provide it directly to your chauffeur after your ride. Our team appreciates your generosity.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">How is the fare for my black car service calculated?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>Our fares are calculated based on the distance of the trip, the type of vehicle selected, and any additional services requested. Unlike a conventional taxi, our rates are transparent and provided upfront. Hourly rates are also available for charters.</p></div>
                     </div>
                 </div>
 
-                <!-- Airport Service Questions -->
+                <!-- MSP Airport Service Questions -->
                 <div x-show="open === 'airport'" class="space-y-6">
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            How do I find my chauffeur for an MSP airport pickup?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>For our premier MSP airport limo and black car service, we offer a complimentary meet-and-greet service. Your chauffeur will be waiting for you at the baggage claim area with a personalized sign. For our standard airport taxi service, your driver will contact you upon your arrival to arrange a specific pickup point at the arrivals curb.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">What is the difference between your MSP airport taxi and MSP airport limo service?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>Our MSP airport taxi service provides prompt and efficient transportation in a luxury sedan. Our MSP airport limo service offers a premium experience with a higher-end vehicle, a complimentary meet-and-greet service inside the airport, and assistance with luggage. Both are superior options for MSP transportation.</p></div>
+                    </div>
+                     <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">How do you track my flight for an MSP pickup?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>We use real-time flight tracking software. When you book your airport limo or taxi, we ask for your flight number. This allows us to monitor your flight's status and automatically adjust your pickup time for any delays or early arrivals, ensuring your chauffeur is there when you land.</p></div>
                     </div>
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            What happens if my flight to MSP is delayed?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>We monitor all incoming flights in real-time. Whether you've booked an airport limo or an airport taxi, we will automatically adjust your pickup time to match your flight's actual arrival. You do not need to contact us about flight delays.</p>
-                        </div>
-                    </div>
-                    <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            Do you offer services for private FBOs at MSP?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>Yes, our black car service extends to all private aviation terminals (FBOs) at and around Minneapolis-St. Paul International Airport. We provide discreet and timely tarmac-side pickups upon request, coordinating directly with the FBO staff to ensure a seamless transition from your aircraft to your ground transportation.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">What is your wait time policy for MSP airport pickups?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>We offer a complimentary wait time for all MSP airport limo and black car pickups. This includes 30 minutes for domestic flights and 60 minutes for international flights after your plane has arrived at the gate. This gives you ample time to deplane and collect your luggage without stress.</p></div>
                     </div>
                 </div>
 
-                <!-- Our Services Questions -->
+                <!-- Fleet & Services Questions -->
                 <div x-show="open === 'services'" class="space-y-6">
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            What types of vehicles do you offer?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>Our fleet is designed to meet a variety of needs. We offer luxury sedans, premium SUVs for more space, executive vans for groups, and stretch limousines for special occasions. Every vehicle in our limo service is meticulously maintained and detailed for your comfort.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">How many passengers and how much luggage can your vehicles hold?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>Our luxury sedans accommodate up to 3 passengers and 2-3 standard suitcases. Our SUVs can hold up to 6 passengers and more luggage, making them ideal for an airport limo trip with family. Please contact us for specifics if you have oversized luggage or a large group.</p></div>
                     </div>
                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            What areas do you service besides Minneapolis?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>Our taxi and limo service covers the entire Minneapolis-St. Paul metropolitan area and surrounding suburbs, including Edina, Minnetonka, and Wayzata. Please see our <a href="service-areas.html" class="text-gold hover:underline">Service Areas</a> page for more details.</p>
-                        </div>
-                    </div>
-                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            Can I book a car for a few hours or a full day?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>Absolutely. We offer hourly charter services for our black car and limo fleet. This is an ideal option for clients who require a vehicle for an extended period, such as for business meetings, a night out, or sightseeing tours. Your chauffeur will be at your disposal for the entire duration of the booking.</p>
-                        </div>
-                    </div>
-                     <div x-data="{ expanded: false }">
-                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
-                            Are your vehicles child-friendly?
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
-                        </button>
-                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
-                            <p>Yes, we are happy to accommodate families with children. We can provide child safety seats and booster seats upon request for a small fee. Please specify your needs when you book your airport taxi or limo so we can have the appropriate seats installed and ready for your journey.</p>
-                        </div>
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">Do you offer point-to-point taxi service or only hourly charters?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>We offer both! You can book a direct, one-way trip, which is common for our airport taxi service, or you can charter a black car or limo on an hourly basis. Hourly charters are perfect for events, business meetings, or a night out in Minneapolis.</p></div>
                     </div>
                 </div>
 
+                <!-- Corporate & Events Questions -->
+                <div x-show="open === 'corporate'" class="space-y-6">
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">Do you offer corporate accounts for black car services?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>Yes, we specialize in providing black car services for corporate clients. We offer centralized billing, customized reporting, and a dedicated account manager to handle all your transportation needs, from airport transfers to executive roadshows.</p></div>
+                    </div>
+                     <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">Do you offer wedding limo packages?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>We do. Our wedding limo packages are designed to provide elegant and reliable transportation on your special day. We can provide a classic stretch limo for the wedding party, as well as black car service for guests. Contact us to create a custom package.</p></div>
+                    </div>
+                </div>
+                
+                <!-- Safety & Policies Questions -->
+                <div x-show="open === 'safety'" class="space-y-6">
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">Are your chauffeurs professionally licensed and background-checked?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>Absolutely. The safety of our passengers is our highest priority. Every chauffeur on our team is fully licensed, has passed a comprehensive background check, and undergoes continuous professional training. This is a core part of our commitment to providing a secure and reliable limo service.</p></div>
+                    </div>
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">What is your lost and found policy?<i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i></button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4"><p>If you believe you have left an item in one of our vehicles, please contact us immediately. We will do our best to locate your property. While we are not liable for lost items, our team will make every effort to return them to their rightful owner.</p></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
