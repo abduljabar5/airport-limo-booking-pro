@@ -7,6 +7,7 @@
 // EmailJS Configuration - Loaded from .env file via API
 let EMAILJS_CONFIG = null;
 let emailjsConfigured = false;
+let GOOGLE_MAPS_API_KEY = null;
 
 // Custom Email Templates
 const EMAIL_TEMPLATES = {
@@ -209,6 +210,25 @@ const EMAIL_TEMPLATES = {
     }
 };
 
+let googleMapsApiKeyLoaded = false;
+
+async function loadGoogleMapsApiKey() {
+  if (googleMapsApiKeyLoaded) return;
+  try {
+    const response = await fetch('/.netlify/functions/get-google-maps-api-key');
+    const data = await response.json();
+    if (data.googleMapsApiKey) {
+      GOOGLE_MAPS_API_KEY = data.googleMapsApiKey;
+      googleMapsApiKeyLoaded = true;
+      console.log('Google Maps API Key loaded successfully.');
+    } else {
+      console.error('Google Maps API Key not found in server response.');
+    }
+  } catch (error) {
+    console.error('Failed to load Google Maps API Key:', error);
+  }
+}
+
 // Load EmailJS configuration from environment variables
 async function loadEmailJSConfig() {
     try {
@@ -249,6 +269,8 @@ async function sendConfirmationEmails(bookingDetails) {
         }
     }
 
+    await loadGoogleMapsApiKey();
+
     const now = new Date();
     
     const vehicleTypeText = bookingDetails.vehicle_type;
@@ -264,14 +286,20 @@ async function sendConfirmationEmails(bookingDetails) {
     }
 
     const payment_status = bookingDetails.payment_method === 'Online Payment' ? 'Paid in Full' : 'Payment due to driver';
-    const pickup_location_url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bookingDetails.pickup_location)}`;
-    const dropoff_location_url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bookingDetails.dropoff_location)}`;
+    const pickupLocationUrl = GOOGLE_MAPS_API_KEY
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bookingDetails.pickup_location)}&key=${GOOGLE_MAPS_API_KEY}`
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bookingDetails.pickup_location)}`;
+
+    const dropoffLocationUrl = GOOGLE_MAPS_API_KEY
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bookingDetails.dropoff_location)}&key=${GOOGLE_MAPS_API_KEY}`
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bookingDetails.dropoff_location)}`;
+
 
     const templateParams = {
         ...bookingDetails,
         payment_status,
-        pickup_location_url,
-        dropoff_location_url,
+        pickup_location_url: pickupLocationUrl,
+        dropoff_location_url: dropoffLocationUrl,
         customer_phone: bookingDetails.phone_number,
         vehicle_type: vehicleTypeText,
         service_type_formatted: serviceTypeFormatted,
@@ -329,3 +357,9 @@ async function sendConfirmationEmails(bookingDetails) {
 
 // Initialize EmailJS configuration on page load
 loadEmailJSConfig(); 
+
+document.addEventListener('DOMContentLoaded', () => {
+    // We can pre-load configurations on page load for faster email sending later.
+    loadEmailJSConfig();
+    loadGoogleMapsApiKey();
+}); 
