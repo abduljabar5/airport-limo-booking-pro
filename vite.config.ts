@@ -1,22 +1,27 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   server: {
     host: "::",
-    port: 8080,
+    port: 8880, // Set a unique port for Vite
   },
-  plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-}));
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        booking: resolve(__dirname, 'book-a-ride.html'),
+        services: resolve(__dirname, 'service-areas.html'),
+        airport: resolve(__dirname, 'airport-service.html'),
+        downtown: resolve(__dirname, 'downtown-minneapolis.html'),
+      },
+    },
+  },
+});

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Limo or Taxi | Minneapolis Luxury Limo</title>
+    <meta name="description" content="Easily book your luxury transportation online with Minneapolis Luxury Limo. Secure your black car, limo, or taxi service in Minneapolis today.">
+    <meta name="keywords" content="book limo Minneapolis, reserve taxi Minneapolis, luxury car booking, online limo reservation, Minneapolis transportation booking">
+    <meta name="author" content="Minneapolis Luxury Limo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://minneapolisluxurylimo.com/book-a-ride.html">
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            DEFAULT: 'hsl(45, 100%, 51%)',
+                            500: 'hsl(45, 100%, 51%)',
+                            600: 'hsl(38, 92%, 45%)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="public/favicon.ico">
+    <style>
+        .service-type-label.selected {
+            border-color: hsl(45, 100%, 51%);
+            box-shadow: 0 0 0 2px hsla(45, 100%, 51%, 0.2);
+        }
+        .service-type-label.selected .service-radio-circle {
+            border-color: hsl(45, 100%, 51%);
+            background-color: hsl(45, 100%, 51%);
+        }
+        .service-type-label.selected .service-radio-circle::after {
+            content: "✔";
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50">
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-black/95 backdrop-blur-sm border-b border-gold/30 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-gold to-gold-600 rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-sm">TT</span>
+                    </div>
+                    <span class="text-xl font-bold text-white">Total Town Car Service</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Home
+                    </a>
+                    <a href="airport-service.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Airport Service
+                    </a>
+                    <a href="downtown-minneapolis.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Downtown Service
+                    </a>
+                    <a href="service-areas.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Service Areas
+                    </a>
+                </nav>
+
+                <!-- Desktop CTAs -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="tel:+16125551234" class="flex items-center space-x-2 text-gray-300 hover:text-gold transition-colors">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                        <span>(612) 555-1234</span>
+                    </a>
+                    <a href="book-a-ride.html" class="bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden bg-black border-t border-gold/30 hidden">
+                <div class="px-4 py-4 space-y-4">
+                    <a href="index.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Home
+                    </a>
+                    <a href="airport-service.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Airport Service
+                    </a>
+                    <a href="downtown-minneapolis.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Downtown Service
+                    </a>
+                    <a href="service-areas.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Service Areas
+                    </a>
+                    <div class="pt-4 border-t border-gold/30 space-y-3">
+                        <a href="tel:+16125551234" class="flex items-center space-x-2 text-gray-300">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <span>(612) 555-1234</span>
+                        </a>
+                        <a href="book-a-ride.html" class="block w-full bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded text-center">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[50vh] flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden pt-16">
+        <div class="absolute inset-0 bg-black/40"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                    <span class="luxury-text-gradient">Reserve Your Luxury Ride</span>
+                </h1>
+                
+                <p class="text-xl md:text-2xl mb-8 text-gray-200 leading-relaxed">
+                    Book your premium transportation with Minneapolis Luxury Limo. 
+                    Simple, secure, and confirmed within minutes.
+                </p>
+                
+                <div class="flex items-center justify-center space-x-4 text-gold">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    <span class="text-lg">Secure & Confidential</span>
+                    <span class="text-gold">•</span>
+                    <i data-lucide="clock" class="w-6 h-6"></i>
+                    <span class="text-lg">Instant Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white shadow-2xl rounded-2xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-gold to-yellow-500 p-6">
+                        <h2 class="text-2xl font-bold text-black text-center">Book Your Luxury Transportation</h2>
+                        <p class="text-center text-black mt-2">Complete the form below and we'll confirm your reservation promptly</p>
+                    </div>
+                    
+                    <form id="booking-form" class="p-8 space-y-6">
+                        <!-- Personal Information -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div>
+                                <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Full Name *</label>
+                                <input type="text" id="name" name="name" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="(612) 555-1234">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email Address *</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="your@email.com">
+                        </div>
+
+                        <!-- Trip Details -->
+                        <div class="border-t border-slate-200 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Trip Details</h3>
+                            <div class="space-y-6">
+                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="pickup-location" class="block text-sm font-medium text-slate-700 mb-2">Pickup Location *</label>
+                                        <input type="text" id="pickup-location" name="pickup-location" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="Address, hotel, or landmark">
+                                    </div>
+                                    <div>
+                                        <label for="dropoff-location" class="block text-sm font-medium text-slate-700 mb-2">Drop-off Location *</label>
+                                        <input type="text" id="dropoff-location" name="dropoff-location" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="Address, hotel, or landmark">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="pickup-date" class="block text-sm font-medium text-slate-700 mb-2">Pickup Date *</label>
+                                        <input type="date" id="pickup-date" name="pickup-date" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                    </div>
+                                    <div>
+                                        <label for="pickup-time" class="block text-sm font-medium text-slate-700 mb-2">Pickup Time *</label>
+                                        <input type="time" id="pickup-time" name="pickup-time" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle & Passengers -->
+                        <div class="border-t border-slate-200 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Vehicle & Passengers</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="passengers" class="block text-sm font-medium text-slate-700 mb-2">Number of Passengers *</label>
+                                    <select id="passengers" name="passengers" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                        <option value="">Select passengers</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7+</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="luggage" class="block text-sm font-medium text-slate-700 mb-2">Luggage Count</label>
+                                    <select id="luggage" name="luggage" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5+</option>
+                                    </select>
+                                </div>
+                            </div>
+                             <div class="mt-6">
+                                <label for="cartype" class="block text-sm font-medium text-slate-700 mb-2">Vehicle Preference *</label>
+                                <select id="cartype" name="cartype" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                    <option value="">Select a vehicle</option>
+                                    <option value="SEDAN">Luxury Sedan (up to 3 passengers)</option>
+                                    <option value="SUV" selected>Luxury SUV (up to 6 passengers)</option>
+                                    <option value="VAN">Executive Van (up to 10 passengers)</option>
+                                    <option value="LIMO">Stretch Limo (up to 8 passengers)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Service Type -->
+                        <div class="border-t border-slate-200 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Service Type *</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label for="service-oneway" class="service-type-label p-4 border rounded-lg cursor-pointer transition-all duration-200">
+                                    <input type="radio" id="service-oneway" name="service-type" value="one-way" checked class="hidden">
+                                    <div class="flex items-center">
+                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
+                                        <div>
+                                            <span class="font-semibold text-slate-800 block">One-Way Transfer</span>
+                                            <span class="text-sm text-slate-500">Single pickup and drop-off</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label for="service-roundtrip" class="service-type-label p-4 border rounded-lg cursor-pointer transition-all duration-200">
+                                    <input type="radio" id="service-roundtrip" name="service-type" value="round-trip" class="hidden">
+                                    <div class="flex items-center">
+                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
+                                        <div>
+                                            <span class="font-semibold text-slate-800 block">Round Trip</span>
+                                            <span class="text-sm text-slate-500">Pickup, drop-off, and return</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label for="service-hourly" class="service-type-label p-4 border rounded-lg cursor-not-allowed transition-all duration-200 opacity-50 bg-slate-50">
+                                    <input type="radio" id="service-hourly" name="service-type" value="hourly" class="hidden" disabled>
+                                    <div class="flex items-center">
+                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
+                                        <div>
+                                            <span class="font-semibold text-slate-400 block">Hourly Charter</span>
+                                            <span class="text-sm text-slate-400">By the hour with wait time</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label for="service-airport" class="service-type-label p-4 border rounded-lg cursor-not-allowed transition-all duration-200 opacity-50 bg-slate-50">
+                                    <input type="radio" id="service-airport" name="service-type" value="airport" class="hidden" disabled>
+                                    <div class="flex items-center">
+                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
+                                        <div>
+                                            <span class="font-semibold text-slate-400 block">Airport Transfer</span>
+                                            <span class="text-sm text-slate-400">To/from MSP or regional airports</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment & Final Fare -->
+                        <div id="payment-section" class="border-t border-slate-200 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Payment &amp; Fare</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
+                                    <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                        <option value="15">15%</option>
+                                        <option value="20" selected>20%</option>
+                                        <option value="25">25%</option>
+                                        <option value="0">Other/No Tip</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
+                                    <div class="flex items-center h-full space-x-4">
+                                        <label for="pay-online" class="flex items-center">
+                                            <input type="radio" id="pay-online" name="payment-method" value="pay-online" checked class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
+                                            <span class="ml-2 text-sm text-slate-600">Pay Online</span>
+                                        </label>
+                                        <label for="pay-in-person" class="flex items-center">
+                                            <input type="radio" id="pay-in-person" name="payment-method" value="pay-in-person" class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
+                                            <span class="ml-2 text-sm text-slate-600">Pay In Person</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-100 p-6 rounded-lg">
+                                <div class="flex justify-between items-center text-slate-600 mb-2">
+                                    <span>Distance:</span>
+                                    <span id="imiles" class="font-semibold text-slate-900">N/A</span>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-slate-200">
+                                    <div class="flex justify-between items-center text-2xl font-bold text-slate-900">
+                                        <span>Total Fare:</span>
+                                        <span id="ifare" class="text-gold">$0.00</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1 text-right">Includes all fees and surcharges.</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-8">
+                                <button type="submit" id="submit-button"
+                                    class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2">
+                                    <i data-lucide="lock" class="w-5 h-5" id="submit-icon"></i>
+                                    <span id="submit-text">Proceed to Payment</span>
+                                </button>
+                                <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
+                                    By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-gray-400 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Total Town Car Service</h3>
+                    <p class="text-sm">Your premier choice for luxury transportation in Minneapolis and surrounding areas.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-gold">Home</a></li>
+                        <li><a href="airport-service.html" class="hover:text-gold">Airport Service</a></li>
+                        <li><a href="service-areas.html" class="hover:text-gold">Service Areas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Contact Us</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
+                            <span>(612) 555-1234</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-gold"></i>
+                            <span>contact@totaltowncarservice.com</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                     <h3 class="text-lg font-bold text-white mb-4">Follow Us</h3>
+                     <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
+                <p>&copy; 2024 Total Town Car Service. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            function updateServiceTypeSelection() {
+                document.querySelectorAll('.service-type-label').forEach(label => {
+                    label.classList.remove('selected');
+                });
+                const selectedRadio = document.querySelector('input[name="service-type"]:checked');
+                if (selectedRadio) {
+                    selectedRadio.closest('.service-type-label').classList.add('selected');
+                }
+            }
+
+            document.querySelectorAll('input[name="service-type"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateServiceTypeSelection();
+                    handleFareUpdate(); 
+                });
+            });
+
+            updateServiceTypeSelection(); // Set initial state
+        });
+
+        // =================================================================================
+        // FARE CALCULATION MODULE
+        // =================================================================================
+
+        const vehicleRates = {
+            'SEDAN': { base: 59.00, min: 65.00, perMile: 3.30 },
+            'SUV': { base: 69.00, min: 75.00, perMile: 3.60 },
+            'VAN': { base: 53.00, min: 55.00, perMile: 3.20 },
+            'LIMO': { base: 250.00, min: 250.00, perMile: 3.50 }
+        };
+
+        const fees = {
+            airport: 0.00, //10.00
+            meetAndGreet: 15.00, //15.00
+            nightSurcharge: 20.00,
+            longDistanceSurcharge: 25.00, // For trips > 75 miles
+            onlinePaymentPercent: 0.03 // 3%
+        };
+
+        /**
+         * Checks if the address is an airport location.
+         * @param {string} address The pickup address.
+         * @returns {boolean} True if it's an airport.
+         */
+        function isAirportPickup(address) {
+            if (!address) return false;
+            const lowerCaseAddress = address.toLowerCase();
+            return lowerCaseAddress.includes('airport') || lowerCaseAddress.includes('msp');
+        }
+
+        /**
+         * Checks if the time falls within the night surcharge window (7 PM - 5:59 AM).
+         * @param {string} timeStr The pickup time in "HH:MM" format.
+         * @returns {boolean} True if night surcharge applies.
+         */
+        function isNightSurchargeApplicable(timeStr) {
+            if (!timeStr) return false;
+            const [hours] = timeStr.split(':').map(Number);
+            return hours >= 19 || hours < 6;
+        }
+
+        let lastFareCalculation = {
+            base: 0,
+            total: 0
+        };
+        
+        /**
+         * Calculates the total fare based on all inputs from the form.
+         */
+        function calculateFare() {
+            const serviceType = document.querySelector('input[name="service-type"]:checked').value;
+            if (serviceType === 'hourly') {
+                handleFareUpdate();
+                return;
+            }
+            const directionsService = new google.maps.DirectionsService();
+
+            const pickupAddress = document.getElementById('pickup-location').value;
+            const destinationAddress = document.getElementById('dropoff-location').value;
+            
+            if (!pickupAddress || !destinationAddress) {
+                return;
+            }
+
+            directionsService.route(
+                {
+                    origin: pickupAddress,
+                    destination: destinationAddress,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                },
+                (response, status) => {
+                    if (status === 'OK') {
+                        const route = response.routes[0].legs[0];
+                        const distanceInMeters = route.distance.value;
+                        const distanceInMiles = distanceInMeters * 0.000621371;
+                        
+                        document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
+                        
+                        lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                        updateTotalFare();
+
+                    } else {
+                        console.error('Directions request failed due to ' + status);
+                        document.getElementById('imiles').textContent = 'N/A';
+                        document.getElementById('ifare').textContent = '$0.00';
+                    }
+                }
+            );
+        }
+
+        /**
+         * Calculates the fare based on distance and selected options, BEFORE tip and payment fees.
+         * @param {number} distanceInMiles The trip distance.
+         * @returns {number} The calculated base fare.
+         */
+        function calculateBaseFare(distanceInMiles) {
+            const vehicleTypeElement = document.getElementById('cartype');
+            const pickupTimeElement = document.getElementById('pickup-time');
+            const pickupLocationElement = document.getElementById('pickup-location');
+            const serviceTypeElement = document.querySelector('input[name="service-type"]:checked');
+
+            if (!vehicleTypeElement || !pickupTimeElement || !pickupLocationElement || !serviceTypeElement) {
+                console.error("One or more fare calculation elements are missing from the DOM.");
+                return 0;
+            }
+
+            const serviceType = serviceTypeElement.value;
+            const dropoffLocationElement = document.getElementById('dropoff-location');
+            const fareElement = document.getElementById('ifare');
+            const milesElement = document.getElementById('imiles');
+            const paymentSection = document.getElementById('payment-section');
+
+            // Handle hourly charter
+            if (serviceType === 'hourly') {
+                fareElement.textContent = 'Call for Quote';
+                milesElement.textContent = 'N/A';
+                dropoffLocationElement.disabled = true;
+                dropoffLocationElement.value = 'Hourly Service';
+                paymentSection.style.display = 'none';
+                lastFareCalculation.base = 0;
+                lastFareCalculation.total = 0;
+                return 0;
+            } else {
+                dropoffLocationElement.disabled = false;
+                paymentSection.style.display = 'block';
+                if (dropoffLocationElement.value === 'Hourly Service') {
+                    dropoffLocationElement.value = '';
+                }
+            }
+
+            const vehicleType = vehicleTypeElement.value;
+            const pickupTime = pickupTimeElement.value;
+            const pickupAddress = pickupLocationElement.value;
+            const isRoundTrip = serviceType === 'round-trip';
+
+            if(!vehicleType) return 0;
+            
+            const rates = vehicleRates[vehicleType];
+            let fare = rates.base + (distanceInMiles * rates.perMile);
+
+            if (isAirportPickup(pickupAddress) || serviceType === 'airport') fare += fees.airport;
+            if (isNightSurchargeApplicable(pickupTime)) fare += fees.nightSurcharge;
+            if (distanceInMiles > 75) fare += fees.longDistanceSurcharge;
+
+            fare = Math.max(fare, rates.min);
+
+            if (isRoundTrip) fare *= 2;
+            
+            return fare;
+        }
+
+        /**
+         * Updates the total fare by adding tip and online fees to the last calculated base fare.
+         */
+        function updateTotalFare() {
+            const tipElement = document.getElementById('tip');
+            const paymentMethodElement = document.querySelector('input[name="payment-method"]:checked');
+            const fareElement = document.getElementById('ifare');
+
+            if (!tipElement || !paymentMethodElement || !fareElement) {
+                console.error("One or more total fare elements are missing from the DOM.");
+                return;
+            }
+
+            const tipPercentage = parseFloat(tipElement.value) / 100;
+            const isPayOnline = paymentMethodElement.value === 'pay-online';
+            
+            let baseFare = lastFareCalculation.base;
+            const tipAmount = baseFare * tipPercentage;
+            let totalFare = baseFare + tipAmount;
+
+            if (isPayOnline) {
+                totalFare += totalFare * fees.onlinePaymentPercent;
+            }
+            
+            fareElement.textContent = `$${Math.ceil(totalFare).toFixed(2)}`;
+            lastFareCalculation.total = totalFare;
+
+            // Enable submit button after fare calculation
+            updateSubmitButton(false, true);
+        }
+
+        function handleFareUpdate() {
+            try {
+                const distanceText = document.getElementById('imiles').textContent;
+                const distanceInMiles = parseFloat(distanceText) || 0;
+                
+                // Base fare is only calculated if we have a distance.
+                if (distanceInMiles > 0) {
+                    lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                }
+                
+                // Total fare is always updated to reflect changes in tip, payment method, etc.
+                updateTotalFare();
+            } catch (error) {
+                console.error("Error during fare update:", error);
+            }
+        }
+
+        // Vehicle passenger limits
+        const vehiclePassengerLimits = {
+            'SEDAN': 3,
+            'SUV': 6,
+            'VAN': 10,
+            'LIMO': 8
+        };
+
+        // Update passenger options based on selected vehicle
+        function updatePassengerOptions() {
+            const vehicleSelect = document.getElementById('cartype');
+            const passengerSelect = document.getElementById('passengers');
+            const selectedVehicle = vehicleSelect.value;
+            
+            if (!selectedVehicle) return;
+            
+            const maxPassengers = vehiclePassengerLimits[selectedVehicle];
+            const currentSelection = passengerSelect.value;
+            
+            // Clear existing options except the first one
+            passengerSelect.innerHTML = '<option value="">Select passengers</option>';
+            
+            // Add options up to the vehicle limit
+            for (let i = 1; i <= maxPassengers; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.textContent = i.toString();
+                
+                // Restore previous selection if it's still valid
+                if (currentSelection === i.toString()) {
+                    option.selected = true;
+                }
+                
+                passengerSelect.appendChild(option);
+            }
+            
+            // If there are more than the limit, add a "X+" option
+            if (maxPassengers < 10) {
+                const option = document.createElement('option');
+                option.value = (maxPassengers + 1).toString();
+                option.textContent = `${maxPassengers + 1}`;
+                passengerSelect.appendChild(option);
+            }
+        }
+
+        // Add event listeners to trigger recalculation
+        function addFareCalculationListeners() {
+            const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person'];
+
+            fieldsToWatch.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (id === 'cartype') {
+                        element.addEventListener('change', function() {
+                            updatePassengerOptions();
+                            handleFareUpdate();
+                        });
+                    } else {
+                        element.addEventListener('change', handleFareUpdate);
+                    }
+                } else {
+                    console.warn(`Listener not attached: Element with ID '${id}' not found.`);
+                }
+            });
+            
+            // Initialize passenger options for the default vehicle
+            updatePassengerOptions();
+
+            // The listeners for payment method changes are already handled by the `fieldsToWatch`
+            // array, which calls `handleFareUpdate`. This function then calls `updateSubmitButton`
+            // with the correct parameters. The code that was here was redundant and causing a bug.
+            
+            // Initialize submit button text
+            updateSubmitButton();
+        }
+
+        // =================================================================================
+        // UTILITY FUNCTIONS
+        // =================================================================================
+
+        function formatTime12Hour(time24) {
+            if (!time24) return 'N/A';
+            const [hours, minutes] = time24.split(':');
+            let period = 'AM';
+            let hour = parseInt(hours, 10);
+
+            if (hour >= 12) {
+                period = 'PM';
+                if (hour > 12) {
+                    hour -= 12;
+                }
+            } else if (hour === 0) {
+                hour = 12;
+            }
+
+            return `${hour}:${minutes} ${period}`;
+        }
+
+        function updateSubmitButton(isSubmitting, isFareCalculated = false) {
+            const submitButton = document.getElementById('submit-button');
+            const submitText = document.getElementById('submit-text');
+            const submitIcon = document.getElementById('submit-icon');
+            const submitDisclaimer = document.getElementById('submit-disclaimer');
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
+
+            if (isSubmitting) {
+                submitButton.disabled = true;
+                submitText.textContent = 'Processing...';
+                submitIcon.setAttribute('data-lucide', 'loader-2');
+                submitIcon.classList.add('animate-spin');
+                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                submitButton.disabled = !isFareCalculated;
+
+                if (!isFareCalculated) {
+                    submitText.textContent = 'Calculate Fare First';
+                    submitIcon.setAttribute('data-lucide', 'calculator');
+                    submitIcon.classList.remove('animate-spin');
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    submitDisclaimer.textContent = 'Please select pickup and drop-off locations to calculate the fare.';
+                } else {
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    submitIcon.classList.remove('animate-spin');
+
+                    if (paymentMethod && paymentMethod.value === 'pay-in-person') {
+                        submitText.textContent = 'Confirm Booking';
+                        submitIcon.setAttribute('data-lucide', 'check-circle');
+                        submitDisclaimer.textContent = 'By clicking "Confirm Booking", you agree to our Terms of Service and Privacy Policy. You will pay the driver in person.';
+                    } else {
+                        submitText.textContent = 'Proceed to Payment';
+                        submitIcon.setAttribute('data-lucide', 'lock');
+                        submitDisclaimer.textContent = 'By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.';
+                    }
+                }
+            }
+            
+            // Refresh Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+
+            const quickBookData = {
+                pickup: params.get('pickup'),
+                destination: params.get('destination'),
+                date: params.get('date'),
+                time: params.get('time'),
+                vehicleType: params.get('vehicleType'),
+            };
+
+            if (quickBookData.pickup && quickBookData.destination) {
+                document.getElementById('pickup-location').value = quickBookData.pickup;
+                document.getElementById('dropoff-location').value = quickBookData.destination;
+                document.getElementById('pickup-date').value = quickBookData.date;
+                document.getElementById('pickup-time').value = quickBookData.time;
+                
+                const vehicleSelect = document.getElementById('cartype');
+                if (quickBookData.vehicleType) {
+                    // The values from index.html are lowercase, e.g., 'suv'. The booking form uses uppercase, e.g., 'SUV'.
+                    const matchingOption = Array.from(vehicleSelect.options).find(opt => opt.value.toLowerCase() === quickBookData.vehicleType.toLowerCase());
+                    if (matchingOption) {
+                        vehicleSelect.value = matchingOption.value;
+                    }
+                }
+
+                // Trigger fare calculation after a short delay to ensure maps API is ready
+                setTimeout(() => {
+                    calculateFare();
+                }, 500);
+
+                // Clean up the URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+
+
+        // Initialize Google Places Autocomplete
+        function initAutocomplete() {
+            try {
+                const autocompleteOptions = {
+                    bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(44.7, -94.0), // Southwest
+                        new google.maps.LatLng(45.2, -93.0)  // Northeast
+                    ),
+                    componentRestrictions: { country: 'us' },
+                    strictBounds: false
+                };
+
+                // Initialize autocomplete for pickup location
+                const pickupInput = document.getElementById('pickup-location');
+                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
+                pickupAutocomplete.addListener('place_changed', calculateFare);
+
+
+                // Initialize autocomplete for dropoff location
+                const dropoffInput = document.getElementById('dropoff-location');
+                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
+                dropoffAutocomplete.addListener('place_changed', calculateFare);
+                
+                addFareCalculationListeners();
+
+            } catch (error) {
+                console.error("Error initializing Google Autocomplete:", error);
+            }
+        }
+        
+        // =================================================================================
+        // FORM SUBMISSION & PAYMENT
+        // =================================================================================
+        
+        function getBookingDetails(form) {
+            const formData = new FormData(form);
+            const vehicleSelect = document.getElementById('cartype');
+            const vehicleTypeText = vehicleSelect.options[vehicleSelect.selectedIndex].text;
+            const totalFare = document.getElementById('ifare')?.textContent || '$0.00';
+            const serviceType = document.querySelector('input[name="service-type"]:checked')?.value || 'Not Specified';
+
+            return {
+                customer_name: formData.get('name'),
+                customer_email: formData.get('email'),
+                phone_number: formData.get('phone'),
+                pickup_date: formData.get('pickup-date'),
+                pickup_time: formatTime12Hour(formData.get('pickup-time')),
+                passengers: formData.get('passengers'),
+                vehicle_type: vehicleTypeText,
+                payment_method: formData.get('payment-method') === 'pay-online' ? 'Online Payment' : 'Pay In Person',
+                service_type: serviceType,
+                service_type_formatted: serviceType === 'round-trip' ? 'Round-Trip' : 'One-Way',
+                pickup_location: document.getElementById('pickup-location').value,
+                dropoff_location: document.getElementById('dropoff-location').value,
+                distance: document.getElementById('imiles')?.textContent || 'N/A',
+                duration: document.getElementById('trip-duration')?.textContent || 'N/A',
+                total_fare: totalFare,
+                tip: formData.get('tip') ? `$${parseFloat(formData.get('tip')).toFixed(2)}` : '$0.00'
+            };
+        }
+
+        // Main form submission logic
+        const bookingForm = document.getElementById('booking-form');
+        bookingForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            updateSubmitButton(true);
+
+            const formData = new FormData(bookingForm);
+            const paymentMethod = formData.get('payment-method');
+            const bookingDetails = getBookingDetails(bookingForm);
+
+             // For "Pay In Person", send email immediately
+            if (paymentMethod === 'pay-in-person') {
+                try {
+                    await sendConfirmationEmails(bookingDetails);
+                    // Redirect to a confirmation page
+                    const queryParams = new URLSearchParams({
+                        customer_name: bookingDetails.customer_name,
+                        pickup_date: bookingDetails.pickup_date,
+                        pickup_time: bookingDetails.pickup_time,
+                        pickup_address: bookingDetails.pickup_location,
+                        dropoff_address: bookingDetails.dropoff_location,
+                        vehicle_type: bookingDetails.vehicle_type,
+                        passengers: bookingDetails.passengers,
+                        total_fare: bookingDetails.total_fare,
+                        service_type_formatted: bookingDetails.service_type_formatted,
+                        tip: bookingDetails.tip
+                    });
+                    window.location.href = `booking-confirmation.html?${queryParams.toString()}`;
+                } catch (error) {
+                    console.error('In-person booking error:', error);
+                    alert(`An error occurred: ${error.message}. Please try again.`);
+                    updateSubmitButton(false, true);
+                }
+            } else if (paymentMethod === 'pay-online') {
+                 // For "Pay Online", proceed to Stripe and send email on success
+                try {
+                    const totalFareString = bookingDetails.total_fare.replace(/[^0-9.-]+/g, "");
+                    const totalFare = parseFloat(totalFareString);
+
+                    if (isNaN(totalFare) || totalFare <= 0) {
+                        throw new Error("Invalid fare amount for payment.");
+                    }
+                    
+                    // Store booking details in session storage to retrieve after payment
+                    sessionStorage.setItem('bookingDetails', JSON.stringify(bookingDetails));
+
+                    const response = await fetch('/.netlify/functions/create-stripe-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            amount: Math.round(totalFare * 100), // amount in cents
+                            customer_email: bookingDetails.customer_email,
+                            success_url: `${window.location.origin}/success.html`,
+                            cancel_url: window.location.href,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Stripe session creation failed.');
+                    }
+
+                    const session = await response.json();
+                    window.location.href = session.url;
+
+                } catch (error) {
+                    console.error('Online payment error:', error);
+                    alert(`An error occurred during the payment process: ${error.message}. Please try again.`);
+                    updateSubmitButton(false, true);
+                    // Clear storage if payment setup fails
+                    sessionStorage.removeItem('bookingDetails');
+                }
+            }
+        });
+
+        // =================================================================================
+        // EMAIL CONFIRMATION WITH EMAILJS
+        // =================================================================================
+        
+        // All email logic is now handled in app.js and the success.html page.
+        // This section is kept for future reference but is no longer active on this page.
+
+    </script>
+    <script src="app.js" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnA__D7we39j6KjrIAvAnff9Kj5PicuhE&libraries=places&callback=initAutocomplete" async defer></script>
+</body>
+</html> 

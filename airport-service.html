@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSP Airport Limo & Taxi Service | Minneapolis Luxury Limo</title>
+    <meta name="description" content="Reliable and luxurious airport transportation to and from Minneapolis-St. Paul International Airport (MSP). Our black car and limo service ensures a stress-free travel experience.">
+    <meta name="keywords" content="MSP airport limo, airport taxi Minneapolis, airport transportation MSP, black car service MSP, Minneapolis airport shuttle, luxury airport transfer">
+    <meta name="author" content="Minneapolis Luxury Limo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://minneapolisluxurylimo.com/airport-service.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://minneapolisluxurylimo.com/airport-service.html">
+    <meta property="og:title" content="MSP Airport Limo & Taxi Service | Minneapolis Luxury Limo">
+    <meta property="og:description" content="Reliable and luxurious airport transportation to and from Minneapolis-St. Paul International Airport (MSP).">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "MSP Airport Transportation Service",
+        "description": "Luxury limo and taxi service to Minneapolis-St. Paul International Airport",
+        "provider": {
+            "@type": "LimousineService",
+            "name": "Minneapolis Luxury Limo",
+            "telephone": "+1-612-555-1234"
+        },
+        "serviceArea": {
+            "@type": "City",
+            "name": "Minneapolis",
+            "sameAs": "https://en.wikipedia.org/wiki/Minneapolis"
+        }
+    }
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            DEFAULT: 'hsl(45, 100%, 51%)',
+                            500: 'hsl(45, 100%, 51%)',
+                            600: 'hsl(38, 92%, 45%)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="public/favicon.ico">
+</head>
+<body class="min-h-screen bg-background">
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-black/95 backdrop-blur-sm border-b border-gold/30 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-gold to-gold-600 rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-sm">TT</span>
+                    </div>
+                    <span class="text-xl font-bold text-white">Total Town Car Service</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Home
+                    </a>
+                    <a href="airport-service.html" class="text-gold hover:text-yellow-400 transition-colors">
+                        Airport Service
+                    </a>
+                    <a href="downtown-minneapolis.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Downtown Service
+                    </a>
+                    <a href="service-areas.html" class="text-gray-300 hover:text-gold transition-colors">
+                        Service Areas
+                    </a>
+                </nav>
+
+                <!-- Desktop CTAs -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="tel:+16125551234" class="flex items-center space-x-2 text-gray-300 hover:text-gold transition-colors">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                        <span>(612) 555-1234</span>
+                    </a>
+                    <a href="book-a-ride.html" class="bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden bg-black border-t border-gold/30 hidden">
+                <div class="px-4 py-4 space-y-4">
+                    <a href="index.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Home
+                    </a>
+                    <a href="airport-service.html" class="block w-full text-left text-gold hover:text-yellow-400 transition-colors">
+                        Airport Service
+                    </a>
+                    <a href="downtown-minneapolis.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Downtown Service
+                    </a>
+                    <a href="service-areas.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">
+                        Service Areas
+                    </a>
+                    <div class="pt-4 border-t border-gold/30 space-y-3">
+                        <a href="tel:+16125551234" class="flex items-center space-x-2 text-gray-300">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <span>(612) 555-1234</span>
+                        </a>
+                        <a href="book-a-ride.html" class="block w-full bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded text-center">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden pt-16">
+        <div class="absolute inset-0 bg-black/40"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    Premier <span class="luxury-text-gradient">MSP Airport Limo and Black Taxi Service</span>
+                </h1>
+                
+                <p class="text-xl md:text-2xl mb-8 text-gray-200 leading-relaxed">
+                    Reliable and luxurious airport transportation to and from Minneapolis-St. Paul International Airport (MSP). 
+                    Flight tracking, meet-and-greet service, and stress-free transfers throughout the Twin Cities.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105">
+                        Book Your Airport Ride
+                    </a>
+                    <a href="tel:+16125551234" class="border-gold text-gold hover:bg-gold hover:text-black border-2 px-8 py-4 text-lg rounded-full transition-all duration-300">
+                        Call (612) 555-1234
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Airport Services Features -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">MSP Airport Transportation Services</h2>
+                <p class="text-lg text-slate-600">Professional airport limo and taxi service with premium amenities</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
+                    <i data-lucide="plane-takeoff" class="w-16 h-16 text-gold mb-6"></i>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Flight Tracking</h3>
+                    <p class="text-slate-600">
+                        We monitor your flight in real-time and adjust pickup times automatically for delays. 
+                        No need to worry about calling us if your flight is running late.
+                    </p>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
+                    <i data-lucide="handshake" class="w-16 h-16 text-gold mb-6"></i>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Meet & Greet Service</h3>
+                    <p class="text-slate-600">
+                        Your professional chauffeur will meet you at baggage claim with a personalized sign, 
+                        assist with luggage, and escort you to your luxury vehicle.
+                    </p>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
+                    <i data-lucide="clock" class="w-16 h-16 text-gold mb-6"></i>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Complimentary Wait Time</h3>
+                    <p class="text-slate-600">
+                        15 minutes for domestic flights, 30 minutes for international arrivals. 
+                        We understand that deplaning and baggage claim take time.
+                    </p>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
+                    <i data-lucide="dollar-sign" class="w-16 h-16 text-gold mb-6"></i>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Fixed Flat Rates</h3>
+                    <p class="text-slate-600">
+                        No surge pricing or hidden fees. Our fixed rates to popular destinations make 
+                        budgeting easy and transparent for your airport transportation.
+                    </p>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
+                    <i data-lucide="shield-check" class="w-16 h-16 text-gold mb-6"></i>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Licensed & Insured</h3>
+                    <p class="text-slate-600">
+                        All our vehicles and chauffeurs are fully licensed and insured. 
+                        Your safety and security are our top priorities for airport transfers.
+                    </p>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
+                    <i data-lucide="car" class="w-16 h-16 text-gold mb-6"></i>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Luxury Fleet</h3>
+                    <p class="text-slate-600">
+                        Choose from our premium fleet of sedans, SUVs, and limousines. 
+                        All vehicles are meticulously maintained and detailed before every service.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fare Table -->
+    <section class="py-16 bg-slate-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">MSP Airport Flat Rates</h2>
+                <p class="text-lg text-slate-600">Transparent pricing with no hidden fees or surge charges</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="bg-gold text-black p-4">
+                        <h3 class="text-xl font-bold text-center">From MSP Airport to Popular Destinations</h3>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Destination</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Sedan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">SUV</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Executive Van</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Stretch Limo</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Downtown Minneapolis</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$65</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$85</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$125</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Downtown St. Paul</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$55</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$75</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$95</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$135</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Bloomington/Mall of America</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$35</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$50</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$70</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$95</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Edina</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$55</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$75</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$95</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$135</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Minnetonka</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$65</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$85</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$105</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$145</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Wayzata</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$75</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$95</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$115</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$155</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Eden Prairie</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$65</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$85</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$105</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$145</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Plymouth</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$75</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$95</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$115</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">$155</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="bg-slate-100 p-4">
+                        <p class="text-sm text-slate-600 text-center">
+                            <strong>Note:</strong> Prices include taxes, fees, and gratuity. Additional destinations available. 
+                            <a href="book-a-ride.html" class="text-gold hover:text-yellow-600 font-semibold">Get a custom quote →</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Over Competition -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Why Choose Us Over Standard Taxis & Rideshares?</h2>
+                <p class="text-lg text-slate-600">Experience the Minneapolis Luxury Limo difference</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Fixed Pricing, No Surge</h3>
+                                <p class="text-slate-600">Unlike rideshares, our airport rates are fixed regardless of demand or weather conditions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Professional Chauffeurs</h3>
+                                <p class="text-slate-600">Licensed, uniformed, and trained professionals - not amateur drivers with personal vehicles.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Flight Tracking Included</h3>
+                                <p class="text-slate-600">We monitor your flight and adjust for delays - no need to coordinate pickup times.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Luxury Vehicles</h3>
+                                <p class="text-slate-600">Immaculate, well-maintained luxury vehicles - not personal cars of unknown condition.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Meet & Greet Service</h3>
+                                <p class="text-slate-600">Personal assistance at baggage claim - no searching for your driver in busy pickup areas.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">24/7 Customer Support</h3>
+                                <p class="text-slate-600">Real human support available anytime, not just app-based customer service.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Guaranteed Service</h3>
+                                <p class="text-slate-600">Reserved vehicle guaranteed - no last-minute cancellations or driver no-shows.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-gold"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 mb-2">Corporate Accounts</h3>
+                                <p class="text-slate-600">Streamlined billing and expense reporting for business travelers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regional Airports -->
+    <section class="py-16 bg-slate-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">We Also Service Regional Airports</h2>
+                <p class="text-lg text-slate-600">Luxury transportation to smaller airports in the Twin Cities area</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+                    <i data-lucide="plane" class="w-12 h-12 text-gold mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Flying Cloud Airport</h3>
+                    <p class="text-slate-600 mb-4">Private jet and charter flights in Eden Prairie</p>
+                    <a href="book-a-ride.html" class="text-gold hover:text-yellow-600 font-semibold">Book Transfer →</a>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+                    <i data-lucide="plane" class="w-12 h-12 text-gold mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Crystal Airport</h3>
+                    <p class="text-slate-600 mb-4">General aviation airport in Crystal, Minnesota</p>
+                    <a href="book-a-ride.html" class="text-gold hover:text-yellow-600 font-semibold">Book Transfer →</a>
+                </div>
+                
+                <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+                    <i data-lucide="plane" class="w-12 h-12 text-gold mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Airlake Airport</h3>
+                    <p class="text-slate-600 mb-4">Private aviation in Lakeville, south of Minneapolis</p>
+                    <a href="book-a-ride.html" class="text-gold hover:text-yellow-600 font-semibold">Book Transfer →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-gold to-yellow-500">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-black mb-4">Ready for Stress-Free Airport Transportation?</h2>
+                <p class="text-lg text-black mb-8">Book your MSP airport limo or taxi service today and experience the luxury difference.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="book-a-ride.html" class="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105">
+                        Book Your Airport Ride
+                    </a>
+                    <a href="tel:+16125551234" class="border-2 border-black text-black hover:bg-black hover:text-white font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300">
+                        Call (612) 555-1234
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Booking Section -->
+    <section class="py-16 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    Ready for a First-Class Experience?
+                </h2>
+                <p class="text-lg text-slate-300 mb-8">
+                    Book your premium airport transfer with Total Town Car Service today and travel with confidence.
+                </p>
+                <a href="book-a-ride.html"
+                    class="bg-gold hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 hover:scale-105">
+                    Book Your Ride Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12 border-t border-gold/30">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-lg flex items-center justify-center">
+                            <span class="text-black font-bold text-sm">ML</span>
+                        </div>
+                        <span class="text-xl font-bold">Minneapolis Luxury Limo</span>
+                    </div>
+                    <p class="text-gray-300 mb-4 max-w-md">
+                        Your premier luxury transportation service in the Twin Cities. Professional, reliable, and comfortable rides to anywhere you need to go.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
+                            <a href="tel:+16125551234" class="text-gray-300 hover:text-gold transition-colors">(612) 555-1234</a>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-gold"></i>
+                            <a href="mailto:info@minneapolisluxurylimo.com" class="text-gray-300 hover:text-gold transition-colors">info@minneapolisluxurylimo.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-gold">Airport Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">MSP Airport Transfers</a></li>
+                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Flight Tracking</a></li>
+                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Meet & Greet</a></li>
+                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Corporate Accounts</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-gold">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-gold transition-colors">Home</a></li>
+                        <li><a href="downtown-minneapolis.html" class="text-gray-300 hover:text-gold transition-colors">Downtown Service</a></li>
+                        <li><a href="service-areas.html" class="text-gray-300 hover:text-gold transition-colors">Service Areas</a></li>
+                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Book a Ride</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gold/30 mt-8 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-gray-400 text-sm">
+                        © 2024 Minneapolis Luxury Limo. All rights reserved. Licensed & Insured.
+                    </div>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-gold text-sm transition-colors">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-gold text-sm transition-colors">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html> 

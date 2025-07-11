@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - Total Town Car</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+        }
+        .gold-text {
+            color: #e4c570;
+        }
+        .brand-gold {
+             background-color: #e4c570;
+        }
+         .brand-gold:hover {
+             background-color: #d3b460;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="min-h-screen flex flex-col items-center justify-center text-center p-4 sm:p-6">
+        <div class="w-full max-w-2xl bg-[#1a1a1a] p-6 sm:p-8 md:p-12 rounded-xl border border-[#333] shadow-2xl">
+            <h1 class="text-3xl sm:text-4xl font-bold gold-text tracking-wider mb-4">TOTAL TOWN CAR</h1>
+            <h2 class="text-xl sm:text-2xl font-semibold text-white mb-6">Thank You For Your Booking!</h2>
+            
+            <p class="text-gray-300 mb-8 max-w-lg mx-auto">
+                Your luxury transportation has been scheduled. A confirmation email with all the details has been sent to the address you provided.
+            </p>
+
+            <div id="booking-details" class="text-left bg-[#0d0d0d] p-6 rounded-lg border border-[#333] mb-8">
+                <h3 class="text-lg sm:text-xl font-semibold gold-text mb-4 border-b border-[#333] pb-3">Your Ride Summary</h3>
+                <!-- Booking details will be injected here by JavaScript -->
+            </div>
+
+            <p class="text-gray-400 mb-2">If you have any questions, please contact us:</p>
+            <p class="text-lg gold-text font-bold tracking-wider">(612) 999-5382</p>
+
+            <a href="/index.html" class="mt-8 inline-block brand-gold text-black font-bold py-3 px-8 rounded-lg hover:bg-yellow-500 transition duration-300 ease-in-out transform hover:scale-105">
+                Back to Homepage
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bookingDetailsContainer = document.getElementById('booking-details');
+            const params = new URLSearchParams(window.location.search);
+
+            const detailsMap = {
+                customer_name: 'Name',
+                service_type_formatted: 'Service Type',
+                pickup_date: 'Pickup Date',
+                pickup_time: 'Pickup Time',
+                pickup_address: 'Pickup Address',
+                dropoff_address: 'Drop-off Address',
+                vehicle_type: 'Vehicle',
+                passengers: 'Passengers',
+                tip: 'Prepaid Tip',
+                total_fare: 'Total Fare (Pay to Driver)',
+            };
+
+            let detailsHtml = '<ul class="space-y-3 text-sm sm:text-base">';
+
+            for (const [key, label] of Object.entries(detailsMap)) {
+                const value = params.get(key);
+                if (value) {
+                     if (key === 'total_fare') {
+                        detailsHtml += `<li class="flex justify-between items-center py-1 border-t border-gray-700 mt-3 pt-3"><strong class="font-semibold text-gray-200">${label}:</strong> <span class="text-xl gold-text font-bold">${decodeURIComponent(value)}</span></li>`;
+                    } else if (key === 'tip' && (value === '$0.00' || value === '0')) {
+                        // Don't display tip if it's $0
+                    } else {
+                        detailsHtml += `<li class="flex justify-between items-center"><strong class="font-medium text-gray-400">${label}:</strong> <span class="text-white text-right">${decodeURIComponent(value)}</span></li>`;
+                    }
+                }
+            }
+
+            detailsHtml += '</ul>';
+
+            if (bookingDetailsContainer) {
+                bookingDetailsContainer.innerHTML += detailsHtml;
+            } else {
+                console.error('Booking details container not found.');
+            }
+        });
+    </script>
+
+</body>
+</html> 
