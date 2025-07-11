@@ -942,6 +942,39 @@
 
     </script>
     <script src="app.js" defer></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnA__D7we39j6KjrIAvAnff9Kj5PicuhE&libraries=places&callback=initAutocomplete" async defer></script>
+    <script>
+    // Dynamically load Google Maps script to protect API key
+    async function initMap() {
+      try {
+        const response = await fetch('/.netlify/functions/get-google-maps-api-key');
+        const data = await response.json();
+        if (data.googleMapsApiKey) {
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initializeAutocomplete`;
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+        } else {
+          console.error('Could not load Google Maps API key.');
+        }
+      } catch (error) {
+        console.error('Error loading Google Maps script:', error);
+      }
+    }
+
+    // This function will be called by the Google Maps script once it's loaded
+    function initializeAutocomplete() {
+      const pickupInput = document.getElementById('pickup-location');
+      const dropoffInput = document.getElementById('dropoff-location');
+
+      if (pickupInput) new google.maps.places.Autocomplete(pickupInput);
+      if (dropoffInput) new google.maps.places.Autocomplete(dropoffInput);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      // ... any other DOMContentLoaded logic for book-a-ride.html
+    });
+  </script>
 </body>
 </html> 
