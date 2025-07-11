@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Minneapolis Limo, Taxi, and Black Car Service | Total Town Car</title>
+    <meta name="description" content="Find answers to common questions about our Minneapolis limo, taxi, and black car services, including MSP airport taxi and airport limo bookings.">
+    <meta name="keywords" content="faq, questions, minneapolis limo service, msp airport taxi, airport limo, black car service, booking, pricing, taxi service">
+    <meta name="author" content="Total Town Car Service">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://minneapolisluxurylimo.com/faq.html">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            DEFAULT: 'hsl(45, 100%, 51%)',
+                            500: 'hsl(45, 100%, 51%)',
+                            600: 'hsl(38, 92%, 45%)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="public/favicon.ico">
+</head>
+<body class="min-h-screen bg-background">
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-black/95 backdrop-blur-sm border-b border-gold/30 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-gold to-gold-600 rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-sm">TT</span>
+                    </div>
+                    <span class="text-xl font-bold text-white">Total Town Car Service</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="flex items-center space-x-8 max-md:hidden">
+                    <a href="index.html" class="text-gray-300 hover:text-gold transition-colors">Home</a>
+                    <a href="airport-service.html" class="text-gray-300 hover:text-gold transition-colors">Airport Service</a>
+                    <a href="downtown-minneapolis.html" class="text-gray-300 hover:text-gold transition-colors">Downtown Service</a>
+                    <a href="service-areas.html" class="text-gray-300 hover:text-gold transition-colors">Service Areas</a>
+                    <a href="about.html" class="text-gray-300 hover:text-gold transition-colors">About</a>
+                    <a href="faq.html" class="text-gold hover:text-yellow-400 transition-colors">FAQ</a>
+                </nav>
+
+                <!-- Desktop CTAs -->
+                <div class="flex items-center space-x-4 max-md:hidden">
+                    <a href="tel:+16125551234" class="flex items-center space-x-2 text-gray-300 hover:text-gold transition-colors">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                        <span>(612) 555-1234</span>
+                    </a>
+                    <a href="book-a-ride.html" class="bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden bg-black border-t border-gold/30 hidden">
+                <div class="px-4 py-4 space-y-4">
+                    <a href="index.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Home</a>
+                    <a href="airport-service.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Airport Service</a>
+                    <a href="downtown-minneapolis.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Downtown Service</a>
+                    <a href="service-areas.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Service Areas</a>
+                    <a href="about.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">About</a>
+                    <a href="faq.html" class="block w-full text-left text-gold hover:text-yellow-400 transition-colors">FAQ</a>
+                    <div class="pt-4 border-t border-gold/30 space-y-3">
+                        <a href="tel:+16125551234" class="flex items-center space-x-2 text-gray-300">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <span>(612) 555-1234</span>
+                        </a>
+                        <a href="book-a-ride.html" class="block w-full bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded text-center">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden pt-16">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    Frequently Asked <span class="luxury-text-gradient">Questions</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-gray-200 leading-relaxed">
+                    Your questions about our Minneapolis Limo, Black Car, and Airport Taxi services, answered.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <main class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto" x-data="{ open: 'booking' }">
+                
+                <!-- FAQ Categories -->
+                <div class="mb-12 border-b border-slate-200">
+                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                        <button @click="open = 'booking'" :class="{ 'border-gold text-gold': open === 'booking', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'booking' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Booking</button>
+                        <button @click="open = 'airport'" :class="{ 'border-gold text-gold': open === 'airport', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'airport' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Airport Services</button>
+                        <button @click="open = 'services'" :class="{ 'border-gold text-gold': open === 'services', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': open !== 'services' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg transition-colors">Our Services</button>
+                    </nav>
+                </div>
+
+                <!-- Booking Questions -->
+                <div x-show="open === 'booking'" class="space-y-6">
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
+                            How do I book a limo or black car service?
+                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
+                        </button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
+                            <p>Booking with us is simple. You can use the secure online form on our <a href="book-a-ride.html" class="text-gold hover:underline">Book Now</a> page. Simply enter your pickup/drop-off locations, date, and time to get started. For immediate assistance or special requests for our <strong class="font-semibold">limo service</strong>, you can also call us directly at (612) 555-1234.</p>
+                        </div>
+                    </div>
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
+                            What is your cancellation policy?
+                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
+                        </button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
+                           <p>We understand that plans can change. We offer a flexible cancellation policy. For our standard <strong class="font-semibold">black car</strong> and <strong class="font-semibold">taxi service</strong>, we request a minimum of 4 hours notice. For specialty vehicles like our <strong class="font-semibold">airport limo</strong>, a 24-hour notice is required. Please contact us for details regarding special events or corporate bookings.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Airport Service Questions -->
+                <div x-show="open === 'airport'" class="space-y-6">
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
+                            How do I find my chauffeur for an MSP airport pickup?
+                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
+                        </button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
+                            <p>For our premier <strong class="font-semibold">MSP airport limo</strong> and <strong class="font-semibold">black car service</strong>, we offer a complimentary meet-and-greet service. Your chauffeur will be waiting for you at the baggage claim area with a personalized sign. For our standard <strong class="font-semibold">airport taxi</strong> service, your driver will contact you upon your arrival to arrange a specific pickup point at the arrivals curb.</p>
+                        </div>
+                    </div>
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
+                            What happens if my flight to MSP is delayed?
+                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
+                        </button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
+                            <p>We monitor all incoming flights in real-time. Whether you've booked an <strong class="font-semibold">airport limo</strong> or an <strong class="font-semibold">airport taxi</strong>, we will automatically adjust your pickup time to match your flight's actual arrival. You do not need to contact us about flight delays.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Our Services Questions -->
+                <div x-show="open === 'services'" class="space-y-6">
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
+                            What types of vehicles do you offer?
+                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
+                        </button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
+                            <p>Our fleet is designed to meet a variety of needs. We offer luxury sedans, premium SUVs for more space, executive vans for groups, and stretch limousines for special occasions. Every vehicle in our <strong class="font-semibold">limo service</strong> is meticulously maintained and detailed for your comfort.</p>
+                        </div>
+                    </div>
+                    <div x-data="{ expanded: false }">
+                        <button @click="expanded = !expanded" class="w-full flex justify-between items-center text-left text-xl font-semibold text-slate-800">
+                            What areas do you service besides Minneapolis?
+                            <i data-lucide="chevron-down" class="w-6 h-6 transition-transform" :class="{ 'rotate-180': expanded }"></i>
+                        </button>
+                        <div x-show="expanded" x-collapse class="mt-4 text-slate-700 space-y-4">
+                            <p>Our <strong class="font-semibold">taxi</strong> and <strong class="font-semibold">limo service</strong> covers the entire Minneapolis-St. Paul metropolitan area and surrounding suburbs, including Edina, Minnetonka, and Wayzata. Please see our <a href="service-areas.html" class="text-gold hover:underline">Service Areas</a> page for more details.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-gray-400 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Total Town Car Service</h3>
+                    <p class="text-sm">Your premier choice for luxury transportation in Minneapolis and surrounding areas.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-gold">Home</a></li>
+                        <li><a href="airport-service.html" class="hover:text-gold">Airport Service</a></li>
+                        <li><a href="service-areas.html" class="hover:text-gold">Service Areas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Contact Us</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
+                            <span>(612) 555-1234</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-gold"></i>
+                            <span>contact@totaltowncarservice.com</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                     <h3 class="text-lg font-bold text-white mb-4">Follow Us</h3>
+                     <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
+                <p>&copy; 2024 Total Town Car Service. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html> 
