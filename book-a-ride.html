@@ -288,55 +288,69 @@
                         
                         <!-- Payment & Final Fare -->
                         <div id="payment-section" class="border-t border-slate-200 pt-6">
-                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Payment &amp; Fare</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
-                                    <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
-                                        <option value="15">15%</option>
-                                        <option value="20" selected>20%</option>
-                                        <option value="25">25%</option>
-                                        <option value="0">Other/No Tip</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
-                                    <div class="flex items-center h-full space-x-4">
-                                        <label for="pay-online" class="flex items-center">
-                                            <input type="radio" id="pay-online" name="payment-method" value="pay-online" checked class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
-                                            <span class="ml-2 text-sm text-slate-600">Pay Online</span>
-                                        </label>
-                                        <label for="pay-in-person" class="flex items-center">
-                                            <input type="radio" id="pay-in-person" name="payment-method" value="pay-in-person" class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
-                                            <span class="ml-2 text-sm text-slate-600">Pay In Person</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-100 p-6 rounded-lg">
-                                <div class="flex justify-between items-center text-slate-600 mb-2">
-                                    <span>Distance:</span>
-                                    <span id="imiles" class="font-semibold text-slate-900">N/A</span>
-                                </div>
-                                <div class="mt-4 pt-4 border-t border-slate-200">
-                                    <div class="flex justify-between items-center text-2xl font-bold text-slate-900">
-                                        <span>Total Fare:</span>
-                                        <span id="ifare" class="text-gold">$0.00</span>
-                                    </div>
-                                    <p class="text-xs text-slate-500 mt-1 text-right">Includes all fees and surcharges.</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-8">
-                                <button type="submit" id="submit-button"
-                                    class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2">
-                                    <i data-lucide="lock" class="w-5 h-5" id="submit-icon"></i>
-                                    <span id="submit-text">Proceed to Payment</span>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Calculate Your Fare</h3>
+                            
+                            <div class="mb-6">
+                                <button type="button" id="calculate-fare-btn"
+                                    class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i data-lucide="calculator" class="w-5 h-5"></i>
+                                    <span>Calculate Fare</span>
                                 </button>
-                                <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
-                                    By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
+                                <p id="fare-status-message" class="text-xs text-slate-500 mt-2 text-center">
+                                    Please enter pickup and drop-off locations to calculate your fare.
                                 </p>
+                            </div>
+
+                            <div id="fare-details-section" class="hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
+                                        <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                            <option value="15">15%</option>
+                                            <option value="20" selected>20%</option>
+                                            <option value="25">25%</option>
+                                            <option value="0">Other/No Tip</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
+                                        <div class="flex items-center h-full space-x-4">
+                                            <label for="pay-online" class="flex items-center">
+                                                <input type="radio" id="pay-online" name="payment-method" value="pay-online" checked class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
+                                                <span class="ml-2 text-sm text-slate-600">Pay Online</span>
+                                            </label>
+                                            <label for="pay-in-person" class="flex items-center">
+                                                <input type="radio" id="pay-in-person" name="payment-method" value="pay-in-person" class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
+                                                <span class="ml-2 text-sm text-slate-600">Pay In Person</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="bg-slate-100 p-6 rounded-lg">
+                                    <div class="flex justify-between items-center text-slate-600 mb-2">
+                                        <span>Distance:</span>
+                                        <span id="imiles" class="font-semibold text-slate-900">N/A</span>
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t border-slate-200">
+                                        <div class="flex justify-between items-center text-2xl font-bold text-slate-900">
+                                            <span>Total Fare:</span>
+                                            <span id="ifare" class="text-gold">$0.00</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1 text-right">Includes all fees and surcharges.</p>
+                                    </div>
+                                </div>
+    
+                                <div class="mt-8">
+                                    <button type="submit" id="submit-button"
+                                        class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2">
+                                        <i data-lucide="lock" class="w-5 h-5" id="submit-icon"></i>
+                                        <span id="submit-text">Proceed to Payment</span>
+                                    </button>
+                                    <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
+                                        By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -464,48 +478,86 @@
             total: 0
         };
         
+        let googleMapsApiLoaded = false;
+
+        function checkLocationsAndEnableFareButton() {
+            const pickup = document.getElementById('pickup-location').value;
+            const dropoff = document.getElementById('dropoff-location').value;
+            const calculateBtn = document.getElementById('calculate-fare-btn');
+            
+            if (pickup && dropoff && googleMapsApiLoaded) {
+                calculateBtn.disabled = false;
+                document.getElementById('fare-status-message').textContent = 'Ready to calculate your fare.';
+            } else {
+                calculateBtn.disabled = true;
+                if (!googleMapsApiLoaded) {
+                    document.getElementById('fare-status-message').textContent = 'Loading map services...';
+                } else {
+                     document.getElementById('fare-status-message').textContent = 'Please enter pickup and drop-off locations.';
+                }
+            }
+        }
+
         /**
          * Calculates the total fare based on all inputs from the form.
          */
-        function calculateFare() {
+        async function calculateFare() {
+            if (!googleMapsApiLoaded) {
+                console.warn('Fare calculation attempted before Google Maps API loaded.');
+                return;
+            }
+
             const serviceType = document.querySelector('input[name="service-type"]:checked').value;
             if (serviceType === 'hourly') {
                 handleFareUpdate();
                 return;
             }
-            const directionsService = new google.maps.DirectionsService();
 
+            const calculateBtn = document.getElementById('calculate-fare-btn');
+            const originalBtnText = calculateBtn.innerHTML;
+            calculateBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Calculating...`;
+            calculateBtn.disabled = true;
+            lucide.createIcons();
+
+            const directionsService = new google.maps.DirectionsService();
             const pickupAddress = document.getElementById('pickup-location').value;
             const destinationAddress = document.getElementById('dropoff-location').value;
             
             if (!pickupAddress || !destinationAddress) {
+                calculateBtn.innerHTML = originalBtnText;
+                calculateBtn.disabled = false;
                 return;
             }
 
-            directionsService.route(
-                {
+            try {
+                const response = await directionsService.route({
                     origin: pickupAddress,
                     destination: destinationAddress,
                     travelMode: google.maps.TravelMode.DRIVING,
-                },
-                (response, status) => {
-                    if (status === 'OK') {
-                        const route = response.routes[0].legs[0];
-                        const distanceInMeters = route.distance.value;
-                        const distanceInMiles = distanceInMeters * 0.000621371;
-                        
-                        document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
-                        
-                        lastFareCalculation.base = calculateBaseFare(distanceInMiles);
-                        updateTotalFare();
+                });
+                const route = response.routes[0].legs[0];
+                const distanceInMeters = route.distance.value;
+                const distanceInMiles = distanceInMeters * 0.000621371;
+                
+                document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
+                
+                lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                updateTotalFare();
 
-                    } else {
-                        console.error('Directions request failed due to ' + status);
-                        document.getElementById('imiles').textContent = 'N/A';
-                        document.getElementById('ifare').textContent = '$0.00';
-                    }
-                }
-            );
+                // Show the fare details section
+                document.getElementById('fare-details-section').classList.remove('hidden');
+                document.getElementById('calculate-fare-btn').textContent = 'Recalculate Fare';
+
+            } catch (error) {
+                console.error('Directions request failed:', error);
+                document.getElementById('imiles').textContent = 'N/A';
+                document.getElementById('ifare').textContent = '$0.00';
+                alert('Could not calculate the route. Please check the addresses and try again.');
+            } finally {
+                calculateBtn.innerHTML = originalBtnText;
+                lucide.createIcons();
+                checkLocationsAndEnableFareButton();
+            }
         }
 
         /**
@@ -967,13 +1019,30 @@
       const pickupInput = document.getElementById('pickup-location');
       const dropoffInput = document.getElementById('dropoff-location');
 
-      if (pickupInput) new google.maps.places.Autocomplete(pickupInput);
-      if (dropoffInput) new google.maps.places.Autocomplete(dropoffInput);
+      if (pickupInput) {
+          new google.maps.places.Autocomplete(pickupInput);
+          pickupInput.addEventListener('input', checkLocationsAndEnableFareButton);
+      }
+      if (dropoffInput) {
+          new google.maps.places.Autocomplete(dropoffInput);
+          dropoffInput.addEventListener('input', checkLocationsAndEnableFareButton);
+      }
+
+      googleMapsApiLoaded = true;
+      checkLocationsAndEnableFareButton(); // Enable button if locations are pre-filled
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('pickup') && params.has('dropoff')) {
+          calculateFare();
+      }
     }
     
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
-      // ... any other DOMContentLoaded logic for book-a-ride.html
+      
+      document.getElementById('calculate-fare-btn').addEventListener('click', calculateFare);
+      
+      checkLocationsAndEnableFareButton();
     });
   </script>
 </body>
