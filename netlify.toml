@@ -1,9 +1,7 @@
 [build]
-  command = "vite build"
-  publish = "dist"
+  publish = "."
   functions = "functions"
 
 [dev]
-  command = "vite"
   port = 8888
-  targetPort = 8880 
+  # No command needed for a static site, Netlify CLI will serve the files. 
