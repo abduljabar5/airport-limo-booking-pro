@@ -502,6 +502,7 @@
          * Calculates the total fare based on all inputs from the form.
          */
         async function calculateFare() {
+            console.log('calculateFare called, googleMapsApiLoaded:', googleMapsApiLoaded);
             if (!googleMapsApiLoaded) {
                 console.warn('Fare calculation attempted before Google Maps API loaded.');
                 return;
@@ -530,6 +531,7 @@
             }
 
             try {
+                console.log('Requesting directions from:', pickupAddress, 'to:', destinationAddress);
                 const response = await directionsService.route({
                     origin: pickupAddress,
                     destination: destinationAddress,
@@ -539,9 +541,11 @@
                 const distanceInMeters = route.distance.value;
                 const distanceInMiles = distanceInMeters * 0.000621371;
                 
+                console.log('Route calculated - Distance:', distanceInMiles, 'miles');
                 document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
                 
                 lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                console.log('Base fare calculated:', lastFareCalculation.base);
                 updateTotalFare();
 
                 // Show the fare details section
@@ -866,7 +870,6 @@
                 const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
                 pickupAutocomplete.addListener('place_changed', calculateFare);
 
-
                 // Initialize autocomplete for dropoff location
                 const dropoffInput = document.getElementById('dropoff-location');
                 const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
@@ -877,6 +880,39 @@
             } catch (error) {
                 console.error("Error initializing Google Autocomplete:", error);
             }
+        }
+
+        // Add event listeners for fare calculation triggers
+        function addFareCalculationListeners() {
+            // Add input listeners for manual address entry
+            const pickupInput = document.getElementById('pickup-location');
+            const dropoffInput = document.getElementById('dropoff-location');
+            
+            if (pickupInput) {
+                pickupInput.addEventListener('input', checkLocationsAndEnableFareButton);
+            }
+            if (dropoffInput) {
+                dropoffInput.addEventListener('input', checkLocationsAndEnableFareButton);
+            }
+
+            // Add listeners for other form elements that affect fare calculation
+            const vehicleSelect = document.getElementById('cartype');
+            const tipSelect = document.getElementById('tip');
+            const paymentMethodRadios = document.querySelectorAll('input[name="payment-method"]');
+            const serviceTypeRadios = document.querySelectorAll('input[name="service-type"]');
+
+            if (vehicleSelect) {
+                vehicleSelect.addEventListener('change', handleFareUpdate);
+            }
+            if (tipSelect) {
+                tipSelect.addEventListener('change', handleFareUpdate);
+            }
+            paymentMethodRadios.forEach(radio => {
+                radio.addEventListener('change', handleFareUpdate);
+            });
+            serviceTypeRadios.forEach(radio => {
+                radio.addEventListener('change', handleFareUpdate);
+            });
         }
         
         // =================================================================================
@@ -1016,24 +1052,17 @@
 
     // This function will be called by the Google Maps script once it's loaded
     function initializeAutocomplete() {
-      const pickupInput = document.getElementById('pickup-location');
-      const dropoffInput = document.getElementById('dropoff-location');
-
-      if (pickupInput) {
-          new google.maps.places.Autocomplete(pickupInput);
-          pickupInput.addEventListener('input', checkLocationsAndEnableFareButton);
-      }
-      if (dropoffInput) {
-          new google.maps.places.Autocomplete(dropoffInput);
-          dropoffInput.addEventListener('input', checkLocationsAndEnableFareButton);
-      }
-
+      console.log('initializeAutocomplete called - Google Maps API loaded');
       googleMapsApiLoaded = true;
+      initAutocomplete(); // Call the main initialization function
       checkLocationsAndEnableFareButton(); // Enable button if locations are pre-filled
 
       const params = new URLSearchParams(window.location.search);
-      if (params.has('pickup') && params.has('dropoff')) {
-          calculateFare();
+      if (params.has('pickup') && params.has('destination')) {
+          console.log('Quick book parameters detected, will calculate fare in 1 second');
+          setTimeout(() => {
+              calculateFare();
+          }, 1000);
       }
     }
     
