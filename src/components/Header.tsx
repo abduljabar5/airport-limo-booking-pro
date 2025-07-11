@@ -61,9 +61,9 @@ const Header = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
-            <a href="tel:+16125551234" className="flex items-center space-x-2 text-gray-300 hover:text-gold transition-colors">
+            <a href="tel:+16129995382" className="flex items-center space-x-2 text-gray-300 hover:text-gold transition-colors">
               <Phone className="w-4 h-4" />
-              <span>(612) 555-1234</span>
+              <span>(612) 999-5382</span>
             </a>
             <Button 
               onClick={navigateToBooking}
@@ -111,9 +111,9 @@ const Header = () => {
                 FAQ
               </button>
               <div className="pt-4 border-t border-gold/30 space-y-3">
-                <a href="tel:+16125551234" className="flex items-center space-x-2 text-gray-300">
+                <a href="tel:+16129995382" className="flex items-center space-x-2 text-gray-300">
                   <Phone className="w-4 h-4" />
-                  <span>(612) 555-1234</span>
+                  <span>(612) 999-5382</span>
                 </a>
                 <Button 
                   onClick={navigateToBooking}

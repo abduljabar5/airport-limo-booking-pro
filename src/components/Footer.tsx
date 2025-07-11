@@ -18,19 +18,10 @@ const Footer = () => {
               Your premier luxury transportation service in the Twin Cities. 
               Professional, reliable, and comfortable rides to anywhere you need to go.
             </p>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-gold" />
-                <a href="tel:+16125551234" className="text-gray-300 hover:text-gold transition-colors">
-                  (612) 555-1234
-                </a>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-gold" />
-                <a href="mailto:info@minneapolislimo.com" className="text-gray-300 hover:text-gold transition-colors">
-                  info@minneapolislimo.com
-                </a>
-              </div>
+            <div className="flex flex-col space-y-2">
+              <h3 className="text-lg font-semibold text-gold">Contact</h3>
+              <a href="tel:+16129995382" className="text-gray-300 hover:text-gold transition-colors">(612) 999-5382</a>
+              <a href="mailto:info@minneapolis-limo.com" className="text-gray-300 hover:text-gold transition-colors">info@minneapolis-limo.com</a>
             </div>
           </div>
 

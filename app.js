@@ -18,7 +18,7 @@ const EMAIL_TEMPLATES = {
                 <div style="background-color: #1a1a1a; padding: 40px; text-align: center; border-bottom: 1px solid #333;">
                     <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 1px; color: #e4c570;">TOTAL TOWN CAR SERVICE</h1>
                     <p style="margin: 10px 0 0 0; font-size: 16px; color: #a0a0a0;">Your Premium Transportation is Confirmed</p>
-                </div>
+        </div>
                 
                 <!-- Content -->
                 <div style="padding: 40px 30px;">
@@ -142,7 +142,7 @@ const EMAIL_TEMPLATES = {
                             </tr>
                         </table>
                     </div>
-                    
+
                     <!-- Trip Details Card -->
                     <div style="background-color: #1a1a1a; border: 1px solid #333; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
                         <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; color: #e4c570; border-bottom: 1px solid #333; padding-bottom: 15px;">🎯 Trip Details</h3>
@@ -177,7 +177,7 @@ const EMAIL_TEMPLATES = {
                             </tr>
                         </table>
                     </div>
-                    
+
                     <!-- Payment Information -->
                     <div style="background-color: #e4c570; color: #0d0d0d; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
                         <h3 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 600;">💰 Payment Information</h3>
@@ -186,7 +186,7 @@ const EMAIL_TEMPLATES = {
                         <p style="margin: 10px 0 0 0; font-size: 16px; font-weight: 500;">{{payment_method}}</p>
                         <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.8;">Status: <strong>{{payment_status}}</strong></p>
                     </div>
-                    
+
                     <!-- Quick Actions -->
                     <div style="text-align: center; margin-bottom: 30px;">
                         <h3 style="color: #ffffff; margin: 0 0 20px 0; font-size: 18px;">🔧 Quick Actions</h3>
@@ -198,7 +198,7 @@ const EMAIL_TEMPLATES = {
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Footer -->
                 <div style="background-color: #1a1a1a; color: #a0a0a0; padding: 25px; text-align: center; border-top: 1px solid #333;">
                     <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 500; color: #ffffff;">Total Town Car Service - Dispatch System</p>

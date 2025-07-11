@@ -99,7 +99,7 @@ const DetailedBooking = () => {
                     <Label htmlFor="phoneNumber" className="text-white font-medium">Phone Number *</Label>
                     <Input
                       id="phoneNumber"
-                      placeholder="(555) 123-4567"
+                      placeholder="(612) 999-5382"
                       value={bookingData.phoneNumber}
                       onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
                       className="bg-white/20 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold"
