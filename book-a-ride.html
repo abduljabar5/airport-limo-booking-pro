@@ -288,20 +288,7 @@
                         
                         <!-- Payment & Final Fare -->
                         <div id="payment-section" class="border-t border-slate-200 pt-6">
-                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Calculate Your Fare</h3>
-                            
-                            <div class="mb-6">
-                                <button type="button" id="calculate-fare-btn"
-                                    class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <i data-lucide="calculator" class="w-5 h-5"></i>
-                                    <span>Calculate Fare</span>
-                                </button>
-                                <p id="fare-status-message" class="text-xs text-slate-500 mt-2 text-center">
-                                    Please enter pickup and drop-off locations to calculate your fare.
-                                </p>
-                            </div>
-
-                            <div id="fare-details-section" class="hidden">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Payment &amp; Fare</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
@@ -350,7 +337,6 @@
                                 <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
                                     By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
                                 </p>
-                                </div>
                             </div>
                         </div>
                     </form>
@@ -478,90 +464,48 @@
             total: 0
         };
         
-        let googleMapsApiLoaded = false;
-
-        function checkLocationsAndEnableFareButton() {
-            const pickup = document.getElementById('pickup-location').value;
-            const dropoff = document.getElementById('dropoff-location').value;
-            const calculateBtn = document.getElementById('calculate-fare-btn');
-            
-            if (pickup && dropoff && googleMapsApiLoaded) {
-                calculateBtn.disabled = false;
-                document.getElementById('fare-status-message').textContent = 'Ready to calculate your fare.';
-            } else {
-                calculateBtn.disabled = true;
-                if (!googleMapsApiLoaded) {
-                    document.getElementById('fare-status-message').textContent = 'Loading map services...';
-                } else {
-                     document.getElementById('fare-status-message').textContent = 'Please enter pickup and drop-off locations.';
-                }
-            }
-        }
-        
         /**
          * Calculates the total fare based on all inputs from the form.
          */
-        async function calculateFare() {
-            console.log('calculateFare called, googleMapsApiLoaded:', googleMapsApiLoaded);
-            if (!googleMapsApiLoaded) {
-                console.warn('Fare calculation attempted before Google Maps API loaded.');
-                return;
-            }
-
+        function calculateFare() {
             const serviceType = document.querySelector('input[name="service-type"]:checked').value;
             if (serviceType === 'hourly') {
                 handleFareUpdate();
                 return;
             }
-
-            const calculateBtn = document.getElementById('calculate-fare-btn');
-            const originalBtnText = calculateBtn.innerHTML;
-            calculateBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Calculating...`;
-            calculateBtn.disabled = true;
-            lucide.createIcons();
-
             const directionsService = new google.maps.DirectionsService();
+
             const pickupAddress = document.getElementById('pickup-location').value;
             const destinationAddress = document.getElementById('dropoff-location').value;
             
             if (!pickupAddress || !destinationAddress) {
-                calculateBtn.innerHTML = originalBtnText;
-                calculateBtn.disabled = false;
                 return;
             }
 
-            try {
-                console.log('Requesting directions from:', pickupAddress, 'to:', destinationAddress);
-                const response = await directionsService.route({
+            directionsService.route(
+                {
                     origin: pickupAddress,
                     destination: destinationAddress,
                     travelMode: google.maps.TravelMode.DRIVING,
-                });
+                },
+                (response, status) => {
+                    if (status === 'OK') {
                         const route = response.routes[0].legs[0];
                         const distanceInMeters = route.distance.value;
                         const distanceInMiles = distanceInMeters * 0.000621371;
                         
-                console.log('Route calculated - Distance:', distanceInMiles, 'miles');
                         document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
                         
                         lastFareCalculation.base = calculateBaseFare(distanceInMiles);
-                console.log('Base fare calculated:', lastFareCalculation.base);
                         updateTotalFare();
 
-                // Show the fare details section
-                document.getElementById('fare-details-section').classList.remove('hidden');
-                document.getElementById('calculate-fare-btn').textContent = 'Recalculate Fare';
-
-            } catch (error) {
-                console.error('Directions request failed:', error);
+                    } else {
+                        console.error('Directions request failed due to ' + status);
                         document.getElementById('imiles').textContent = 'N/A';
                         document.getElementById('ifare').textContent = '$0.00';
-                alert('Could not calculate the route. Please check the addresses and try again.');
-            } finally {
-                calculateBtn.innerHTML = originalBtnText;
-                lucide.createIcons();
-                checkLocationsAndEnableFareButton();
                     }
+                }
+            );
         }
 
         /**
@@ -853,6 +797,36 @@
         });
 
 
+        // Initialize Google Places Autocomplete
+        function initAutocomplete() {
+            try {
+                const autocompleteOptions = {
+                    bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(44.7, -94.0), // Southwest
+                        new google.maps.LatLng(45.2, -93.0)  // Northeast
+                    ),
+                    componentRestrictions: { country: 'us' },
+                    strictBounds: false
+                };
+
+                // Initialize autocomplete for pickup location
+                const pickupInput = document.getElementById('pickup-location');
+                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
+                pickupAutocomplete.addListener('place_changed', calculateFare);
+
+
+                // Initialize autocomplete for dropoff location
+                const dropoffInput = document.getElementById('dropoff-location');
+                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
+                dropoffAutocomplete.addListener('place_changed', calculateFare);
+                
+                addFareCalculationListeners();
+
+            } catch (error) {
+                console.error("Error initializing Google Autocomplete:", error);
+            }
+        }
+        
         // =================================================================================
         // FORM SUBMISSION & PAYMENT
         // =================================================================================
@@ -969,143 +943,38 @@
     </script>
     <script src="app.js" defer></script>
     <script>
-    // Flag to ensure initialization only runs once
-    let isMapInitialized = false;
-
     // Dynamically load Google Maps script to protect API key
     async function initMap() {
-      // Prevent multiple initializations
-      if (isMapInitialized) return;
-      isMapInitialized = true;
-      
       try {
         const response = await fetch('/.netlify/functions/get-google-maps-api-key');
         const data = await response.json();
         if (data.googleMapsApiKey) {
           const script = document.createElement('script');
-          // Use `initializeAutocomplete` as the single entry point after the script loads
           script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initializeAutocomplete`;
           script.async = true;
           script.defer = true;
           document.head.appendChild(script);
         } else {
           console.error('Could not load Google Maps API key.');
-          // Provide feedback to the user
-          document.getElementById('fare-status-message').textContent = 'Error: Map services failed to load. Please refresh.';
         }
       } catch (error) {
         console.error('Error loading Google Maps script:', error);
-        document.getElementById('fare-status-message').textContent = 'Error: Map services failed to load. Please refresh.';
       }
     }
 
-    /**
-     * This is the main function called by the Google Maps script callback.
-     * It handles all initialization related to Google Maps Autocomplete and fare calculation.
-     */
+    // This function will be called by the Google Maps script once it's loaded
     function initializeAutocomplete() {
-        console.log('Google Maps API script loaded. Initializing autocomplete...');
-        googleMapsApiLoaded = true;
+      const pickupInput = document.getElementById('pickup-location');
+      const dropoffInput = document.getElementById('dropoff-location');
 
-        try {
-            const autocompleteOptions = {
-                bounds: new google.maps.LatLngBounds(
-                    new google.maps.LatLng(44.7, -94.0), // Southwest
-                    new google.maps.LatLng(45.2, -93.0)  // Northeast
-                ),
-                componentRestrictions: { country: 'us' },
-                strictBounds: false
-            };
-
-            // Initialize autocomplete for pickup and dropoff locations
-            const pickupInput = document.getElementById('pickup-location');
-            const dropoffInput = document.getElementById('dropoff-location');
-
-            if (pickupInput) {
-                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
-                // When a place is selected, trigger fare calculation.
-                pickupAutocomplete.addListener('place_changed', () => {
-                    checkLocationsAndEnableFareButton();
-                    // Automatically calculate fare when a place is selected from dropdown
-                    if (document.getElementById('dropoff-location').value) {
-                        calculateFare();
-                    }
-                });
-                // Also check when user types manually
-                pickupInput.addEventListener('input', checkLocationsAndEnableFareButton);
-            }
-
-            if (dropoffInput) {
-                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
-                dropoffAutocomplete.addListener('place_changed', () => {
-                    checkLocationsAndEnableFareButton();
-                    if (document.getElementById('pickup-location').value) {
-                        calculateFare();
-                    }
-                });
-                dropoffInput.addEventListener('input', checkLocationsAndEnableFareButton);
-            }
-
-            // Now that maps are ready, add listeners for other form fields
-            addFareCalculationListeners();
-            
-            // Check initial state of the form to enable/disable the fare button
-            checkLocationsAndEnableFareButton();
-            
-            console.log('Google Places Autocomplete initialized successfully.');
-            
-            // Handle quick booking parameters from the URL
-            const params = new URLSearchParams(window.location.search);
-            if (params.has('pickup') && params.has('destination')) {
-                console.log('Quick book parameters detected, will calculate fare.');
-                setTimeout(() => {
-                    calculateFare();
-                }, 500); // Short delay to ensure everything is rendered
-            }
-
-        } catch (error) {
-            console.error("Fatal error initializing Google Autocomplete:", error);
-            document.getElementById('fare-status-message').textContent = 'Error initializing autocomplete.';
-        }
+      if (pickupInput) new google.maps.places.Autocomplete(pickupInput);
+      if (dropoffInput) new google.maps.places.Autocomplete(dropoffInput);
     }
-
-    // Add event listeners for fare calculation triggers
-    function addFareCalculationListeners() {
-        const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person'];
-
-        fieldsToWatch.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                if (id === 'cartype') {
-                    element.addEventListener('change', function() {
-                        updatePassengerOptions();
-                        handleFareUpdate();
-                    });
-                } else {
-                    element.addEventListener('change', handleFareUpdate);
-                }
-            } else {
-                console.warn(`Listener not attached: Element with ID '${id}' not found.`);
-            }
-        });
-        
-        // Initialize passenger options for the default vehicle
-        updatePassengerOptions();
-        
-        // Initialize submit button text
-        updateSubmitButton();
-    }
-
+    
     document.addEventListener('DOMContentLoaded', () => {
-      // Start the map loading process as soon as the DOM is ready
       initMap();
-      
-      // The calculate fare button listener remains
-      document.getElementById('calculate-fare-btn').addEventListener('click', calculateFare);
-      
-      // Set the initial state of the fare button
-      checkLocationsAndEnableFareButton();
+      // ... any other DOMContentLoaded logic for book-a-ride.html
     });
-    </script>
+  </script>
 </body>
 </html> 
