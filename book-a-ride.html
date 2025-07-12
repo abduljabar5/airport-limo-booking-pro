@@ -950,7 +950,7 @@
         const data = await response.json();
         if (data.googleMapsApiKey) {
           const script = document.createElement('script');
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initializeAutocomplete`;
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initAutocomplete`;
           script.async = true;
           script.defer = true;
           document.head.appendChild(script);
@@ -960,15 +960,6 @@
       } catch (error) {
         console.error('Error loading Google Maps script:', error);
       }
-    }
-
-    // This function will be called by the Google Maps script once it's loaded
-    function initializeAutocomplete() {
-      const pickupInput = document.getElementById('pickup-location');
-      const dropoffInput = document.getElementById('dropoff-location');
-
-      if (pickupInput) new google.maps.places.Autocomplete(pickupInput);
-      if (dropoffInput) new google.maps.places.Autocomplete(dropoffInput);
     }
     
     document.addEventListener('DOMContentLoaded', () => {
