@@ -302,54 +302,54 @@
                             </div>
 
                             <div id="fare-details-section" class="hidden">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                    <div>
-                                        <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
-                                        <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
-                                            <option value="15">15%</option>
-                                            <option value="20" selected>20%</option>
-                                            <option value="25">25%</option>
-                                            <option value="0">Other/No Tip</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
-                                        <div class="flex items-center h-full space-x-4">
-                                            <label for="pay-online" class="flex items-center">
-                                                <input type="radio" id="pay-online" name="payment-method" value="pay-online" checked class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
-                                                <span class="ml-2 text-sm text-slate-600">Pay Online</span>
-                                            </label>
-                                            <label for="pay-in-person" class="flex items-center">
-                                                <input type="radio" id="pay-in-person" name="payment-method" value="pay-in-person" class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
-                                                <span class="ml-2 text-sm text-slate-600">Pay In Person</span>
-                                            </label>
-                                        </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
+                                    <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                        <option value="15">15%</option>
+                                        <option value="20" selected>20%</option>
+                                        <option value="25">25%</option>
+                                        <option value="0">Other/No Tip</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
+                                    <div class="flex items-center h-full space-x-4">
+                                        <label for="pay-online" class="flex items-center">
+                                            <input type="radio" id="pay-online" name="payment-method" value="pay-online" checked class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
+                                            <span class="ml-2 text-sm text-slate-600">Pay Online</span>
+                                        </label>
+                                        <label for="pay-in-person" class="flex items-center">
+                                            <input type="radio" id="pay-in-person" name="payment-method" value="pay-in-person" class="h-4 w-4 text-gold focus:ring-gold border-slate-300">
+                                            <span class="ml-2 text-sm text-slate-600">Pay In Person</span>
+                                        </label>
                                     </div>
                                 </div>
-    
-                                <div class="bg-slate-100 p-6 rounded-lg">
-                                    <div class="flex justify-between items-center text-slate-600 mb-2">
-                                        <span>Distance:</span>
-                                        <span id="imiles" class="font-semibold text-slate-900">N/A</span>
-                                    </div>
-                                    <div class="mt-4 pt-4 border-t border-slate-200">
-                                        <div class="flex justify-between items-center text-2xl font-bold text-slate-900">
-                                            <span>Total Fare:</span>
-                                            <span id="ifare" class="text-gold">$0.00</span>
-                                        </div>
-                                        <p class="text-xs text-slate-500 mt-1 text-right">Includes all fees and surcharges.</p>
-                                    </div>
+                            </div>
+
+                            <div class="bg-slate-100 p-6 rounded-lg">
+                                <div class="flex justify-between items-center text-slate-600 mb-2">
+                                    <span>Distance:</span>
+                                    <span id="imiles" class="font-semibold text-slate-900">N/A</span>
                                 </div>
-    
-                                <div class="mt-8">
-                                    <button type="submit" id="submit-button"
-                                        class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2">
-                                        <i data-lucide="lock" class="w-5 h-5" id="submit-icon"></i>
-                                        <span id="submit-text">Proceed to Payment</span>
-                                    </button>
-                                    <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
-                                        By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
-                                    </p>
+                                <div class="mt-4 pt-4 border-t border-slate-200">
+                                    <div class="flex justify-between items-center text-2xl font-bold text-slate-900">
+                                        <span>Total Fare:</span>
+                                        <span id="ifare" class="text-gold">$0.00</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1 text-right">Includes all fees and surcharges.</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-8">
+                                <button type="submit" id="submit-button"
+                                    class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2">
+                                    <i data-lucide="lock" class="w-5 h-5" id="submit-icon"></i>
+                                    <span id="submit-text">Proceed to Payment</span>
+                                </button>
+                                <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
+                                    By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
+                                </p>
                                 </div>
                             </div>
                         </div>
@@ -497,7 +497,7 @@
                 }
             }
         }
-
+        
         /**
          * Calculates the total fare based on all inputs from the form.
          */
@@ -537,16 +537,16 @@
                     destination: destinationAddress,
                     travelMode: google.maps.TravelMode.DRIVING,
                 });
-                const route = response.routes[0].legs[0];
-                const distanceInMeters = route.distance.value;
-                const distanceInMiles = distanceInMeters * 0.000621371;
-                
+                        const route = response.routes[0].legs[0];
+                        const distanceInMeters = route.distance.value;
+                        const distanceInMiles = distanceInMeters * 0.000621371;
+                        
                 console.log('Route calculated - Distance:', distanceInMiles, 'miles');
-                document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
-                
-                lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                        document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
+                        
+                        lastFareCalculation.base = calculateBaseFare(distanceInMiles);
                 console.log('Base fare calculated:', lastFareCalculation.base);
-                updateTotalFare();
+                        updateTotalFare();
 
                 // Show the fare details section
                 document.getElementById('fare-details-section').classList.remove('hidden');
@@ -554,14 +554,14 @@
 
             } catch (error) {
                 console.error('Directions request failed:', error);
-                document.getElementById('imiles').textContent = 'N/A';
-                document.getElementById('ifare').textContent = '$0.00';
+                        document.getElementById('imiles').textContent = 'N/A';
+                        document.getElementById('ifare').textContent = '$0.00';
                 alert('Could not calculate the route. Please check the addresses and try again.');
             } finally {
                 calculateBtn.innerHTML = originalBtnText;
                 lucide.createIcons();
                 checkLocationsAndEnableFareButton();
-            }
+                    }
         }
 
         /**
@@ -853,79 +853,6 @@
         });
 
 
-        // Initialize Google Places Autocomplete
-        function initAutocomplete() {
-            // Check if Google Maps API is fully loaded
-            if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') {
-                console.log('Google Maps API not fully loaded yet, retrying in 100ms');
-                setTimeout(initAutocomplete, 100);
-                return;
-            }
-
-            try {
-                console.log('Initializing Google Places Autocomplete');
-                const autocompleteOptions = {
-                    bounds: new google.maps.LatLngBounds(
-                        new google.maps.LatLng(44.7, -94.0), // Southwest
-                        new google.maps.LatLng(45.2, -93.0)  // Northeast
-                    ),
-                    componentRestrictions: { country: 'us' },
-                    strictBounds: false
-                };
-
-                // Initialize autocomplete for pickup location
-                const pickupInput = document.getElementById('pickup-location');
-                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
-                pickupAutocomplete.addListener('place_changed', calculateFare);
-
-                // Initialize autocomplete for dropoff location
-                const dropoffInput = document.getElementById('dropoff-location');
-                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
-                dropoffAutocomplete.addListener('place_changed', calculateFare);
-                
-                addFareCalculationListeners();
-                console.log('Google Places Autocomplete initialized successfully');
-
-            } catch (error) {
-                console.error("Error initializing Google Autocomplete:", error);
-                // Retry after a short delay
-                setTimeout(initAutocomplete, 500);
-            }
-        }
-
-        // Add event listeners for fare calculation triggers
-        function addFareCalculationListeners() {
-            // Add input listeners for manual address entry
-            const pickupInput = document.getElementById('pickup-location');
-            const dropoffInput = document.getElementById('dropoff-location');
-            
-            if (pickupInput) {
-                pickupInput.addEventListener('input', checkLocationsAndEnableFareButton);
-            }
-            if (dropoffInput) {
-                dropoffInput.addEventListener('input', checkLocationsAndEnableFareButton);
-            }
-
-            // Add listeners for other form elements that affect fare calculation
-            const vehicleSelect = document.getElementById('cartype');
-            const tipSelect = document.getElementById('tip');
-            const paymentMethodRadios = document.querySelectorAll('input[name="payment-method"]');
-            const serviceTypeRadios = document.querySelectorAll('input[name="service-type"]');
-
-            if (vehicleSelect) {
-                vehicleSelect.addEventListener('change', handleFareUpdate);
-            }
-            if (tipSelect) {
-                tipSelect.addEventListener('change', handleFareUpdate);
-            }
-            paymentMethodRadios.forEach(radio => {
-                radio.addEventListener('change', handleFareUpdate);
-            });
-            serviceTypeRadios.forEach(radio => {
-                radio.addEventListener('change', handleFareUpdate);
-            });
-        }
-        
         // =================================================================================
         // FORM SUBMISSION & PAYMENT
         // =================================================================================
@@ -1042,52 +969,143 @@
     </script>
     <script src="app.js" defer></script>
     <script>
+    // Flag to ensure initialization only runs once
+    let isMapInitialized = false;
+
     // Dynamically load Google Maps script to protect API key
     async function initMap() {
+      // Prevent multiple initializations
+      if (isMapInitialized) return;
+      isMapInitialized = true;
+      
       try {
         const response = await fetch('/.netlify/functions/get-google-maps-api-key');
         const data = await response.json();
         if (data.googleMapsApiKey) {
           const script = document.createElement('script');
+          // Use `initializeAutocomplete` as the single entry point after the script loads
           script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initializeAutocomplete`;
           script.async = true;
           script.defer = true;
           document.head.appendChild(script);
         } else {
           console.error('Could not load Google Maps API key.');
+          // Provide feedback to the user
+          document.getElementById('fare-status-message').textContent = 'Error: Map services failed to load. Please refresh.';
         }
       } catch (error) {
         console.error('Error loading Google Maps script:', error);
+        document.getElementById('fare-status-message').textContent = 'Error: Map services failed to load. Please refresh.';
       }
     }
 
-    // This function will be called by the Google Maps script once it's loaded
+    /**
+     * This is the main function called by the Google Maps script callback.
+     * It handles all initialization related to Google Maps Autocomplete and fare calculation.
+     */
     function initializeAutocomplete() {
-      console.log('initializeAutocomplete called - Google Maps API loaded');
-      googleMapsApiLoaded = true;
-      
-      // Wait a moment for Google Maps to be fully ready
-      setTimeout(() => {
-        initAutocomplete(); // Call the main initialization function
-        checkLocationsAndEnableFareButton(); // Enable button if locations are pre-filled
+        console.log('Google Maps API script loaded. Initializing autocomplete...');
+        googleMapsApiLoaded = true;
 
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('pickup') && params.has('destination')) {
-            console.log('Quick book parameters detected, will calculate fare in 1 second');
-            setTimeout(() => {
-                calculateFare();
-            }, 1000);
+        try {
+            const autocompleteOptions = {
+                bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(44.7, -94.0), // Southwest
+                    new google.maps.LatLng(45.2, -93.0)  // Northeast
+                ),
+                componentRestrictions: { country: 'us' },
+                strictBounds: false
+            };
+
+            // Initialize autocomplete for pickup and dropoff locations
+            const pickupInput = document.getElementById('pickup-location');
+            const dropoffInput = document.getElementById('dropoff-location');
+
+            if (pickupInput) {
+                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
+                // When a place is selected, trigger fare calculation.
+                pickupAutocomplete.addListener('place_changed', () => {
+                    checkLocationsAndEnableFareButton();
+                    // Automatically calculate fare when a place is selected from dropdown
+                    if (document.getElementById('dropoff-location').value) {
+                        calculateFare();
+                    }
+                });
+                // Also check when user types manually
+                pickupInput.addEventListener('input', checkLocationsAndEnableFareButton);
+            }
+
+            if (dropoffInput) {
+                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
+                dropoffAutocomplete.addListener('place_changed', () => {
+                    checkLocationsAndEnableFareButton();
+                    if (document.getElementById('pickup-location').value) {
+                        calculateFare();
+                    }
+                });
+                dropoffInput.addEventListener('input', checkLocationsAndEnableFareButton);
+            }
+
+            // Now that maps are ready, add listeners for other form fields
+            addFareCalculationListeners();
+            
+            // Check initial state of the form to enable/disable the fare button
+            checkLocationsAndEnableFareButton();
+            
+            console.log('Google Places Autocomplete initialized successfully.');
+            
+            // Handle quick booking parameters from the URL
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('pickup') && params.has('destination')) {
+                console.log('Quick book parameters detected, will calculate fare.');
+                setTimeout(() => {
+                    calculateFare();
+                }, 500); // Short delay to ensure everything is rendered
+            }
+
+        } catch (error) {
+            console.error("Fatal error initializing Google Autocomplete:", error);
+            document.getElementById('fare-status-message').textContent = 'Error initializing autocomplete.';
         }
-      }, 100);
     }
-    
+
+    // Add event listeners for fare calculation triggers
+    function addFareCalculationListeners() {
+        const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person'];
+
+        fieldsToWatch.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                if (id === 'cartype') {
+                    element.addEventListener('change', function() {
+                        updatePassengerOptions();
+                        handleFareUpdate();
+                    });
+                } else {
+                    element.addEventListener('change', handleFareUpdate);
+                }
+            } else {
+                console.warn(`Listener not attached: Element with ID '${id}' not found.`);
+            }
+        });
+        
+        // Initialize passenger options for the default vehicle
+        updatePassengerOptions();
+        
+        // Initialize submit button text
+        updateSubmitButton();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      // Start the map loading process as soon as the DOM is ready
       initMap();
       
+      // The calculate fare button listener remains
       document.getElementById('calculate-fare-btn').addEventListener('click', calculateFare);
       
+      // Set the initial state of the fare button
       checkLocationsAndEnableFareButton();
     });
-  </script>
+    </script>
 </body>
 </html> 
