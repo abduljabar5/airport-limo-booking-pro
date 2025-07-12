@@ -855,7 +855,15 @@
 
         // Initialize Google Places Autocomplete
         function initAutocomplete() {
+            // Check if Google Maps API is fully loaded
+            if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') {
+                console.log('Google Maps API not fully loaded yet, retrying in 100ms');
+                setTimeout(initAutocomplete, 100);
+                return;
+            }
+
             try {
+                console.log('Initializing Google Places Autocomplete');
                 const autocompleteOptions = {
                     bounds: new google.maps.LatLngBounds(
                         new google.maps.LatLng(44.7, -94.0), // Southwest
@@ -876,9 +884,12 @@
                 dropoffAutocomplete.addListener('place_changed', calculateFare);
                 
                 addFareCalculationListeners();
+                console.log('Google Places Autocomplete initialized successfully');
 
             } catch (error) {
                 console.error("Error initializing Google Autocomplete:", error);
+                // Retry after a short delay
+                setTimeout(initAutocomplete, 500);
             }
         }
 
@@ -1054,16 +1065,20 @@
     function initializeAutocomplete() {
       console.log('initializeAutocomplete called - Google Maps API loaded');
       googleMapsApiLoaded = true;
-      initAutocomplete(); // Call the main initialization function
-      checkLocationsAndEnableFareButton(); // Enable button if locations are pre-filled
+      
+      // Wait a moment for Google Maps to be fully ready
+      setTimeout(() => {
+        initAutocomplete(); // Call the main initialization function
+        checkLocationsAndEnableFareButton(); // Enable button if locations are pre-filled
 
-      const params = new URLSearchParams(window.location.search);
-      if (params.has('pickup') && params.has('destination')) {
-          console.log('Quick book parameters detected, will calculate fare in 1 second');
-          setTimeout(() => {
-              calculateFare();
-          }, 1000);
-      }
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('pickup') && params.has('destination')) {
+            console.log('Quick book parameters detected, will calculate fare in 1 second');
+            setTimeout(() => {
+                calculateFare();
+            }, 1000);
+        }
+      }, 100);
     }
     
     document.addEventListener('DOMContentLoaded', () => {
