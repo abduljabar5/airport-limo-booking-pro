@@ -248,8 +248,8 @@
                                     <div class="flex items-center">
                                         <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
                                         <div>
-                                            <span class="font-semibold text-slate-800 block">One-Way Transfer</span>
-                                            <span class="text-sm text-slate-500">Single pickup and drop-off</span>
+                                            <p class="font-semibold text-slate-800">One-Way</p>
+                                            <p class="text-sm text-slate-500">A to B</p>
                                         </div>
                                     </div>
                                 </label>
@@ -258,74 +258,49 @@
                                     <div class="flex items-center">
                                         <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
                                         <div>
-                                            <span class="font-semibold text-slate-800 block">Round Trip</span>
-                                            <span class="text-sm text-slate-500">Pickup, drop-off, and return</span>
-                                        </div>
-                                    </div>
-                                </label>
-                                <label for="service-hourly" class="service-type-label p-4 border rounded-lg cursor-not-allowed transition-all duration-200 opacity-50 bg-slate-50">
-                                    <input type="radio" id="service-hourly" name="service-type" value="hourly" class="hidden" disabled>
-                                    <div class="flex items-center">
-                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
-                                        <div>
-                                            <span class="font-semibold text-slate-400 block">Hourly Charter</span>
-                                            <span class="text-sm text-slate-400">By the hour with wait time</span>
-                                        </div>
-                                    </div>
-                                </label>
-                                <label for="service-airport" class="service-type-label p-4 border rounded-lg cursor-not-allowed transition-all duration-200 opacity-50 bg-slate-50">
-                                    <input type="radio" id="service-airport" name="service-type" value="airport" class="hidden" disabled>
-                                    <div class="flex items-center">
-                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
-                                        <div>
-                                            <span class="font-semibold text-slate-400 block">Airport Transfer</span>
-                                            <span class="text-sm text-slate-400">To/from MSP or regional airports</span>
+                                            <p class="font-semibold text-slate-800">Round-Trip</p>
+                                            <p class="text-sm text-slate-500">Return trip included</p>
                                         </div>
                                     </div>
                                 </label>
                             </div>
                         </div>
-                        
-                        <!-- Fare Calculation & Payment -->
-                        <div id="fare-details-section" class="border-t border-slate-200 pt-6 space-y-4">
-                            <!-- The "Calculate Fare" button and related elements have been removed. -->
-                        </div>
 
-                        <!-- Payment Section -->
-                        <div id="payment-section" class="border-t border-slate-200 pt-6 hidden">
-                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Your Fare Details</h3>
+                        <!-- Fare & Payment -->
+                        <div id="fare-details-section" class="border-t border-slate-200 pt-6 space-y-4 hidden">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Fare Estimate</h3>
                             
-                            <div class="mb-6">
-                                <p id="fare-status-message" class="text-xs text-slate-500 mt-2 text-center">
-                                    Please enter pickup and drop-off locations to calculate your fare.
-                                </p>
+                            <div class="bg-slate-100 p-6 rounded-lg space-y-3">
+                                <div class="flex justify-between items-center text-slate-600">
+                                    <span>Base Fare (<span id="imiles">0 Miles</span>)</span>
+                                    <span id="base-fare">$0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-600">
+                                    <span>Gratuity (20%)</span>
+                                    <span id="gratuity">$0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center font-bold text-slate-900 text-lg border-t border-slate-300 pt-3 mt-3">
+                                    <span>Total Estimated Fare</span>
+                                    <span id="total-fare">$0.00</span>
+                                </div>
                             </div>
+                            
+                            <div id="payment-section">
+                                <h3 class="text-lg font-semibold text-slate-900 mt-6 mb-4">Payment Information</h3>
+                                <div id="card-element" class="w-full px-4 py-3 border border-slate-300 rounded-lg"></div>
+                                <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
+                            </div>
+                        </div>
 
-                            <div class="bg-slate-100 p-6 rounded-lg">
-                                <div class="flex justify-between items-center text-slate-600 mb-2">
-                                    <span>Distance:</span>
-                                    <span id="imiles" class="font-semibold text-slate-900">N/A</span>
-                                </div>
-                                <div class="mt-4 pt-4 border-t border-slate-200">
-                                    <div class="flex justify-between items-center text-2xl font-bold text-slate-900">
-                                        <span>Total Fare:</span>
-                                        <span id="ifare" class="text-gold">$0.00</span>
-                                    </div>
-                                    <p class="text-xs text-slate-500 mt-1 text-right">Includes all fees and surcharges.</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-8">
-                                <button type="submit" id="submit-button"
-                                    class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2">
-                                    <i data-lucide="lock" class="w-5 h-5" id="submit-icon"></i>
-                                    <span id="submit-text">Proceed to Payment</span>
-                                </button>
-                                <p class="text-xs text-slate-500 mt-4 text-center" id="submit-disclaimer">
-                                    By clicking "Proceed to Payment", you agree to our Terms of Service and Privacy Policy. Your booking will be securely processed.
-                                </p>
-                                </div>
-                            </div>
+                        <!-- Submission -->
+                        <div class="border-t border-slate-200 pt-6">
+                            <button type="submit" class="w-full bg-gold hover:bg-gold-600 text-black font-bold py-4 px-4 rounded-lg transition-colors text-lg" disabled>
+                                Book Reservation
+                            </button>
+                            <p class="text-center text-sm text-slate-500 mt-4">
+                                By clicking "Book Reservation", you agree to our Terms of Service.
+                                Your card will be authorized but not charged until the ride is complete.
+                            </p>
                         </div>
                     </form>
                 </div>
@@ -334,97 +309,154 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black text-gray-400 py-12">
+    <footer class="bg-black text-white py-12">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- About -->
                 <div>
-                    <h3 class="text-lg font-bold text-white mb-4">Total Town Car Service</h3>
-                    <p class="text-sm">Your premier choice for luxury transportation in Minneapolis and surrounding areas.
+                    <h3 class="text-lg font-semibold text-gold mb-4">About Us</h3>
+                    <p class="text-gray-400">
+                        Minneapolis Luxury Limo provides premier black car and limousine services in the Twin Cities. We are dedicated to providing a safe, reliable, and luxurious experience.
                     </p>
                 </div>
+
+                <!-- Services -->
                 <div>
-                    <h3 class="text-lg font-bold text-white mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html" class="hover:text-gold">Home</a></li>
-                        <li><a href="airport-service.html" class="hover:text-gold">Airport Service</a></li>
-                        <li><a href="service-areas.html" class="hover:text-gold">Service Areas</a></li>
+                    <h3 class="text-lg font-semibold text-gold mb-4">Our Services</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="airport-service.html" class="hover:text-gold transition-colors">Airport Transportation</a></li>
+                        <li><a href="downtown-minneapolis.html" class="hover:text-gold transition-colors">Downtown Service</a></li>
+                        <li><a href="service-areas.html" class="hover:text-gold transition-colors">Corporate Travel</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Special Events</a></li>
                     </ul>
                 </div>
+
+                <!-- Quick Links -->
                 <div>
-                    <h3 class="text-lg font-bold text-white mb-4">Contact Us</h3>
-                    <ul class="space-y-2 text-sm">
+                    <h3 class="text-lg font-semibold text-gold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-gold transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="faq.html" class="hover:text-gold transition-colors">FAQ</a></li>
+                        <li><a href="book-a-ride.html" class="hover:text-gold transition-colors">Book Now</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gold mb-4">Contact Us</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-gold"></i>
+                            <span>Minneapolis, MN, USA</span>
+                        </li>
                         <li class="flex items-center space-x-2">
                             <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
-                            <span>(612) 999-5382</span>
+                             <a href="tel:+16129995382" class="hover:text-gold transition-colors">(612) 999-5382</a>
                         </li>
                         <li class="flex items-center space-x-2">
                             <i data-lucide="mail" class="w-4 h-4 text-gold"></i>
-                            <span>contact@totaltowncarservice.com</span>
+                            <a href="mailto:booking@minneapolisluxurylimo.com" class="hover:text-gold transition-colors">booking@minneapolisluxurylimo.com</a>
                         </li>
                     </ul>
                 </div>
-                <div>
-                     <h3 class="text-lg font-bold text-white mb-4">Follow Us</h3>
-                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="facebook" class="w-5 h-5"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-gold"><i data-lucide="instagram" class="w-5 h-5"></i></a>
-                    </div>
-                </div>
             </div>
-            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
-                <p>&copy; 2024 Total Town Car Service. All Rights Reserved.</p>
+
+            <div class="mt-8 border-t border-gold/30 pt-6 text-center text-gray-500">
+                <p>&copy; 2024 Minneapolis Luxury Limo. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
 
     <script>
-    // Flag to ensure initialization only runs once
-    let isMapInitialized = false;
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenu.classList.toggle('hidden');
+            });
 
-    // Dynamically load Google Maps script to protect API key
-    async function initMap() {
-      // Prevent multiple initializations
-      if (isMapInitialized) return;
-      isMapInitialized = true;
-      
-      try {
-        const response = await fetch('/.netlify/functions/get-google-maps-api-key');
-        const data = await response.json();
-        if (data.googleMapsApiKey) {
-          const script = document.createElement('script');
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initializeAutocomplete`;
-          script.async = true;
-          script.defer = true;
-          document.head.appendChild(script);
-        } else {
-          console.error('Could not load Google Maps API key.');
-          // Display a user-friendly error message
-          const fareStatus = document.getElementById('fare-status-message');
-          if(fareStatus) fareStatus.textContent = 'Error: Could not load map services. Please refresh and try again.';
-        }
-      } catch (error) {
-        console.error('Error fetching Google Maps API key:', error);
-        const fareStatus = document.getElementById('fare-status-message');
-        if(fareStatus) fareStatus.textContent = 'Error: Could not load map services. Please refresh and try again.';
-      }
-    }
+            // Set min date for pickup date
+            const dateInput = document.getElementById('pickup-date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
 
-    // Single initialization function called by Google Maps callback
-    function initializeAutocomplete() {
-        if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') {
-            console.error("Google Maps API not fully loaded. Retrying...");
-            setTimeout(initializeAutocomplete, 200);
-            return;
+            // Lucide icons
+            lucide.createIcons();
+
+            // Auto-advance to dropoff location
+            const pickupInput = document.getElementById('pickup-location');
+            const dropoffInput = document.getElementById('dropoff-location');
+            pickupInput.addEventListener('change', () => {
+                if(pickupInput.value) dropoffInput.focus();
+            });
+
+            // Handle service type selection styling
+            const serviceTypeRadios = document.querySelectorAll('input[name="service-type"]');
+            serviceTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('.service-type-label').forEach(label => {
+                        label.classList.remove('selected');
+                    });
+                    if (this.checked) {
+                        this.closest('.service-type-label').classList.add('selected');
+                    }
+                });
+            });
+            // Initial check
+            const checkedRadio = document.querySelector('input[name="service-type"]:checked');
+            if (checkedRadio) {
+                checkedRadio.closest('.service-type-label').classList.add('selected');
+            }
+            // Start loading Google Maps
+            initMap();
+        });
+        
+        // =================================================================================
+        // Google Maps, Fare Calculation, and Stripe Integration
+        // =================================================================================
+
+        let isMapInitialized = false;
+
+        async function initMap() {
+            if (isMapInitialized) return;
+            isMapInitialized = true;
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-google-maps-api-key');
+                const data = await response.json();
+                if (data.googleMapsApiKey) {
+                    const script = document.createElement('script');
+                    script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initializeAutocomplete`;
+                    script.async = true;
+                    script.defer = true;
+                    document.head.appendChild(script);
+                } else {
+                    console.error('Could not load Google Maps API key.');
+                }
+            } catch (error) {
+                console.error('Error fetching Google Maps API key:', error);
+            }
         }
         
-        console.log('Google Maps API is ready. Initializing autocomplete...');
-        
-        try {
+        let lastFareCalculation = { base: 0, gratuity: 0, total: 0 };
+        let googleMapsApiLoaded = false;
+
+        function initializeAutocomplete() {
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+                console.error("Google Maps API not fully loaded yet. Retrying in 100ms.");
+                setTimeout(initializeAutocomplete, 100);
+                return;
+            }
+
+            console.log('Google Maps API is ready. Initializing autocomplete.');
+            googleMapsApiLoaded = true;
+
             const autocompleteOptions = {
                 bounds: new google.maps.LatLngBounds(
-                    new google.maps.LatLng(44.7, -94.0), // Southwest
-                    new google.maps.LatLng(45.2, -93.0)  // Northeast
+                    new google.maps.LatLng(44.7, -94.0), // Southwest Minneapolis
+                    new google.maps.LatLng(45.2, -93.0)  // Northeast Minneapolis
                 ),
                 componentRestrictions: { country: 'us' },
                 strictBounds: false
@@ -435,176 +467,181 @@
 
             if (pickupInput) {
                 const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
-                pickupAutocomplete.addListener('place_changed', () => {
-                    if (document.getElementById('dropoff-location').value) {
-                        calculateFare();
-                    }
-                });
+                pickupAutocomplete.addListener('place_changed', calculateFare);
             }
-
             if (dropoffInput) {
                 const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
-                dropoffAutocomplete.addListener('place_changed', () => {
-                    if (document.getElementById('pickup-location').value) {
-                        calculateFare();
-                    }
-                });
+                dropoffAutocomplete.addListener('place_changed', calculateFare);
             }
 
             addFareCalculationListeners();
-            
+
             console.log('Google Places Autocomplete initialized successfully.');
-            
-            // Handle quick booking links from URL params
+
             const params = new URLSearchParams(window.location.search);
-            if (params.has('pickup') && params.has('destination')) {
-                document.getElementById('pickup-location').value = params.get('pickup');
-                document.getElementById('dropoff-location').value = params.get('destination');
-                console.log('Quick book parameters detected, calculating fare...');
+            if (params.has('pickup') && params.has('dropoff')) {
+                pickupInput.value = params.get('pickup');
+                dropoffInput.value = params.get('dropoff');
+                console.log('Quick book parameters detected, calculating fare.');
                 setTimeout(calculateFare, 500); // Give a moment for UI to update
             }
-        } catch (error) {
-            console.error("Error initializing Google Places Autocomplete:", error);
-        }
-    }
-
-    // --- Fare Calculation Logic ---
-    const lastFareCalculation = {
-        base: 0,
-        tip: 0,
-        gratuity: 0,
-        total: 0
-    };
-
-    /**
-     * Calculates the total fare based on all inputs from the form.
-     */
-    async function calculateFare() {
-        console.log('calculateFare called');
-        
-        const pickupAddress = document.getElementById('pickup-location').value;
-        const destinationAddress = document.getElementById('dropoff-location').value;
-
-        if (!pickupAddress || !destinationAddress) {
-            console.warn('Fare calculation requires both pickup and destination addresses.');
-            return;
         }
 
-        const directionsService = new google.maps.DirectionsService();
-
-        try {
-            const response = await directionsService.route({
-                origin: pickupAddress,
-                destination: destinationAddress,
-                travelMode: google.maps.TravelMode.DRIVING,
+        function addFareCalculationListeners() {
+            const fieldsToWatch = ['passengers', 'cartype'];
+            fieldsToWatch.forEach(id => {
+                document.getElementById(id)?.addEventListener('change', () => {
+                    if (lastFareCalculation.base > 0) calculateFare();
+                });
             });
-            const route = response.routes[0].legs[0];
-            const distanceInMeters = route.distance.value;
-            const distanceInMiles = distanceInMeters * 0.000621371;
+            document.querySelectorAll('input[name="service-type"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (lastFareCalculation.base > 0) calculateFare();
+                });
+            });
+        }
+
+        async function calculateFare() {
+            if (!googleMapsApiLoaded) {
+                console.warn('Fare calculation attempted before Google Maps API loaded.');
+                return;
+            }
+
+            const pickupAddress = document.getElementById('pickup-location').value;
+            const destinationAddress = document.getElementById('dropoff-location').value;
+
+            if (!pickupAddress || !destinationAddress) {
+                console.log('Both pickup and dropoff locations are required to calculate fare.');
+                return;
+            }
+
+            const directionsService = new google.maps.DirectionsService();
+            try {
+                const response = await directionsService.route({
+                    origin: pickupAddress,
+                    destination: destinationAddress,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                });
+
+                const route = response.routes[0].legs[0];
+                const distanceInMiles = route.distance.value * 0.000621371;
+                
+                document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
+                
+                lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                updateTotalFare();
+
+                document.getElementById('fare-details-section').classList.remove('hidden');
+                document.querySelector('button[type="submit"]').disabled = false;
+                
+            } catch (error) {
+                console.error('Directions request failed due to ' + error.status, error);
+                alert('Could not calculate the route. Please check the addresses and try again.');
+            }
+        }
+        
+        function calculateBaseFare(distance) {
+            const baseRate = 25.00; // Flat fee
+            const perMileRate = 3.50;
+            const vehicleType = document.getElementById('cartype').value;
+            let vehicleMultiplier = 1.0;
+
+            switch (vehicleType) {
+                case 'SUV': vehicleMultiplier = 1.2; break;
+                case 'VAN': vehicleMultiplier = 1.5; break;
+                case 'LIMO': vehicleMultiplier = 2.0; break;
+            }
+
+            let fare = baseRate + (distance * perMileRate * vehicleMultiplier);
+            return Math.max(fare, 45.00); // Minimum fare
+        }
+
+        function updateTotalFare() {
+            const gratuity = lastFareCalculation.base * 0.20;
+            const total = lastFareCalculation.base + gratuity;
+
+            lastFareCalculation.gratuity = gratuity;
+            lastFareCalculation.total = total;
             
-            document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
+            document.getElementById('base-fare').textContent = `$${lastFareCalculation.base.toFixed(2)}`;
+            document.getElementById('gratuity').textContent = `$${gratuity.toFixed(2)}`;
+            document.getElementById('total-fare').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_51PeasfRqmY13B22O95XG2O63JcW0Uj6LCiFmQyXy7CM5wLgVz1DHyP4tWk4wT8c3E3vGqL7e3tN9yA8dD3dZ8xG00zL4LhI9M');
+        const elements = stripe.elements({
+            fonts: [{ cssSrc: 'https://fonts.googleapis.com/css?family=Roboto' }]
+        });
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    color: '#32325d',
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+                    '::placeholder': { color: '#aab7c4' }
+                },
+                invalid: { color: '#fa755a', iconColor: '#fa755a' }
+            }
+        });
+        cardElement.mount('#card-element');
+
+        cardElement.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        const form = document.getElementById('booking-form');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Disable button to prevent multiple submissions
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                },
+            });
+
+            if (error) {
+                document.getElementById('card-errors').textContent = error.message;
+                submitButton.disabled = false;
+                return;
+            }
             
-            lastFareCalculation.base = calculateBaseFare(distanceInMiles);
-            updateTotalFare();
+            const bookingDetails = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                pickupLocation: document.getElementById('pickup-location').value,
+                dropoffLocation: document.getElementById('dropoff-location').value,
+                pickupDate: document.getElementById('pickup-date').value,
+                pickupTime: document.getElementById('pickup-time').value,
+                passengers: document.getElementById('passengers').value,
+                luggage: document.getElementById('luggage').value,
+                cartype: document.getElementById('cartype').value,
+                serviceType: document.querySelector('input[name="service-type"]:checked').value,
+                paymentMethodId: paymentMethod.id,
+                fare: lastFareCalculation.total.toFixed(2)
+            };
 
-            // Show the payment section
-            document.getElementById('payment-section').classList.remove('hidden');
-
-            console.log("Route calculated:", { distance: route.distance.text, duration: route.duration.text, baseFare: lastFareCalculation.base });
-
-        } catch (error) {
-            console.error('Directions request failed due to ' + error.status, error);
-            document.getElementById('imiles').textContent = 'Error calculating route.';
-        }
-    }
-
-    function calculateBaseFare(miles) {
-        const carType = document.getElementById('cartype').value;
-        const serviceType = document.querySelector('input[name="service-type"]:checked').value;
-        let ratePerMile = 3.50; // Default for SUV
-        let minimumFare = 65.00; // Default for SUV
-
-        switch(carType) {
-            case 'SEDAN':
-                ratePerMile = 3.00;
-                minimumFare = 55.00;
-                break;
-            case 'VAN':
-                ratePerMile = 4.50;
-                minimumFare = 85.00;
-                break;
-            case 'LIMO':
-                ratePerMile = 5.50;
-                minimumFare = 120.00;
-                break;
-        }
-
-        let calculatedFare = miles * ratePerMile;
-        
-        if (serviceType === 'airport-pickup' || serviceType === 'airport-dropoff') {
-            calculatedFare += 10; // Airport surcharge
-        }
-
-        const baseFare = Math.max(calculatedFare, minimumFare);
-        console.log(`Base fare calculated: $${baseFare.toFixed(2)} (Miles: ${miles.toFixed(1)}, Rate: ${ratePerMile}, Min: ${minimumFare})`);
-        return baseFare;
-    }
-
-    function updateTotalFare() {
-        const tipPercentage = parseInt(document.getElementById('tip').value) / 100;
-        lastFareCalculation.tip = lastFareCalculation.base * tipPercentage;
-        
-        // Gratuity is often included, let's assume 20% auto-gratuity for simplicity
-        lastFareCalculation.gratuity = lastFareCalculation.base * 0.20; 
-
-        lastFareCalculation.total = lastFareCalculation.base + lastFareCalculation.tip;
-
-        document.getElementById('base-fare').textContent = `$${lastFareCalculation.base.toFixed(2)}`;
-        document.getElementById('tip-amount').textContent = `$${lastFareCalculation.tip.toFixed(2)}`;
-        document.getElementById('total-fare').textContent = `$${lastFareCalculation.total.toFixed(2)}`;
-    }
-
-    /**
-     * Attaches event listeners to all form fields that affect the fare.
-     */
-    function addFareCalculationListeners() {
-        document.getElementById('cartype').addEventListener('change', calculateFare);
-        document.querySelectorAll('input[name="service-type"]').forEach(radio => {
-            radio.addEventListener('change', calculateFare);
+            // Instead of sending to Stripe here, we send to our success page
+            // with the booking details to be handled by app.js
+            sessionStorage.setItem('bookingDetails', JSON.stringify(bookingDetails));
+            window.location.href = 'success.html';
         });
-        document.getElementById('tip').addEventListener('change', updateTotalFare);
-    }
-    
-    // Kick off the map loading process when the page is ready
-    document.addEventListener('DOMContentLoaded', initMap);
-
-    // Lucide Icons replacement
-    document.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
-        
-        // Mobile menu toggle
-        const menuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if(menuButton && mobileMenu) {
-            menuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        
-        // Service type selection visual feedback
-        const serviceLabels = document.querySelectorAll('.service-type-label');
-        serviceLabels.forEach(label => {
-            label.addEventListener('click', () => {
-                serviceLabels.forEach(l => l.classList.remove('selected'));
-                label.classList.add('selected');
-            });
-        });
-        // Set initial selected state
-        const initialSelected = document.querySelector('input[name="service-type"]:checked');
-        if (initialSelected) {
-            initialSelected.closest('.service-type-label').classList.add('selected');
-        }
-    });
     </script>
     <script src="app.js" defer></script>
 </body>
