@@ -635,9 +635,11 @@
           };
 
         const fees = {
-            airport: 0.00,
+            airport: 15.00,
+            meetAndGreet: 20.00,
             nightSurcharge: 20.00,
-            longDistanceSurcharge: 25.00, // For trips > 75 miles
+            longDistanceSurcharge: 1.5, // Multiplier for trips > 75 miles
+            suvExtraPassenger: 20.00 // For SUV with >6 passengers
         };
 
         /**
@@ -646,7 +648,12 @@
         function isAirportPickup(address) {
             if (!address) return false;
             const lowerCaseAddress = address.toLowerCase();
-            return lowerCaseAddress.includes('airport') || lowerCaseAddress.includes('msp');
+            return (lowerCaseAddress.search(/airport/) != -1) || 
+                   (lowerCaseAddress.search(/msp terminal/) != -1) || 
+                   (lowerCaseAddress.search(/terminal one/) != -1) || 
+                   (lowerCaseAddress.search(/minneapolis−saint paul international airport/) != -1) || 
+                   (lowerCaseAddress.search(/terminal 2/) != -1) || 
+                   (lowerCaseAddress.search(/terminal 1/) != -1);
         }
 
         /**
@@ -669,15 +676,36 @@
             if (!mappedVehicleType || !mainVehicleRates[mappedVehicleType]) return 0;
             
             const rates = mainVehicleRates[mappedVehicleType];
-            let fare = rates.base + (distanceInMiles * rates.perMile);
+            let fare;
 
-            if (isAirportPickup(pickupAddress)) fare += fees.airport;
-            if (isNightSurchargeApplicable(pickupTime)) fare += fees.nightSurcharge;
-            if (distanceInMiles > 75) fare += fees.longDistanceSurcharge;
+            // Base fare calculation with 7-mile threshold (matching provided code)
+            if (distanceInMiles <= 7) {
+                fare = rates.base;
+            } else {
+                fare = rates.base + (rates.perMile * (distanceInMiles - 7));
+            }
 
+            // Apply minimum fare
             fare = Math.max(fare, rates.min);
+
+            // Night surcharge (7 PM to 5:59 AM)
+            if (isNightSurchargeApplicable(pickupTime)) {
+                fare += fees.nightSurcharge;
+            }
+
+            // Long distance surcharge (over 75 miles)
+            if (distanceInMiles > 75) {
+                fare += fees.longDistanceSurcharge * (distanceInMiles - 75);
+            }
+
+            // Airport pickup fee
+            if (isAirportPickup(pickupAddress)) {
+                fare += fees.airport;
+            }
+
+            // Note: SUV extra passenger fee not applicable to quick booking
+            // as quick booking doesn't have passenger selection
             
-            // Don't ceil here - this matches book-a-ride.html calculateBaseFare exactly
             return fare;
         }
 
