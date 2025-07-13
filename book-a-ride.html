@@ -210,7 +210,7 @@
                                         <option value="4">4</option>
                                         <option value="5">5</option>
                                         <option value="6">6</option>
-                                        <option value="7">7+</option>
+                                        <option value="7">7</option>
                                     </select>
                                 </div>
                                 <div>
@@ -494,11 +494,12 @@
         };
 
         const fees = {
-            airport: 0.00, //10.00
-            meetAndGreet: 0.00, //15.00
+            airport: 15.00,
+            meetAndGreet: 20.00,
             nightSurcharge: 20.00,
-            longDistanceSurcharge: 25.00, // For trips > 75 miles
-            onlinePaymentPercent: 0.03 // 3%
+            longDistanceSurcharge: 1.5, // Multiplier for trips > 75 miles
+            onlinePaymentPercent: 0.03, // 3%
+            suvExtraPassenger: 20.00 // For SUV with >6 passengers
         };
 
         /**
@@ -509,7 +510,12 @@
         function isAirportPickup(address) {
             if (!address) return false;
             const lowerCaseAddress = address.toLowerCase();
-            return lowerCaseAddress.includes('airport') || lowerCaseAddress.includes('msp');
+            return (lowerCaseAddress.search(/airport/) != -1) || 
+                   (lowerCaseAddress.search(/msp terminal/) != -1) || 
+                   (lowerCaseAddress.search(/terminal one/) != -1) || 
+                   (lowerCaseAddress.search(/minneapolis−saint paul international airport/) != -1) || 
+                   (lowerCaseAddress.search(/terminal 2/) != -1) || 
+                   (lowerCaseAddress.search(/terminal 1/) != -1);
         }
 
         /**
@@ -582,6 +588,7 @@
             const pickupTimeElement = document.getElementById('pickup-time');
             const pickupLocationElement = document.getElementById('pickup-location');
             const serviceTypeElement = document.querySelector('input[name="service-type"]:checked');
+            const passengersElement = document.getElementById('passengers');
 
             if (!vehicleTypeElement || !pickupTimeElement || !pickupLocationElement || !serviceTypeElement) {
                 console.error("One or more fare calculation elements are missing from the DOM.");
@@ -616,19 +623,54 @@
             const pickupTime = pickupTimeElement.value;
             const pickupAddress = pickupLocationElement.value;
             const isRoundTrip = serviceType === 'round-trip';
+            const passengers = parseInt(passengersElement?.value || '1');
 
             if(!vehicleType) return 0;
             
             const rates = vehicleRates[vehicleType];
-            let fare = rates.base + (distanceInMiles * rates.perMile);
+            let fare;
 
-            if (isAirportPickup(pickupAddress) || serviceType === 'airport') fare += fees.airport;
-            if (isNightSurchargeApplicable(pickupTime)) fare += fees.nightSurcharge;
-            if (distanceInMiles > 75) fare += fees.longDistanceSurcharge;
+            // Base fare calculation with 7-mile threshold (matching provided code)
+            if (distanceInMiles <= 7) {
+                fare = rates.base;
+            } else {
+                fare = rates.base + (rates.perMile * (distanceInMiles - 7));
+            }
 
+            // Apply minimum fare
             fare = Math.max(fare, rates.min);
 
-            if (isRoundTrip) fare *= 2;
+            // Night surcharge (7 PM to 5:59 AM)
+            if (isNightSurchargeApplicable(pickupTime)) {
+                fare += fees.nightSurcharge;
+            }
+
+            // Long distance surcharge (over 75 miles)
+            if (distanceInMiles > 75) {
+                fare += fees.longDistanceSurcharge * (distanceInMiles - 75);
+            }
+
+            // Round trip doubles the fare
+            if (isRoundTrip) {
+                fare = fare * 2;
+            }
+
+            // Airport pickup fee
+            if (isAirportPickup(pickupAddress)) {
+                fare += fees.airport;
+            }
+
+            // SUV extra passenger charge (>6 passengers)
+            if (vehicleType === 'SUV' && passengers > 6) {
+                fare += fees.suvExtraPassenger;
+            }
+
+            // Meet and greet fee (if implemented in form)
+            // This would need a checkbox in the form to enable
+            // const meetAndGreetElement = document.getElementById('meet-and-greet');
+            // if (meetAndGreetElement && meetAndGreetElement.checked) {
+            //     fare += fees.meetAndGreet;
+            // }
             
             return fare;
         }
@@ -651,17 +693,21 @@
             const isPayOnline = paymentMethodElement.value === 'pay-online';
             
             let baseFare = lastFareCalculation.base;
-            let tipAmount = 0;
+            let totalFare = baseFare;
 
+            // Add tip amount
             if (tipSelection === 'custom') {
-                tipAmount = parseFloat(customTipElement.value) || 0;
+                const customTipAmount = parseFloat(customTipElement.value) || 0;
+                if (customTipAmount > 0) {
+                    totalFare += customTipAmount;
+                }
             } else {
                 const tipPercentage = parseFloat(tipSelection) / 100;
-                tipAmount = baseFare * tipPercentage;
+                const tipAmount = baseFare * tipPercentage;
+                totalFare += tipAmount;
             }
 
-            let totalFare = baseFare + tipAmount;
-
+            // Add online payment fee (3% of total including tip)
             if (isPayOnline) {
                 totalFare += totalFare * fees.onlinePaymentPercent;
             }
@@ -690,12 +736,12 @@
             }
         }
 
-        // Vehicle passenger limits
+        // Vehicle passenger limits (matching provided code)
         const vehiclePassengerLimits = {
-            'SUV': 6,
+            'SUV': 7,
             'SEDAN': 4,
             'TAXI': 4,
-            'VAN': 10
+            'VAN': 14
         };
 
         // Update passenger options based on selected vehicle
@@ -712,7 +758,7 @@
             // Clear existing options except the first one
             passengerSelect.innerHTML = '<option value="">Select passengers</option>';
             
-            // Add options up to the vehicle limit
+            // Add options up to the vehicle limit (matching provided code)
             for (let i = 1; i <= maxPassengers; i++) {
                 const option = document.createElement('option');
                 option.value = i.toString();
@@ -723,14 +769,6 @@
                     option.selected = true;
                 }
                 
-                passengerSelect.appendChild(option);
-            }
-            
-            // If there are more than the limit, add a "X+" option
-            if (maxPassengers < 10) {
-                const option = document.createElement('option');
-                option.value = (maxPassengers + 1).toString();
-                option.textContent = `${maxPassengers + 1}`;
                 passengerSelect.appendChild(option);
             }
         }
