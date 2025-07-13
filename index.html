@@ -107,12 +107,10 @@
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-gold to-gold-600 rounded-lg flex items-center justify-center">
-                        <span class="text-black font-bold text-sm">TT</span>
-                    </div>
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service Logo" class="w-12 h-12 rounded-lg object-cover">
                     <span class="text-xl font-bold text-white">Total Town Car Service</span>
-                </div>
+                </a>
 
                 <!-- Desktop Navigation -->
                 <nav class="flex items-center space-x-8 max-md:hidden">
@@ -531,10 +529,8 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-lg flex items-center justify-center">
-                            <span class="text-black font-bold text-sm">ML</span>
-                        </div>
-                        <span class="text-xl font-bold">Minneapolis Luxury Limo</span>
+                        <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service Logo" class="w-12 h-12 rounded-lg object-cover">
+                        <span class="text-xl font-bold">Total Town Car Service</span>
                     </div>
                     <p class="text-gray-300 mb-4 max-w-md">
                         Your premier luxury transportation service in the Twin Cities. Professional, reliable, and comfortable rides to anywhere you need to go.
@@ -735,16 +731,62 @@
 
         // Quick booking form functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Set minimum date to today
             const dateInput = document.getElementById('quick-date');
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.min = today;
-            
-            // Set default time to current time + 2 hours
             const timeInput = document.getElementById('quick-time');
-            const now = new Date();
-            now.setHours(now.getHours() + 2);
-            timeInput.value = now.toTimeString().slice(0, 5);
+
+            function setMinDateAndTime() {
+                if (!dateInput || !timeInput) return;
+
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                let day = now.getDate();
+
+                if (now.getHours() >= 23) {
+                    day += 1; // Set minimum to tomorrow
+                }
+                
+                const dayString = day.toString().padStart(2, '0');
+                const minDate = `${year}-${month}-${dayString}`;
+                dateInput.min = minDate;
+
+                if (dateInput.value === minDate && now.getHours() < 23) {
+                    const minHour = (now.getHours() + 1).toString().padStart(2, '0');
+                    const minMinutes = now.getMinutes().toString().padStart(2, '0');
+                    timeInput.min = `${minHour}:${minMinutes}`;
+                } else {
+                    timeInput.min = '';
+                }
+            }
+
+            if (dateInput && timeInput) {
+                const now = new Date();
+                 if (now.getHours() >= 23) {
+                    now.setDate(now.getDate() + 1);
+                    now.setHours(8);
+                    now.setMinutes(0);
+                } else {
+                    now.setHours(now.getHours() + 1);
+                }
+                
+                dateInput.value = now.toISOString().split('T')[0];
+                timeInput.value = now.toTimeString().slice(0, 5);
+            }
+
+            setMinDateAndTime();
+            dateInput.addEventListener('change', setMinDateAndTime);
+
+            // Open date/time picker on input click
+            if (dateInput) {
+                dateInput.addEventListener('click', function () {
+                    try { this.showPicker(); } catch (e) { console.info('showPicker() is not supported in this browser.') }
+                });
+            }
+            if (timeInput) {
+                timeInput.addEventListener('click', function () {
+                    try { this.showPicker(); } catch (e) { console.info('showPicker() is not supported in this browser.') }
+                });
+            }
 
             // Quick booking form state
             let quoteData = null;

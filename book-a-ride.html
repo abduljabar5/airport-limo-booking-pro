@@ -59,12 +59,10 @@
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-gold to-gold-600 rounded-lg flex items-center justify-center">
-                        <span class="text-black font-bold text-sm">TT</span>
-                    </div>
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service Logo" class="w-12 h-12 rounded-lg object-cover">
                     <span class="text-xl font-bold text-white">Total Town Car Service</span>
-                </div>
+                </a>
 
                 <!-- Desktop Navigation -->
                 <nav class="flex items-center space-x-8 max-md:hidden">
@@ -291,13 +289,15 @@
                             <h3 class="text-lg font-semibold text-slate-900 mb-4">Payment &amp; Fare</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <div>
-                                    <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver (%)</label>
+                                    <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver</label>
                                     <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
                                         <option value="15">15%</option>
                                         <option value="20" selected>20%</option>
                                         <option value="25">25%</option>
-                                        <option value="0">Other/No Tip</option>
+                                        <option value="0">No Tip</option>
+                                        <option value="custom">Enter Custom Amount</option>
                                     </select>
+                                    <input type="number" id="custom-tip" name="custom-tip" placeholder="Enter amount ($)" class="hidden w-full mt-2 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" min="0" step="0.01">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
@@ -346,12 +346,16 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black text-gray-400 py-12">
+    <footer class="bg-black text-white py-12 border-t border-gold/30">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-bold text-white mb-4">Total Town Car Service</h3>
-                    <p class="text-sm">Your premier choice for luxury transportation in Minneapolis and surrounding areas.
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service Logo" class="w-12 h-12 rounded-lg object-cover">
+                        <span class="text-xl font-bold">Total Town Car Service</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Your premier choice for luxury transportation in Minneapolis and beyond. We offer reliable, professional, and comfortable town car services for any occasion.
                     </p>
                 </div>
                 <div>
@@ -371,7 +375,7 @@
                         </li>
                         <li class="flex items-center space-x-2">
                             <i data-lucide="mail" class="w-4 h-4 text-gold"></i>
-                            <span>contact@totaltowncarservice.com</span>
+                            <span>totaltowncarservice@gmail.com</span>
                         </li>
                     </ul>
                 </div>
@@ -393,10 +397,70 @@
     <script>
         // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
+            // Disable past dates, and today if it's after 11 PM
+            const dateInput = document.getElementById('pickup-date');
+            const timeInput = document.getElementById('pickup-time');
+
+            function setMinDateAndTime() {
+                if (!dateInput || !timeInput) return;
+
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                let day = now.getDate();
+
+                if (now.getHours() >= 23) {
+                    day += 1; // Set minimum to tomorrow
+                }
+                
+                const dayString = day.toString().padStart(2, '0');
+                const minDate = `${year}-${month}-${dayString}`;
+                dateInput.min = minDate;
+
+                // When the date is today, set min time to one hour from now
+                if (dateInput.value === minDate && now.getHours() < 23) {
+                    const minHour = (now.getHours() + 1).toString().padStart(2, '0');
+                    const minMinutes = now.getMinutes().toString().padStart(2, '0');
+                    timeInput.min = `${minHour}:${minMinutes}`;
+                } else {
+                    timeInput.min = ''; // No restriction for future dates
+                }
+            }
+
+            // Set initial value for date and time
+            if (dateInput && timeInput) {
+                const now = new Date();
+                 if (now.getHours() >= 23) {
+                    now.setDate(now.getDate() + 1);
+                    now.setHours(8); // Default to 8 AM for next day
+                    now.setMinutes(0);
+                } else {
+                    now.setHours(now.getHours() + 1); // Default to one hour from now
+                }
+                
+                dateInput.value = now.toISOString().split('T')[0];
+                timeInput.value = now.toTimeString().slice(0, 5);
+            }
+
+            setMinDateAndTime();
+            dateInput.addEventListener('change', setMinDateAndTime);
+            
             document.getElementById('mobile-menu-button').addEventListener('click', function() {
                 const mobileMenu = document.getElementById('mobile-menu');
                 mobileMenu.classList.toggle('hidden');
             });
+
+            // Open date/time picker on input click
+            if (dateInput) {
+                dateInput.addEventListener('click', function () {
+                    try { this.showPicker(); } catch (e) { console.info('showPicker() is not supported in this browser.') }
+                });
+            }
+            if (timeInput) {
+                timeInput.addEventListener('click', function () {
+                    try { this.showPicker(); } catch (e) { console.info('showPicker() is not supported in this browser.') }
+                });
+            }
 
             function updateServiceTypeSelection() {
                 document.querySelectorAll('.service-type-label').forEach(label => {
@@ -574,19 +638,28 @@
          */
         function updateTotalFare() {
             const tipElement = document.getElementById('tip');
+            const customTipElement = document.getElementById('custom-tip');
             const paymentMethodElement = document.querySelector('input[name="payment-method"]:checked');
             const fareElement = document.getElementById('ifare');
 
-            if (!tipElement || !paymentMethodElement || !fareElement) {
+            if (!tipElement || !customTipElement || !paymentMethodElement || !fareElement) {
                 console.error("One or more total fare elements are missing from the DOM.");
                 return;
             }
 
-            const tipPercentage = parseFloat(tipElement.value) / 100;
+            const tipSelection = tipElement.value;
             const isPayOnline = paymentMethodElement.value === 'pay-online';
             
             let baseFare = lastFareCalculation.base;
-            const tipAmount = baseFare * tipPercentage;
+            let tipAmount = 0;
+
+            if (tipSelection === 'custom') {
+                tipAmount = parseFloat(customTipElement.value) || 0;
+            } else {
+                const tipPercentage = parseFloat(tipSelection) / 100;
+                tipAmount = baseFare * tipPercentage;
+            }
+
             let totalFare = baseFare + tipAmount;
 
             if (isPayOnline) {
@@ -664,7 +737,7 @@
 
         // Add event listeners to trigger recalculation
         function addFareCalculationListeners() {
-            const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person'];
+            const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person', 'custom-tip'];
 
             fieldsToWatch.forEach(id => {
                 const element = document.getElementById(id);
@@ -681,6 +754,20 @@
                     console.warn(`Listener not attached: Element with ID '${id}' not found.`);
                 }
             });
+
+            // Show/hide custom tip input
+            const tipSelect = document.getElementById('tip');
+            const customTipInput = document.getElementById('custom-tip');
+            if (tipSelect && customTipInput) {
+                tipSelect.addEventListener('change', () => {
+                    if (tipSelect.value === 'custom') {
+                        customTipInput.classList.remove('hidden');
+                    } else {
+                        customTipInput.classList.add('hidden');
+                        customTipInput.value = ''; // Clear value when hidden
+                    }
+                });
+            }
             
             // Initialize passenger options for the default vehicle
             updatePassengerOptions();
@@ -947,17 +1034,17 @@
     async function initMap() {
       try {
         const response = await fetch('/.netlify/functions/get-google-maps-api-key');
-        const data = await response.json();
+                const data = await response.json();
         if (data.googleMapsApiKey) {
           const script = document.createElement('script');
           script.src = `https://maps.googleapis.com/maps/api/js?key=${data.googleMapsApiKey}&libraries=places&callback=initAutocomplete`;
           script.async = true;
           script.defer = true;
           document.head.appendChild(script);
-        } else {
+                } else {
           console.error('Could not load Google Maps API key.');
-        }
-      } catch (error) {
+                }
+            } catch (error) {
         console.error('Error loading Google Maps script:', error);
       }
     }
@@ -966,6 +1053,6 @@
       initMap();
       // ... any other DOMContentLoaded logic for book-a-ride.html
     });
-  </script>
+    </script>
 </body>
 </html> 
