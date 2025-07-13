@@ -34,6 +34,13 @@ export const handler = async (event) => {
       success_url: success_url,
       cancel_url: cancel_url,
       customer_email: customer_email,
+      payment_intent_data: {
+        description: `Limo ride for ${customer_email}`,
+        metadata: {
+          customer_email: customer_email,
+          service_date: new Date().toISOString(),
+        }
+      },
     });
 
     return {
