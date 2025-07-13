@@ -202,7 +202,7 @@
                         <div>
                             <i data-lucide="star" class="w-12 h-12 text-gold mx-auto lg:mx-0 mb-3"></i>
                             <h3 class="text-xl font-semibold mb-2">Premium Fleet</h3>
-                            <p class="text-gray-300">Luxury sedans, SUVs, and stretch limousines</p>
+                            <p class="text-gray-300">Luxury taxis, SUVs, and stretch limousines</p>
                         </div>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                         <select id="quick-vehicle-type" 
                             class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-gold" required>
                             <option value="" class="text-black">Select Vehicle Type</option>
-                            <option value="sedan" class="text-black">Luxury Sedan (1-3 passengers)</option>
+                            <option value="taxi" class="text-black">Luxury Taxi (1-3 passengers)</option>
                             <option value="suv" class="text-black">Premium SUV (1-6 passengers)</option>
                             <option value="limo" class="text-black">Stretch Limousine (1-8 passengers)</option>
                             <option value="sprinter" class="text-black">Executive Van (1-14 passengers)</option>
@@ -334,7 +334,7 @@
                 <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-all duration-300">
                     <div class="text-center">
                         <div class="text-6xl mb-4">🚗</div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Luxury Sedans</h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Luxury Taxis</h3>
                         <p class="text-slate-600 mb-3">Perfect for airport transfers and business travel</p>
                         <p class="text-gold font-semibold mb-4">1-3 passengers</p>
                         <ul class="text-sm text-slate-700 space-y-1 mb-4">
@@ -344,7 +344,7 @@
                             <li>• Phone chargers</li>
                         </ul>
                         <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded text-sm transition-all duration-300">
-                            Book Sedan
+                            Book Taxi
                         </a>
                     </div>
                 </div>
@@ -612,7 +612,7 @@
         // =================================================================================
 
         const vehicleRates = {
-            'sedan': { base: 59.00, min: 65.00, perMile: 3.30 },
+            'taxi': { base: 59.00, min: 65.00, perMile: 3.30 },
             'suv': { base: 69.00, min: 75.00, perMile: 3.60 },
             'sprinter': { base: 53.00, min: 55.00, perMile: 3.20 },
             'limo': { base: 250.00, min: 250.00, perMile: 3.50 }
@@ -620,14 +620,14 @@
 
         // Map quick booking vehicle types to main booking vehicle types
         const vehicleTypeMapping = {
-            'sedan': 'SEDAN',
+            'taxi': 'TAXI',
             'suv': 'SUV', 
             'sprinter': 'VAN',
             'limo': 'LIMO'
         };
 
         const mainVehicleRates = {
-            'SEDAN': { base: 59.00, min: 65.00, perMile: 3.30 },
+            'TAXI': { base: 59.00, min: 65.00, perMile: 3.30 },
             'SUV': { base: 69.00, min: 75.00, perMile: 3.60 },
             'VAN': { base: 53.00, min: 55.00, perMile: 3.20 },
             'LIMO': { base: 250.00, min: 250.00, perMile: 3.50 }
