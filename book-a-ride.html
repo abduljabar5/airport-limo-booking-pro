@@ -963,6 +963,18 @@
             const totalFare = document.getElementById('ifare')?.textContent || '$0.00';
             const serviceType = document.querySelector('input[name="service-type"]:checked')?.value || 'Not Specified';
 
+            // Calculate the actual tip amount in dollars
+            const tipSelection = formData.get('tip');
+            const customTipElement = document.getElementById('custom-tip');
+            let tipAmount = 0;
+            
+            if (tipSelection === 'custom') {
+                tipAmount = parseFloat(customTipElement.value) || 0;
+            } else if (tipSelection && tipSelection !== '0') {
+                const tipPercentage = parseFloat(tipSelection) / 100;
+                tipAmount = lastFareCalculation.base * tipPercentage;
+            }
+
             return {
                 customer_name: formData.get('name'),
                 customer_email: formData.get('email'),
@@ -979,7 +991,7 @@
                 distance: document.getElementById('imiles')?.textContent || 'N/A',
                 duration: document.getElementById('trip-duration')?.textContent || 'N/A',
                 total_fare: totalFare,
-                tip: formData.get('tip') ? `$${parseFloat(formData.get('tip')).toFixed(2)}` : '$0.00'
+                tip: tipAmount > 0 ? `$${tipAmount.toFixed(2)}` : '$0.00'
             };
         }
 
