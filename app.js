@@ -44,13 +44,14 @@ const EMAIL_TEMPLATES = {
                                 <td style="padding: 15px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase; vertical-align: top;">Date & Time:</td>
                                 <td style="padding: 15px 0; font-size: 16px; font-weight: 500; color: #ffffff;">{{pickup_date}} at {{pickup_time}}</td>
                             </tr>
-                            {{round_trip_details}}
                              <tr>
                                 <td style="padding: 10px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase;">Service:</td>
                                 <td style="padding: 10px 0; font-size: 16px; font-weight: 500; color: #ffffff;">{{service_type_formatted}}</td>
                             </tr>
                         </table>
                     </div>
+                    
+                    {{return_trip_section}}
                     
                     <!-- Booking Details -->
                     <div style="background-color: #1a1a1a; border: 1px solid #333; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
@@ -168,7 +169,6 @@ const EMAIL_TEMPLATES = {
                                 <td style="padding: 10px 0; color: #a0a0a0;">Time:</td>
                                 <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">{{pickup_time}}</td>
                             </tr>
-                            {{round_trip_details_owner}}
                             <tr>
                                 <td style="padding: 10px 0; color: #a0a0a0;">Passengers:</td>
                                 <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">{{passengers}}</td>
@@ -184,6 +184,8 @@ const EMAIL_TEMPLATES = {
                             {{flight_number_row}}
                         </table>
                     </div>
+
+                    {{return_trip_section_owner}}
 
                     <!-- Payment Information -->
                     <div style="background-color: #e4c570; color: #0d0d0d; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
@@ -338,46 +340,64 @@ async function sendConfirmationEmails(bookingDetails) {
         templateParams.flight_number_row = '';
     }
 
-    // Generate round trip details if round trip is selected
+    // Generate return trip section if round trip is selected
     if (bookingDetails.service_type === 'round-trip' && bookingDetails.return_date && bookingDetails.return_time) {
-        // Customer email round trip details
-        templateParams.round_trip_details = `
-            <tr>
-                <td style="padding: 15px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase; vertical-align: top;">Return Date & Time:</td>
-                <td style="padding: 15px 0; font-size: 16px; font-weight: 500; color: #ffffff;">${bookingDetails.return_date} at ${bookingDetails.return_time}</td>
-            </tr>`;
-        
-        // Add return flight number if provided
+        // Customer email return trip section
+        let returnFlightRow = '';
         if (bookingDetails.return_flight_number && bookingDetails.return_flight_number.trim() !== '') {
-            templateParams.round_trip_details += `
-            <tr>
-                <td style="padding: 10px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase;">Return Flight:</td>
-                <td style="padding: 10px 0; font-size: 16px; font-weight: 500; color: #ffffff;">${bookingDetails.return_flight_number}</td>
-            </tr>`;
+            returnFlightRow = `
+                <tr>
+                    <td style="padding: 10px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase; width: 20%;">Flight Number:</td>
+                    <td style="padding: 10px 0; font-size: 16px; font-weight: 500; color: #ffffff;">${bookingDetails.return_flight_number}</td>
+                </tr>`;
         }
+        
+        templateParams.return_trip_section = `
+            <!-- Return Trip Details -->
+            <div style="background-color: #1a1a1a; border: 1px solid #333; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+                <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; color: #e4c570; border-bottom: 1px solid #333; padding-bottom: 15px;">🔄 Return Trip Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 15px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase; width: 20%;">Return Date:</td>
+                        <td style="padding: 15px 0; font-size: 16px; font-weight: 500; color: #ffffff;">${bookingDetails.return_date}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px 0; font-size: 14px; color: #a0a0a0; text-transform: uppercase;">Return Time:</td>
+                        <td style="padding: 15px 0; font-size: 16px; font-weight: 500; color: #ffffff;">${bookingDetails.return_time}</td>
+                    </tr>
+                    ${returnFlightRow}
+                </table>
+            </div>`;
 
-        // Owner email round trip details
-        templateParams.round_trip_details_owner = `
-            <tr>
-                <td style="padding: 10px 0; color: #a0a0a0;">Return Date:</td>
-                <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${bookingDetails.return_date}</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px 0; color: #a0a0a0;">Return Time:</td>
-                <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${bookingDetails.return_time}</td>
-            </tr>`;
-        
-        // Add return flight number if provided
+        // Owner email return trip section
+        let ownerReturnFlightRow = '';
         if (bookingDetails.return_flight_number && bookingDetails.return_flight_number.trim() !== '') {
-            templateParams.round_trip_details_owner += `
-            <tr>
-                <td style="padding: 10px 0; color: #a0a0a0;">Return Flight:</td>
-                <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${bookingDetails.return_flight_number}</td>
-            </tr>`;
+            ownerReturnFlightRow = `
+                <tr>
+                    <td style="padding: 10px 0; color: #a0a0a0; width: 40%;">Return Flight:</td>
+                    <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${bookingDetails.return_flight_number}</td>
+                </tr>`;
         }
+        
+        templateParams.return_trip_section_owner = `
+            <!-- Return Trip Details Card -->
+            <div style="background-color: #1a1a1a; border: 1px solid #333; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+                <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; color: #e4c570; border-bottom: 1px solid #333; padding-bottom: 15px;">🔄 Return Trip Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 10px 0; color: #a0a0a0; width: 40%;">Return Date:</td>
+                        <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${bookingDetails.return_date}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; color: #a0a0a0;">Return Time:</td>
+                        <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${bookingDetails.return_time}</td>
+                    </tr>
+                    ${ownerReturnFlightRow}
+                </table>
+            </div>`;
     } else {
-        templateParams.round_trip_details = '';
-        templateParams.round_trip_details_owner = '';
+        templateParams.return_trip_section = '';
+        templateParams.return_trip_section_owner = '';
     }
 
     // Generate special requests section if special requests are provided
