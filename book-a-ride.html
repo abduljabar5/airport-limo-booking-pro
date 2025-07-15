@@ -281,6 +281,41 @@
                             </div>
                         </div>
                         
+                        <!-- Round Trip Details (Hidden by default) -->
+                        <div id="round-trip-section" class="border-t border-slate-200 pt-6 hidden">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Return Trip Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="return-date" class="block text-sm font-medium text-slate-700 mb-2">Return Date *</label>
+                                    <input type="date" id="return-date" name="return-date" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                </div>
+                                <div>
+                                    <label for="return-time" class="block text-sm font-medium text-slate-700 mb-2">Return Time *</label>
+                                    <input type="time" id="return-time" name="return-time" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                </div>
+                                <div>
+                                    <label for="return-flight-number" class="block text-sm font-medium text-slate-700 mb-2">Return Flight Number</label>
+                                    <input type="text" id="return-flight-number" name="return-flight-number" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="e.g., DL8765 (optional)">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Special Requests / Additional Travel Details -->
+                        <div class="border-t border-slate-200 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Special Requests / Additional Travel Details</h3>
+                            <div>
+                                <label for="special-requests" class="block text-sm font-medium text-slate-700 mb-2">Special Requests or Additional Information</label>
+                                <textarea 
+                                    id="special-requests" 
+                                    name="special-requests" 
+                                    rows="4" 
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors resize-vertical" 
+                                    placeholder="Please include any special requests, accessibility needs, child seats, extra stops, preferred route, or any other details that would help us provide better service...">
+                                </textarea>
+                                <p class="text-xs text-slate-500 mt-2">Examples: Prefer highway route, contact via text only, etc.</p>
+                            </div>
+                        </div>
+                        
                         <!-- Payment & Final Fare -->
                         <div id="payment-section" class="border-t border-slate-200 pt-6">
                             <h3 class="text-lg font-semibold text-slate-900 mb-4">Payment &amp; Fare</h3>
@@ -469,14 +504,67 @@
                 }
             }
 
+            function toggleRoundTripSection() {
+                const selectedRadio = document.querySelector('input[name="service-type"]:checked');
+                const roundTripSection = document.getElementById('round-trip-section');
+                const returnDateInput = document.getElementById('return-date');
+                const returnTimeInput = document.getElementById('return-time');
+                
+                if (selectedRadio && selectedRadio.value === 'round-trip') {
+                    roundTripSection.classList.remove('hidden');
+                    // Make return date and time required for round trips
+                    returnDateInput.required = true;
+                    returnTimeInput.required = true;
+                    
+                    // Set minimum return date/time based on outbound trip
+                    setMinimumReturnDateTime();
+                } else {
+                    roundTripSection.classList.add('hidden');
+                    // Remove required attribute when hidden
+                    returnDateInput.required = false;
+                    returnTimeInput.required = false;
+                    // Clear values when hidden
+                    returnDateInput.value = '';
+                    returnTimeInput.value = '';
+                    document.getElementById('return-flight-number').value = '';
+                }
+            }
+
+            function setMinimumReturnDateTime() {
+                const pickupDate = document.getElementById('pickup-date').value;
+                const pickupTime = document.getElementById('pickup-time').value;
+                const returnDateInput = document.getElementById('return-date');
+                const returnTimeInput = document.getElementById('return-time');
+                
+                if (pickupDate) {
+                    // Set minimum return date to pickup date
+                    returnDateInput.min = pickupDate;
+                    
+                    // If return date is same as pickup date, set minimum time
+                    if (returnDateInput.value === pickupDate && pickupTime) {
+                        const [hours, minutes] = pickupTime.split(':');
+                        const minReturnHours = parseInt(hours) + 2; // Minimum 2 hours between pickup and return
+                        if (minReturnHours < 24) {
+                            returnTimeInput.min = `${minReturnHours.toString().padStart(2, '0')}:${minutes}`;
+                        } else {
+                            returnTimeInput.min = '';
+                        }
+                    } else {
+                        returnTimeInput.min = '';
+                    }
+                }
+            }
+
             document.querySelectorAll('input[name="service-type"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     updateServiceTypeSelection();
+                    toggleRoundTripSection();
                     handleFareUpdate(); 
                 });
             });
 
             updateServiceTypeSelection(); // Set initial state
+            toggleRoundTripSection(); // Set initial round trip section visibility
         });
 
         // =================================================================================
@@ -791,6 +879,17 @@
             
             // Flight number field is now always visible and optional
             
+            // Add listeners to update return date/time constraints when pickup changes
+            const pickupDateInput = document.getElementById('pickup-date');
+            const pickupTimeInput = document.getElementById('pickup-time');
+            const returnDateInput = document.getElementById('return-date');
+            
+            if (pickupDateInput && pickupTimeInput && returnDateInput) {
+                pickupDateInput.addEventListener('change', setMinimumReturnDateTime);
+                pickupTimeInput.addEventListener('change', setMinimumReturnDateTime);
+                returnDateInput.addEventListener('change', setMinimumReturnDateTime);
+            }
+            
             // Initialize passenger options for the default vehicle
             updatePassengerOptions();
 
@@ -959,6 +1058,14 @@
                 tipAmount = lastFareCalculation.base * tipPercentage;
             }
 
+            // Include round trip details if round trip is selected
+            const roundTripData = {};
+            if (serviceType === 'round-trip') {
+                roundTripData.return_date = formData.get('return-date');
+                roundTripData.return_time = formatTime12Hour(formData.get('return-time'));
+                roundTripData.return_flight_number = formData.get('return-flight-number') || '';
+            }
+
             return {
                 customer_name: formData.get('name'),
                 customer_email: formData.get('email'),
@@ -976,7 +1083,9 @@
                 duration: document.getElementById('trip-duration')?.textContent || 'N/A',
                 total_fare: totalFare,
                 tip: tipAmount > 0 ? `$${tipAmount.toFixed(2)}` : '$0.00',
-                flight_number: formData.get('flight-number') || ''
+                flight_number: formData.get('flight-number') || '',
+                special_requests: formData.get('special-requests') || '',
+                ...roundTripData
             };
         }
 
