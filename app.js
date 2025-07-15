@@ -71,6 +71,7 @@ const EMAIL_TEMPLATES = {
                                 <td style="padding: 10px 0; color: #a0a0a0;">Vehicle Type:</td>
                                 <td style="padding: 10px 0; color: #ffffff;">{{vehicle_type}}</td>
                             </tr>
+                            {{flight_number_row}}
                         </table>
                     </div>
                     
@@ -176,6 +177,7 @@ const EMAIL_TEMPLATES = {
                                 <td style="padding: 10px 0; color: #a0a0a0;">Service Type:</td>
                                 <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">{{service_type_formatted}}</td>
                             </tr>
+                            {{flight_number_row}}
                         </table>
                     </div>
 
@@ -279,6 +281,8 @@ async function sendConfirmationEmails(bookingDetails) {
     let serviceTypeFormatted = 'One-Way Transfer';
     if (serviceType === 'round-trip') {
         serviceTypeFormatted = 'Round Trip';
+    } else if (serviceType === 'meet-greet') {
+        serviceTypeFormatted = 'Meet and Greet';
     } else if (serviceType === 'hourly') {
         serviceTypeFormatted = 'Hourly Charter';
     } else if (serviceType === 'airport') {
@@ -315,6 +319,17 @@ async function sendConfirmationEmails(bookingDetails) {
 
     if (templateParams.tip === '$0.00' || templateParams.tip === '0' || !templateParams.tip) {
         templateParams.tip = 'No tip added';
+    }
+
+    // Generate flight number row if flight number is provided
+    if (bookingDetails.flight_number && bookingDetails.flight_number.trim() !== '') {
+        templateParams.flight_number_row = `
+            <tr>
+                <td style="padding: 10px 0; color: #a0a0a0;">Flight Number:</td>
+                <td style="padding: 10px 0; color: #ffffff;">${bookingDetails.flight_number}</td>
+            </tr>`;
+    } else {
+        templateParams.flight_number_row = '';
     }
 
 

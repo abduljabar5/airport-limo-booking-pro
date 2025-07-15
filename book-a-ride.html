@@ -199,6 +199,23 @@
                         <div class="border-t border-slate-200 pt-6">
                             <h3 class="text-lg font-semibold text-slate-900 mb-4">Vehicle & Passengers</h3>
                             
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="cartype" class="block text-sm font-medium text-slate-700 mb-2">Vehicle Preference *</label>
+                                    <select id="cartype" name="cartype" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                        <option value="">Select a vehicle</option>
+                                        <option value="SUV" selected>SUV (1-6 Bags)</option>
+                                        <option value="SEDAN">Sedan (1-4 Bags)</option>
+                                        <option value="TAXI">Taxi (1-4 Bags)</option>
+                                        <option value="VAN">Van (1-10 Bags)</option>
+                                    </select>
+                                </div>
+                                <div id="flight-number-container" class="hidden">
+                                    <label for="flight-number" class="block text-sm font-medium text-slate-700 mb-2">Flight Number</label>
+                                    <input type="text" id="flight-number" name="flight-number" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="e.g., AA1234, DL5678">
+                                </div>
+                            </div>
+                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="passengers" class="block text-sm font-medium text-slate-700 mb-2">Number of Passengers *</label>
@@ -225,22 +242,12 @@
                                     </select>
                                 </div>
                             </div>
-                             <div class="mt-6">
-                                <label for="cartype" class="block text-sm font-medium text-slate-700 mb-2">Vehicle Preference *</label>
-                                <select id="cartype" name="cartype" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
-                                    <option value="">Select a vehicle</option>
-                                    <option value="SUV" selected>SUV (1-6 Bags)</option>
-                                    <option value="SEDAN">Sedan (1-4 Bags)</option>
-                                    <option value="TAXI">Taxi (1-4 Bags)</option>
-                                    <option value="VAN">Van (1-10 Bags)</option>
-                                </select>
-                            </div>
                         </div>
 
                         <!-- Service Type -->
                         <div class="border-t border-slate-200 pt-6">
                             <h3 class="text-lg font-semibold text-slate-900 mb-4">Service Type *</h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <label for="service-oneway" class="service-type-label p-4 border rounded-lg cursor-pointer transition-all duration-200">
                                     <input type="radio" id="service-oneway" name="service-type" value="one-way" checked class="hidden">
                                     <div class="flex items-center">
@@ -261,23 +268,13 @@
                                         </div>
                                     </div>
                                 </label>
-                                <label for="service-hourly" class="service-type-label p-4 border rounded-lg cursor-not-allowed transition-all duration-200 opacity-50 bg-slate-50">
-                                    <input type="radio" id="service-hourly" name="service-type" value="hourly" class="hidden" disabled>
+                                <label for="service-meetgreet" class="service-type-label p-4 border rounded-lg cursor-pointer transition-all duration-200">
+                                    <input type="radio" id="service-meetgreet" name="service-type" value="meet-greet" class="hidden">
                                     <div class="flex items-center">
                                         <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
                                         <div>
-                                            <span class="font-semibold text-slate-400 block">Hourly Charter</span>
-                                            <span class="text-sm text-slate-400">By the hour with wait time</span>
-                                        </div>
-                                    </div>
-                                </label>
-                                <label for="service-airport" class="service-type-label p-4 border rounded-lg cursor-not-allowed transition-all duration-200 opacity-50 bg-slate-50">
-                                    <input type="radio" id="service-airport" name="service-type" value="airport" class="hidden" disabled>
-                                    <div class="flex items-center">
-                                        <div class="service-radio-circle border-2 border-slate-300 w-5 h-5 rounded-full mr-3 flex-shrink-0"></div>
-                                        <div>
-                                            <span class="font-semibold text-slate-400 block">Airport Transfer</span>
-                                            <span class="text-sm text-slate-400">To/from MSP or regional airports</span>
+                                            <span class="font-semibold text-slate-800 block">Meet and Greet</span>
+                                            <span class="text-sm text-slate-500">Driver meets you inside airport</span>
                                         </div>
                                     </div>
                                 </label>
@@ -601,28 +598,15 @@
             const milesElement = document.getElementById('imiles');
             const paymentSection = document.getElementById('payment-section');
 
-            // Handle hourly charter
-            if (serviceType === 'hourly') {
-                fareElement.textContent = 'Call for Quote';
-                milesElement.textContent = 'N/A';
-                dropoffLocationElement.disabled = true;
-                dropoffLocationElement.value = 'Hourly Service';
-                paymentSection.style.display = 'none';
-                lastFareCalculation.base = 0;
-                lastFareCalculation.total = 0;
-                return 0;
-            } else {
-                dropoffLocationElement.disabled = false;
-                paymentSection.style.display = 'block';
-                if (dropoffLocationElement.value === 'Hourly Service') {
-                    dropoffLocationElement.value = '';
-                }
-            }
+            // All service types are now supported
+            dropoffLocationElement.disabled = false;
+            paymentSection.style.display = 'block';
 
             const vehicleType = vehicleTypeElement.value;
             const pickupTime = pickupTimeElement.value;
             const pickupAddress = pickupLocationElement.value;
             const isRoundTrip = serviceType === 'round-trip';
+            const isMeetGreet = serviceType === 'meet-greet';
             const passengers = parseInt(passengersElement?.value || '1');
 
             if(!vehicleType) return 0;
@@ -660,17 +644,15 @@
                 fare += fees.airport;
             }
 
+            // Meet and greet service fee
+            if (isMeetGreet) {
+                fare += fees.meetAndGreet;
+            }
+
             // SUV extra passenger charge (>6 passengers)
             if (vehicleType === 'SUV' && passengers > 6) {
                 fare += fees.suvExtraPassenger;
             }
-
-            // Meet and greet fee (if implemented in form)
-            // This would need a checkbox in the form to enable
-            // const meetAndGreetElement = document.getElementById('meet-and-greet');
-            // if (meetAndGreetElement && meetAndGreetElement.checked) {
-            //     fare += fees.meetAndGreet;
-            // }
             
             return fare;
         }
@@ -805,6 +787,31 @@
                         customTipInput.value = ''; // Clear value when hidden
                     }
                 });
+            }
+            
+            // Show/hide flight number field based on airport pickup detection
+            const pickupLocationInput = document.getElementById('pickup-location');
+            const flightNumberContainer = document.getElementById('flight-number-container');
+            if (pickupLocationInput && flightNumberContainer) {
+                function toggleFlightNumberField() {
+                    const pickupAddress = pickupLocationInput.value;
+                    if (isAirportPickup(pickupAddress)) {
+                        flightNumberContainer.classList.remove('hidden');
+                    } else {
+                        flightNumberContainer.classList.add('hidden');
+                        // Clear flight number when hidden
+                        const flightNumberInput = document.getElementById('flight-number');
+                        if (flightNumberInput) {
+                            flightNumberInput.value = '';
+                        }
+                    }
+                }
+                
+                pickupLocationInput.addEventListener('input', toggleFlightNumberField);
+                pickupLocationInput.addEventListener('change', toggleFlightNumberField);
+                
+                // Check initial state
+                toggleFlightNumberField();
             }
             
             // Initialize passenger options for the default vehicle
@@ -985,13 +992,14 @@
                 vehicle_type: vehicleTypeText,
                 payment_method: formData.get('payment-method') === 'pay-online' ? 'Online Payment' : 'Pay In Person',
                 service_type: serviceType,
-                service_type_formatted: serviceType === 'round-trip' ? 'Round-Trip' : 'One-Way',
+                service_type_formatted: serviceType === 'round-trip' ? 'Round-Trip' : serviceType === 'meet-greet' ? 'Meet and Greet' : 'One-Way',
                 pickup_location: document.getElementById('pickup-location').value,
                 dropoff_location: document.getElementById('dropoff-location').value,
                 distance: document.getElementById('imiles')?.textContent || 'N/A',
                 duration: document.getElementById('trip-duration')?.textContent || 'N/A',
                 total_fare: totalFare,
-                tip: tipAmount > 0 ? `$${tipAmount.toFixed(2)}` : '$0.00'
+                tip: tipAmount > 0 ? `$${tipAmount.toFixed(2)}` : '$0.00',
+                flight_number: formData.get('flight-number') || ''
             };
         }
 
