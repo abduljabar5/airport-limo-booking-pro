@@ -18,7 +18,6 @@ export const handler = async (event) => {
 
     // Create a Checkout Session with the amount and description
     const session = await stripeClient.checkout.sessions.create({
-      payment_method_types: ['card'],
       line_items: [{
         price_data: {
           currency: 'usd',
