@@ -177,11 +177,20 @@
                                         <label for="pickup-location" class="block text-sm font-medium text-slate-700 mb-2">Pickup Location *</label>
                                         <input type="text" id="pickup-location" name="pickup-location" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="Address, hotel, or landmark">
                                     </div>
-                                    <div>
+                                    <div class="relative">
                                         <label for="dropoff-location" class="block text-sm font-medium text-slate-700 mb-2">Drop-off Location *</label>
-                                        <input type="text" id="dropoff-location" name="dropoff-location" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="Address, hotel, or landmark">
+                                        <input type="text" id="dropoff-location" name="dropoff-location" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors pr-12" placeholder="Address, hotel, or landmark">
+                                        <button type="button" id="add-stop-btn" class="absolute right-3 top-[38px] w-8 h-8 bg-gold hover:bg-gold-600 text-black rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-sm" title="Add a stop">
+                                            <i data-lucide="plus" class="w-4 h-4">+</i>
+                                        </button>
                                     </div>
                                 </div>
+                                
+                                <!-- Additional Stops Section -->
+                                <div id="additional-stops-container">
+                                    <!-- Additional stops will be added here dynamically -->
+                                </div>
+                                
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label for="pickup-date" class="block text-sm font-medium text-slate-700 mb-2">Pickup Date *</label>
@@ -240,6 +249,20 @@
                                         <option value="4">4</option>
                                         <option value="5">5+</option>
                                     </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Car Seat Option -->
+                            <div class="mt-6">
+                                <div class="border border-slate-200 rounded-lg p-4">
+                                    <label for="car-seat" class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="car-seat" name="car-seat" class="h-4 w-4 text-gold focus:ring-gold border-slate-300 rounded">
+                                        <div class="ml-3">
+                                            <span class="text-sm font-medium text-slate-800">Car Seat Required</span>
+                                            <p class="text-xs text-slate-600 mt-1">Add a child car seat to your ride (+$30.00)</p>
+                                        </div>
+                                        <!-- <span class="ml-auto text-sm font-semibold text-gold">+$30.00</span> -->
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -322,13 +345,13 @@
                                 <div>
                                     <label for="tip" class="block text-sm font-medium text-slate-700 mb-2">Tip Your Driver</label>
                                     <select id="tip" name="tip" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                        <option value="custom">Enter Custom Amount</option>
                                         <option value="15">15%</option>
-                                        <option value="20" selected>20%</option>
+                                        <option value="20">20%</option>
                                         <option value="25">25%</option>
                                         <option value="0">No Tip</option>
-                                        <option value="custom">Enter Custom Amount</option>
                                     </select>
-                                    <input type="number" id="custom-tip" name="custom-tip" placeholder="Enter amount ($)" class="hidden w-full mt-2 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" min="0" step="0.01">
+                                    <input type="number" id="custom-tip" name="custom-tip" placeholder="Enter amount ($)" class="w-full mt-2 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" min="0" step="0.01">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-2">Payment Method *</label>
@@ -567,6 +590,149 @@
         });
 
         // =================================================================================
+        // ADDITIONAL STOPS FUNCTIONALITY
+        // =================================================================================
+        
+        let stopCounter = 0;
+        const maxStops = 5; // Maximum number of additional stops allowed
+        
+        function addStop() {
+            if (stopCounter >= maxStops) {
+                alert(`Maximum of ${maxStops} additional stops allowed.`);
+                return;
+            }
+            
+            stopCounter++;
+            const stopId = `stop-${stopCounter}`;
+            
+            const stopHtml = `
+                <div class="additional-stop bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 relative" data-stop-id="${stopId}">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-md font-medium text-slate-800 flex items-center">
+                            <span class="w-6 h-6 bg-gold text-black rounded-full flex items-center justify-center text-sm font-bold mr-2">${stopCounter}</span>
+                            Additional Stop
+                        </h4>
+                        <button type="button" class="remove-stop-btn w-6 h-6 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full flex items-center justify-center transition-all duration-200" data-stop-id="${stopId}" title="Remove this stop">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="${stopId}-location" class="block text-sm font-medium text-slate-700 mb-2">Stop Location *</label>
+                            <input type="text" id="${stopId}-location" name="${stopId}-location" required class="stop-location w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors" placeholder="Address, hotel, or landmark">
+                        </div>
+                        <div>
+                            <label for="${stopId}-duration" class="block text-sm font-medium text-slate-700 mb-2">Wait Time ($1/min)</label>
+                            <select id="${stopId}-duration" name="${stopId}-duration" class="stop-duration w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
+                                <option value="5" selected>5 minutes</option>
+                                <option value="10">10 minutes</option>
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 hour</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('additional-stops-container').insertAdjacentHTML('beforeend', stopHtml);
+            
+            // Initialize autocomplete for the new stop
+            initStopAutocomplete(stopId);
+            
+            // Add event listeners for the remove button
+            document.querySelector(`[data-stop-id="${stopId}"] .remove-stop-btn`).addEventListener('click', function() {
+                removeStop(stopId);
+            });
+            
+            // Add event listener for duration change
+            document.querySelector(`#${stopId}-duration`).addEventListener('change', function() {
+                calculateFare();
+                updateTotalFare();
+            });
+            
+            // Refresh Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Update the add button state
+            updateAddStopButton();
+            
+            // Recalculate fare if locations are already filled
+            setTimeout(calculateFare, 100);
+        }
+        
+        function removeStop(stopId) {
+            const stopElement = document.querySelector(`[data-stop-id="${stopId}"]`);
+            if (stopElement) {
+                stopElement.remove();
+                stopCounter--;
+                renumberStops();
+                updateAddStopButton();
+                // Recalculate fare after removing stop
+                setTimeout(calculateFare, 100);
+            }
+        }
+        
+        function renumberStops() {
+            const stops = document.querySelectorAll('.additional-stop');
+            stops.forEach((stop, index) => {
+                const stopNumber = index + 1;
+                const numberBadge = stop.querySelector('h4 span');
+                if (numberBadge) {
+                    numberBadge.textContent = stopNumber;
+                }
+            });
+        }
+        
+        function updateAddStopButton() {
+            const addButton = document.getElementById('add-stop-btn');
+            if (stopCounter >= maxStops) {
+                addButton.style.opacity = '0.3';
+                addButton.style.pointerEvents = 'none';
+                addButton.title = 'Maximum stops reached';
+            } else {
+                addButton.style.opacity = '1';
+                addButton.style.pointerEvents = 'auto';
+                addButton.title = 'Add a stop';
+            }
+        }
+        
+        function initStopAutocomplete(stopId) {
+            // Wait for Google Maps to be available
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+                setTimeout(() => initStopAutocomplete(stopId), 100);
+                return;
+            }
+            
+            const stopInput = document.getElementById(`${stopId}-location`);
+            if (stopInput) {
+                const autocompleteOptions = {
+                    bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(44.7, -94.0), // Southwest
+                        new google.maps.LatLng(45.2, -93.0)  // Northeast
+                    ),
+                    componentRestrictions: { country: 'us' },
+                    strictBounds: false
+                };
+                
+                const autocomplete = new google.maps.places.Autocomplete(stopInput, autocompleteOptions);
+                autocomplete.addListener('place_changed', calculateFare);
+            }
+        }
+        
+        // Initialize add stop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('add-stop-btn').addEventListener('click', addStop);
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // =================================================================================
         // FARE CALCULATION MODULE
         // =================================================================================
 
@@ -583,7 +749,8 @@
             nightSurcharge: 20.00,
             longDistanceSurcharge: 1.5, // Multiplier for trips > 75 miles
             onlinePaymentPercent: 0.03, // 3%
-            suvExtraPassenger: 20.00 // For SUV with >6 passengers
+            suvExtraPassenger: 20.00, // For SUV with >6 passengers
+            carSeatFee: 30.00 // Fee for car seat
         };
 
         /**
@@ -636,30 +803,66 @@
                 return;
             }
 
-            directionsService.route(
-                {
-                    origin: pickupAddress,
-                    destination: destinationAddress,
-                    travelMode: google.maps.TravelMode.DRIVING,
-                },
-                (response, status) => {
-                    if (status === 'OK') {
-                        const route = response.routes[0].legs[0];
-                        const distanceInMeters = route.distance.value;
-                        const distanceInMiles = distanceInMeters * 0.000621371;
-                        
-                        document.getElementById('imiles').textContent = `${distanceInMiles.toFixed(1)} Miles`;
-                        
-                        lastFareCalculation.base = calculateBaseFare(distanceInMiles);
-                        updateTotalFare();
-
-                    } else {
-                        console.error('Directions request failed due to ' + status);
-                        document.getElementById('imiles').textContent = 'N/A';
-                        document.getElementById('ifare').textContent = '$0.00';
-                    }
+            // Collect all additional stops
+            const waypoints = [];
+            const stopInputs = document.querySelectorAll('.stop-location');
+            stopInputs.forEach(input => {
+                if (input.value.trim()) {
+                    waypoints.push({
+                        location: input.value,
+                        stopover: true
+                    });
                 }
-            );
+            });
+
+            const requestConfig = {
+                origin: pickupAddress,
+                destination: destinationAddress,
+                travelMode: google.maps.TravelMode.DRIVING,
+            };
+
+            // Add waypoints if there are any stops
+            // Important: Do NOT optimize waypoints to maintain the exact order of stops
+            if (waypoints.length > 0) {
+                requestConfig.waypoints = waypoints;
+                requestConfig.optimizeWaypoints = false; // Keep stops in the specified order
+            }
+
+            directionsService.route(requestConfig, (response, status) => {
+                if (status === 'OK') {
+                    let totalDistanceInMiles = 0;
+                    
+                    // Calculate total distance through all legs of the journey
+                    // Each leg represents: pickup→stop1, stop1→stop2, ..., lastStop→destination
+                    response.routes[0].legs.forEach((leg, index) => {
+                        const legDistanceInMiles = leg.distance.value * 0.000621371;
+                        totalDistanceInMiles += legDistanceInMiles;
+                        
+                        // Debug logging to verify route calculation
+                        console.log(`Leg ${index + 1}: ${leg.start_address} → ${leg.end_address} = ${legDistanceInMiles.toFixed(2)} miles`);
+                    });
+                    
+                    console.log(`Total route distance: ${totalDistanceInMiles.toFixed(2)} miles`);
+                    
+                    document.getElementById('imiles').textContent = `${totalDistanceInMiles.toFixed(1)} Miles`;
+                    
+                    // Calculate stop surcharge based on wait time ($1 per minute)
+                    let stopSurcharge = 0;
+                    const stopDurationSelects = document.querySelectorAll('.stop-duration');
+                    stopDurationSelects.forEach(select => {
+                        const waitTimeMinutes = parseInt(select.value) || 5;
+                        stopSurcharge += waitTimeMinutes; // $1 per minute
+                    });
+                    
+                    lastFareCalculation.base = calculateBaseFare(totalDistanceInMiles) + stopSurcharge;
+                    updateTotalFare();
+
+                } else {
+                    console.error('Directions request failed due to ' + status);
+                    document.getElementById('imiles').textContent = 'N/A';
+                    document.getElementById('ifare').textContent = '$0.00';
+                }
+            });
         }
 
         /**
@@ -674,6 +877,7 @@
             const serviceTypeElement = document.querySelector('input[name="service-type"]:checked');
             const passengersElement = document.getElementById('passengers');
              const dropoffLocationElement = document.getElementById('dropoff-location');
+            const carSeatCheckbox = document.getElementById('car-seat');
 
             if (
                 pickupLocationElement.value.toLowerCase() === 'test' &&
@@ -703,6 +907,7 @@
             const isRoundTrip = serviceType === 'round-trip';
             const isMeetGreet = serviceType === 'meet-greet';
             const passengers = parseInt(passengersElement?.value || '1');
+            const isCarSeatRequired = carSeatCheckbox?.checked;
 
             if(!vehicleType) return 0;
             
@@ -747,6 +952,11 @@
             // SUV extra passenger charge (>6 passengers)
             if (vehicleType === 'SUV' && passengers > 6) {
                 fare += fees.suvExtraPassenger;
+            }
+
+            // Car seat fee
+            if (isCarSeatRequired) {
+                fare += fees.carSeatFee;
             }
             
             return fare;
@@ -852,7 +1062,7 @@
 
         // Add event listeners to trigger recalculation
         function addFareCalculationListeners() {
-            const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person', 'custom-tip'];
+            const fieldsToWatch = ['cartype', 'pickup-time', 'tip', 'passengers', 'luggage', 'pay-online', 'pay-in-person', 'custom-tip', 'car-seat'];
 
             fieldsToWatch.forEach(id => {
                 const element = document.getElementById(id);
@@ -874,14 +1084,17 @@
             const tipSelect = document.getElementById('tip');
             const customTipInput = document.getElementById('custom-tip');
             if (tipSelect && customTipInput) {
-                tipSelect.addEventListener('change', () => {
+                const updateTipVisibility = () => {
                     if (tipSelect.value === 'custom') {
                         customTipInput.classList.remove('hidden');
                     } else {
                         customTipInput.classList.add('hidden');
                         customTipInput.value = ''; // Clear value when hidden
                     }
-                });
+                };
+
+                tipSelect.addEventListener('change', updateTipVisibility);
+                updateTipVisibility(); // Set initial visibility
             }
             
             // Flight number field is now always visible and optional
@@ -936,6 +1149,7 @@
             const submitIcon = document.getElementById('submit-icon');
             const submitDisclaimer = document.getElementById('submit-disclaimer');
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
+            const carSeatCheckbox = document.getElementById('car-seat');
 
             if (isSubmitting) {
                 submitButton.disabled = true;
@@ -1012,35 +1226,7 @@
         });
 
 
-        // Initialize Google Places Autocomplete
-        function initAutocomplete() {
-            try {
-                const autocompleteOptions = {
-                    bounds: new google.maps.LatLngBounds(
-                        new google.maps.LatLng(44.7, -94.0), // Southwest
-                        new google.maps.LatLng(45.2, -93.0)  // Northeast
-                    ),
-                    componentRestrictions: { country: 'us' },
-                    strictBounds: false
-                };
-
-                // Initialize autocomplete for pickup location
-                const pickupInput = document.getElementById('pickup-location');
-                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
-                pickupAutocomplete.addListener('place_changed', calculateFare);
-
-
-                // Initialize autocomplete for dropoff location
-                const dropoffInput = document.getElementById('dropoff-location');
-                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
-                dropoffAutocomplete.addListener('place_changed', calculateFare);
-                
-                addFareCalculationListeners();
-
-            } catch (error) {
-                console.error("Error initializing Google Autocomplete:", error);
-            }
-        }
+        // Note: initAutocomplete is now defined globally at the bottom of the page
         
         // =================================================================================
         // FORM SUBMISSION & PAYMENT
@@ -1073,6 +1259,23 @@
                 roundTripData.return_flight_number = formData.get('return-flight-number') || '';
             }
 
+            // Collect additional stops information
+            const additionalStops = [];
+            const stopInputs = document.querySelectorAll('.stop-location');
+            stopInputs.forEach((input, index) => {
+                if (input.value.trim()) {
+                    const stopId = input.id.replace('-location', '');
+                    const durationSelect = document.getElementById(`${stopId}-duration`);
+                    const duration = durationSelect ? durationSelect.value : '10';
+                    
+                    additionalStops.push({
+                        location: input.value,
+                        duration: `${duration} minutes`,
+                        stopNumber: index + 1
+                    });
+                }
+            });
+
             return {
                 customer_name: formData.get('name'),
                 customer_email: formData.get('email'),
@@ -1092,6 +1295,8 @@
                 tip: tipAmount > 0 ? `$${tipAmount.toFixed(2)}` : '$0.00',
                 flight_number: formData.get('flight-number') || '',
                 special_requests: formData.get('special-requests') || '',
+                additional_stops: additionalStops,
+                car_seat_required: formData.get('car-seat') === 'on', // Check if car seat is required
                 ...roundTripData
             };
         }
@@ -1121,7 +1326,8 @@
                         passengers: bookingDetails.passengers,
                         total_fare: bookingDetails.total_fare,
                         service_type_formatted: bookingDetails.service_type_formatted,
-                        tip: bookingDetails.tip
+                        tip: bookingDetails.tip,
+                        car_seat_required: bookingDetails.car_seat_required ? 'true' : 'false'
                     });
                     window.location.href = `booking-confirmation.html?${queryParams.toString()}`;
                 } catch (error) {
@@ -1181,6 +1387,39 @@
     </script>
     <script src="app.js" defer></script>
     <script>
+    // Make initAutocomplete globally available for Google Maps callback
+    window.initAutocomplete = function() {
+        try {
+            const autocompleteOptions = {
+                bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(44.7, -94.0), // Southwest
+                    new google.maps.LatLng(45.2, -93.0)  // Northeast
+                ),
+                componentRestrictions: { country: 'us' },
+                strictBounds: false
+            };
+
+            // Initialize autocomplete for pickup location
+            const pickupInput = document.getElementById('pickup-location');
+            if (pickupInput) {
+                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
+                pickupAutocomplete.addListener('place_changed', calculateFare);
+            }
+
+            // Initialize autocomplete for dropoff location
+            const dropoffInput = document.getElementById('dropoff-location');
+            if (dropoffInput) {
+                const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
+                dropoffAutocomplete.addListener('place_changed', calculateFare);
+            }
+            
+            addFareCalculationListeners();
+
+        } catch (error) {
+            console.error("Error initializing Google Autocomplete:", error);
+        }
+    };
+
     // Dynamically load Google Maps script to protect API key
     async function initMap() {
       try {
@@ -1202,6 +1441,16 @@
     
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
+      
+      // Add event listener for car seat checkbox
+      const carSeatCheckbox = document.getElementById('car-seat');
+      if (carSeatCheckbox) {
+          carSeatCheckbox.addEventListener('change', () => {
+              calculateFare();
+              updateTotalFare();
+          });
+      }
+      
       // ... any other DOMContentLoaded logic for book-a-ride.html
     });
     </script>

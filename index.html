@@ -608,6 +608,8 @@
             mobileMenu.classList.toggle('hidden');
         });
 
+        let initialQuoteDone = false;
+
         // =================================================================================
         // FARE CALCULATION MODULE FOR QUICK BOOKING
         // =================================================================================
@@ -847,6 +849,7 @@
 
                     try {
                         quoteData = await calculateQuickBookingQuote(formData);
+                        initialQuoteDone = true; // Enable auto-updating after first quote
                         
                         // Show quote display
                         document.getElementById('distance-value').textContent = quoteData.distance;
@@ -878,6 +881,36 @@
             });
         });
 
+        async function recalculateQuote() {
+            if (!initialQuoteDone) return; // Only run if initial quote has been generated
+
+            const pickupInput = document.getElementById('quick-pickup');
+            const destinationInput = document.getElementById('quick-destination');
+            const vehicleInput = document.getElementById('quick-vehicle-type');
+
+            const formData = {
+                pickup: pickupInput.value,
+                destination: destinationInput.value,
+                date: document.getElementById('quick-date').value,
+                time: document.getElementById('quick-time').value,
+                vehicleType: vehicleInput.value
+            };
+
+            if (formData.pickup && formData.destination && formData.vehicleType) {
+                try {
+                    const quoteData = await calculateQuickBookingQuote(formData);
+                    document.getElementById('distance-value').textContent = quoteData.distance;
+                    document.getElementById('cost-value').textContent = quoteData.cost;
+                    document.getElementById('quote-display').classList.remove('hidden');
+                } catch (error) {
+                    console.error('Error recalculating quote:', error);
+                    document.getElementById('quote-display').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('quote-display').classList.add('hidden');
+            }
+        }
+
         // Initialize Google Places Autocomplete
         function initAutocomplete() {
             // Check if Google Maps API is loaded
@@ -900,17 +933,19 @@
 
                 // Initialize autocomplete for quick booking form
                 if (document.getElementById('quick-pickup')) {
-                    new google.maps.places.Autocomplete(
+                    const pickupAutocomplete = new google.maps.places.Autocomplete(
                         document.getElementById('quick-pickup'),
                         autocompleteOptions
                     );
+                    pickupAutocomplete.addListener('place_changed', recalculateQuote);
                 }
 
                 if (document.getElementById('quick-destination')) {
-                    new google.maps.places.Autocomplete(
+                    const destinationAutocomplete = new google.maps.places.Autocomplete(
                         document.getElementById('quick-destination'),
                         autocompleteOptions
                     );
+                    destinationAutocomplete.addListener('place_changed', recalculateQuote);
                 }
             } catch (error) {
                 console.error('Error initializing Google Places Autocomplete:', error);
@@ -920,7 +955,12 @@
         }
 
         // Initialize autocomplete when page loads
-        document.addEventListener('DOMContentLoaded', initAutocomplete);
+        document.addEventListener('DOMContentLoaded', () => {
+            initAutocomplete();
+            document.getElementById('quick-pickup').addEventListener('change', recalculateQuote);
+            document.getElementById('quick-destination').addEventListener('change', recalculateQuote);
+            document.getElementById('quick-vehicle-type').addEventListener('change', recalculateQuote);
+        });
 
         // Acronym expansion
         const acronyms = {
