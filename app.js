@@ -55,6 +55,8 @@ const EMAIL_TEMPLATES = {
                         </table>
                     </div>
                     
+                    {{short_notice_warning}}
+                    
                     {{return_trip_section}}
                     
                     {{additional_stops_section}}
@@ -395,6 +397,32 @@ async function sendConfirmationEmails(bookingDetails) {
     templateParams.total_fare_owner_html = isUnpaid
         ? `<span style="color: #dc2626;">${templateParams.total_fare}</span>`
         : templateParams.total_fare;
+
+    // Check if this is a short notice booking (less than 12 hours)
+    let shortNoticeWarning = '';
+    try {
+        const pickupDateTime = new Date(`${safeBookingDetails.pickup_date} ${safeBookingDetails.pickup_time}`);
+        const timeDifference = pickupDateTime.getTime() - now.getTime();
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+        
+        if (hoursDifference < 12) {
+            shortNoticeWarning = `
+                <div style="background-color: #dc2626; color: #ffffff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">⚠️ SHORT NOTICE BOOKING</h3>
+                    <p style="margin: 0 0 15px 0; font-size: 16px; line-height: 1.5;">
+                        Your ride is scheduled for less than 12 hours from now. 
+                        <strong>You must call us to confirm your booking.</strong>
+                    </p>
+                    <p style="margin: 0; font-size: 18px; font-weight: 600;">
+                        📞 Call us at: <a href="tel:6129995382" style="color: #ffffff; text-decoration: underline;">(612) 999-5382</a>
+                    </p>
+                </div>`;
+        }
+    } catch (error) {
+        console.error('Error calculating short notice warning:', error);
+    }
+    
+    templateParams.short_notice_warning = shortNoticeWarning;
 
     // Generate flight number row if flight number is provided
     if (safeBookingDetails.flight_number && safeBookingDetails.flight_number.trim() !== '') {

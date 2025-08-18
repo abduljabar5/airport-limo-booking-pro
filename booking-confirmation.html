@@ -38,6 +38,18 @@
                 <!-- Booking details will be injected here by JavaScript -->
             </div>
 
+            <!-- Short Notice Warning -->
+            <div id="short-notice-warning" class="hidden bg-red-600 text-white p-6 rounded-lg mb-8 text-center">
+                <h3 class="text-xl font-bold mb-3">⚠️ SHORT NOTICE BOOKING</h3>
+                <p class="text-lg mb-4">
+                    Your ride is scheduled for less than 12 hours from now. 
+                    <strong>You must call us to confirm your booking.</strong>
+                </p>
+                <p class="text-xl font-bold">
+                    📞 Call us at: <a href="tel:6129995382" class="underline">(612) 999-5382</a>
+                </p>
+            </div>
+
             <p class="text-gray-400 mb-2">If you have any questions, please contact us:</p>
             <p class="text-lg gold-text font-bold tracking-wider">(612) 999-5382</p>
 
@@ -86,6 +98,25 @@
                 bookingDetailsContainer.innerHTML += detailsHtml;
             } else {
                 console.error('Booking details container not found.');
+            }
+
+            // Check if this is a short notice booking (less than 12 hours)
+            try {
+                const pickupDate = params.get('pickup_date');
+                const pickupTime = params.get('pickup_time');
+                
+                if (pickupDate && pickupTime) {
+                    const pickupDateTime = new Date(`${pickupDate} ${pickupTime}`);
+                    const now = new Date();
+                    const timeDifference = pickupDateTime.getTime() - now.getTime();
+                    const hoursDifference = timeDifference / (1000 * 60 * 60);
+                    
+                    if (hoursDifference < 12) {
+                        document.getElementById('short-notice-warning').classList.remove('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Error calculating short notice warning:', error);
             }
         });
     </script>

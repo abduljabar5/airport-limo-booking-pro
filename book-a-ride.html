@@ -581,7 +581,9 @@
                 radio.addEventListener('change', () => {
                     updateServiceTypeSelection();
                     toggleRoundTripSection();
-                    handleFareUpdate(); 
+                    handleFareUpdate();
+                    // Update distance display for round trips
+                    updateDistanceDisplay();
                 });
             });
 
@@ -844,7 +846,9 @@
                     
                     console.log(`Total route distance: ${totalDistanceInMiles.toFixed(2)} miles`);
                     
-                    document.getElementById('imiles').textContent = `${totalDistanceInMiles.toFixed(1)} Miles`;
+                    // Double distance for round trips
+                    const displayDistance = serviceType === 'round-trip' ? totalDistanceInMiles * 2 : totalDistanceInMiles;
+                    document.getElementById('imiles').textContent = `${displayDistance.toFixed(1)} Miles`;
                     
                     // Calculate stop surcharge based on wait time ($1 per minute)
                     let stopSurcharge = 0;
@@ -863,6 +867,45 @@
                     document.getElementById('ifare').textContent = '$0.00';
                 }
             });
+        }
+
+        /**
+         * Gets the display distance (doubled for round trips)
+         * @returns {string} The distance to display
+         */
+        function getDisplayDistance() {
+            const distanceText = document.getElementById('imiles').textContent;
+            if (distanceText === 'N/A') return 'N/A';
+            
+            const serviceType = document.querySelector('input[name="service-type"]:checked')?.value;
+            if (serviceType === 'round-trip') {
+                const distanceInMiles = parseFloat(distanceText);
+                if (!isNaN(distanceInMiles)) {
+                    return `${(distanceInMiles * 2).toFixed(1)} Miles`;
+                }
+            }
+            return distanceText;
+        }
+
+        /**
+         * Updates the distance display when service type changes
+         */
+        function updateDistanceDisplay() {
+            const distanceElement = document.getElementById('imiles');
+            if (distanceElement && distanceElement.textContent !== 'N/A') {
+                const currentDistance = parseFloat(distanceElement.textContent);
+                if (!isNaN(currentDistance)) {
+                    const serviceType = document.querySelector('input[name="service-type"]:checked')?.value;
+                    if (serviceType === 'round-trip') {
+                        // For round trips, double the displayed distance
+                        distanceElement.textContent = `${(currentDistance * 2).toFixed(1)} Miles`;
+                    } else {
+                        // For other service types, show original distance
+                        const originalDistance = currentDistance / 2; // Reverse the doubling
+                        distanceElement.textContent = `${originalDistance.toFixed(1)} Miles`;
+                    }
+                }
+            }
         }
 
         /**
@@ -1289,7 +1332,7 @@
                 service_type_formatted: serviceType === 'round-trip' ? 'Round-Trip' : serviceType === 'meet-greet' ? 'Meet and Greet' : 'One-Way',
                 pickup_location: document.getElementById('pickup-location').value,
                 dropoff_location: document.getElementById('dropoff-location').value,
-                distance: document.getElementById('imiles')?.textContent || 'N/A',
+                distance: getDisplayDistance(),
                 duration: document.getElementById('trip-duration')?.textContent || 'N/A',
                 total_fare: totalFare,
                 tip: tipAmount > 0 ? `$${tipAmount.toFixed(2)}` : '$0.00',
@@ -1305,6 +1348,14 @@
         const bookingForm = document.getElementById('booking-form');
         bookingForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Validate addresses before allowing submission
+            const addressValidation = await validateAddressesBeforeSubmission();
+            if (!addressValidation.isValid) {
+                showAddressErrorModal(addressValidation.message);
+                return;
+            }
+            
             updateSubmitButton(true);
 
             const formData = new FormData(bookingForm);
@@ -1377,6 +1428,92 @@
             }
         });
 
+        // Validate addresses before form submission
+        async function validateAddressesBeforeSubmission() {
+            const pickupInput = document.getElementById('pickup-location');
+            const dropoffInput = document.getElementById('dropoff-location');
+            
+            const pickupAddress = pickupInput.value.trim();
+            const dropoffAddress = dropoffInput.value.trim();
+            
+            // Check if addresses are empty
+            if (!pickupAddress) {
+                return {
+                    isValid: false,
+                    message: 'Please enter a pickup location.'
+                };
+            }
+            
+            if (!dropoffAddress) {
+                return {
+                    isValid: false,
+                    message: 'Please enter a dropoff location.'
+                };
+            }
+            
+            // Check if addresses have red styling (indicating they're invalid)
+            const pickupHasError = pickupInput.style.borderColor === '#dc2626';
+            const dropoffHasError = dropoffInput.style.borderColor === '#dc2626';
+            
+            // If any address has red styling, it's invalid
+            if (pickupHasError) {
+                return {
+                    isValid: false,
+                    message: 'Please enter a valid pickup address or select from the dropdown.'
+                };
+            }
+            
+            if (dropoffHasError) {
+                return {
+                    isValid: false,
+                    message: 'Please enter a valid dropoff address or select from the dropdown.'
+                };
+            }
+            
+            // If addresses have green styling, they're valid
+            const pickupHasSuccess = pickupInput.style.borderColor === '#10b981';
+            const dropoffHasSuccess = dropoffInput.style.borderColor === '#10b981';
+            
+            if (pickupHasSuccess && dropoffHasSuccess) {
+                return { isValid: true, message: '' };
+            }
+            
+            // For addresses without clear validation status, perform Google API validation
+            try {
+                const pickupValid = await validateAddress(pickupAddress);
+                const dropoffValid = await validateAddress(dropoffAddress);
+                
+                if (!pickupValid) {
+                    // Mark pickup as invalid with red styling
+                    pickupInput.style.borderColor = '#dc2626';
+                    pickupInput.style.backgroundColor = '#fef2f2';
+                    return {
+                        isValid: false,
+                        message: 'Pickup address is not valid. Please check the spelling or select from the dropdown.'
+                    };
+                }
+                
+                if (!dropoffValid) {
+                    // Mark dropoff as invalid with red styling
+                    dropoffInput.style.borderColor = '#dc2626';
+                    dropoffInput.style.backgroundColor = '#fef2f2';
+                    return {
+                        isValid: false,
+                        message: 'Dropoff address is not valid. Please check the spelling or select from the dropdown.'
+                    };
+                }
+                
+                return { isValid: true, message: '' };
+                
+            } catch (error) {
+                console.error('Address validation error during submission:', error);
+                return {
+                    isValid: false,
+                    message: 'Unable to validate addresses. Please try again or select addresses from the dropdown.'
+                };
+            }
+        }
+
         // =================================================================================
         // EMAIL CONFIRMATION WITH EMAILJS
         // =================================================================================
@@ -1403,7 +1540,17 @@
             const pickupInput = document.getElementById('pickup-location');
             if (pickupInput) {
                 const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
-                pickupAutocomplete.addListener('place_changed', calculateFare);
+                pickupAutocomplete.addListener('place_changed', function() {
+                    // Mark as valid when selected from dropdown
+                    pickupInput.style.borderColor = '#10b981'; // Green border
+                    pickupInput.style.backgroundColor = '#f0fdf4'; // Light green background
+                    pickupInput.dataset.validated = 'true';
+                    
+                    // Immediately clear any existing error messages
+                    clearAddressError(pickupInput);
+                    
+                    calculateFare();
+                });
                 
                 // Add manual input handling for pickup location
                 pickupInput.addEventListener('input', debounce(handleManualAddressInput, 1000));
@@ -1414,7 +1561,17 @@
             const dropoffInput = document.getElementById('dropoff-location');
             if (dropoffInput) {
                 const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
-                dropoffAutocomplete.addListener('place_changed', calculateFare);
+                dropoffAutocomplete.addListener('place_changed', function() {
+                    // Mark as valid when selected from dropdown
+                    dropoffInput.style.borderColor = '#10b981'; // Green border
+                    dropoffInput.style.backgroundColor = '#f0fdf4'; // Light green background
+                    dropoffInput.dataset.validated = 'true';
+                    
+                    // Immediately clear any existing error messages
+                    clearAddressError(dropoffInput);
+                    
+                    calculateFare();
+                });
                 
                 // Add manual input handling for dropoff location
                 dropoffInput.addEventListener('input', debounce(handleManualAddressInput, 1000));
@@ -1446,7 +1603,13 @@
         const input = event.target;
         const address = input.value.trim();
         
-        if (address.length < 5) return; // Don't validate very short inputs
+        if (address.length === 0) return; // Don't validate empty inputs
+        
+        // If input is already green (valid), clear any error messages
+        if (input.style.borderColor === '#10b981') {
+            clearAddressError(input);
+            return;
+        }
         
         try {
             // Validate address using Google Geocoding API
@@ -1454,23 +1617,24 @@
             
             if (isValid) {
                 // Remove any previous error styling
-                input.classList.remove('border-red-500', 'bg-red-50');
-                input.classList.add('border-green-500', 'bg-green-50');
+                input.style.borderColor = '';
+                input.style.backgroundColor = '';
+                clearAddressError(input);
                 
                 // Calculate fare with the manually entered address
                 setTimeout(() => calculateFare(), 500);
             } else {
-                // Show error styling
-                input.classList.remove('border-green-500', 'bg-green-50');
-                input.classList.add('border-red-500', 'bg-red-50');
+                // Show error styling with inline styles
+                input.style.borderColor = '#dc2626';
+                input.style.backgroundColor = '#fef2f2';
                 
                 // Show error message
                 showAddressError(input, 'Address not found. Please check the spelling or select from the dropdown.');
             }
         } catch (error) {
             console.error('Address validation error:', error);
-            input.classList.remove('border-green-500', 'bg-green-50');
-            input.classList.add('border-red-500', 'bg-red-50');
+            input.style.borderColor = '#dc2626';
+            input.style.backgroundColor = '#fef2f2';
             showAddressError(input, 'Unable to validate address. Please try again.');
         }
     }
@@ -1480,15 +1644,29 @@
         const input = event.target;
         const address = input.value.trim();
         
-        if (address.length < 5) return;
+        if (address.length === 0) return;
         
-        try {
-            const isValid = await validateAddress(address);
-            if (!isValid) {
-                showAddressError(input, 'Please enter a valid address or select from the dropdown suggestions.');
+        // If input is already green (valid), clear any error messages
+        if (input.style.borderColor === '#10b981') {
+            clearAddressError(input);
+            return;
+        }
+        
+        // Only validate if the input doesn't have green styling
+        if (input.style.borderColor !== '#10b981') {
+            try {
+                const isValid = await validateAddress(address);
+                if (!isValid) {
+                    input.style.borderColor = '#dc2626';
+                    input.style.backgroundColor = '#fef2f2';
+                    showAddressError(input, 'Please enter a valid address or select from the dropdown suggestions.');
+                }
+            } catch (error) {
+                console.error('Address validation error on blur:', error);
+                input.style.borderColor = '#dc2626';
+                input.style.backgroundColor = '#fef2f2';
+                showAddressError(input, 'Unable to validate address. Please try again.');
             }
-        } catch (error) {
-            console.error('Address validation error on blur:', error);
         }
     }
 
@@ -1548,6 +1726,14 @@
         }, 5000);
     }
 
+    // Clear address error message immediately
+    function clearAddressError(input) {
+        const existingError = input.parentNode.querySelector('.address-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
     // Dynamically load Google Maps script to protect API key
     async function initMap() {
       try {
@@ -1579,8 +1765,99 @@
           });
       }
       
+      // Update distance display for initial service type
+      updateDistanceDisplay();
+      
       // ... any other DOMContentLoaded logic for book-a-ride.html
     });
+    </script>
+
+    <!-- Custom Modal for Address Validation Errors -->
+    <div id="address-error-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+            <!-- Modal Header -->
+            <div class="bg-orange-500 text-white p-6 rounded-t-2xl text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold">Address Validation Error</h3>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 text-center">
+                <p id="modal-message" class="text-gray-700 text-lg mb-6 leading-relaxed">
+                    Please enter a valid address or select from the dropdown suggestions.
+                </p>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="modal-close-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                        Got It
+                    </button>
+                    <button id="modal-help-btn" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                        <i data-lucide="phone" class="w-4 h-4 inline mr-2"></i>
+                        Call Us
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function showAddressErrorModal(message) {
+            const modal = document.getElementById('address-error-modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalMessage = document.getElementById('modal-message');
+            
+            // Set the message
+            modalMessage.textContent = message;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            
+            // Animate in
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+        
+        function hideAddressErrorModal() {
+            const modal = document.getElementById('address-error-modal');
+            const modalContent = document.getElementById('modal-content');
+            
+            // Animate out
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            // Hide modal after animation
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+        
+        // Event listeners for modal
+        document.getElementById('modal-close-btn').addEventListener('click', hideAddressErrorModal);
+        document.getElementById('modal-help-btn').addEventListener('click', () => {
+            window.location.href = 'tel:6129995382';
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('address-error-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'address-error-modal') {
+                hideAddressErrorModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideAddressErrorModal();
+            }
+        });
     </script>
 </body>
 </html> 
