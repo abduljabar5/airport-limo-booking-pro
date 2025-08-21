@@ -8,7 +8,7 @@
     <meta name="keywords" content="book limo Minneapolis, reserve taxi Minneapolis, luxury car booking, online limo reservation, Minneapolis transportation booking">
     <meta name="author" content="Minneapolis Luxury Limo">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://minneapolisluxurylimo.com/book-a-ride.html">
+    <link rel="canonical" href="https://totaltowncar.com/book-a-ride.html">
     
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -784,7 +784,8 @@
 
         let lastFareCalculation = {
             base: 0,
-            total: 0
+            total: 0,
+            actualDistance: 0  // Store the actual one-way distance
         };
         
         /**
@@ -846,7 +847,10 @@
                     
                     console.log(`Total route distance: ${totalDistanceInMiles.toFixed(2)} miles`);
                     
-                    // Double distance for round trips
+                    // Store the actual one-way distance
+                    lastFareCalculation.actualDistance = totalDistanceInMiles;
+                    
+                    // Double distance for round trips (for display only)
                     const displayDistance = serviceType === 'round-trip' ? totalDistanceInMiles * 2 : totalDistanceInMiles;
                     document.getElementById('imiles').textContent = `${displayDistance.toFixed(1)} Miles`;
                     
@@ -863,8 +867,15 @@
 
                 } else {
                     console.error('Directions request failed due to ' + status);
+                    // Reset distance and fare when calculation fails
                     document.getElementById('imiles').textContent = 'N/A';
                     document.getElementById('ifare').textContent = '$0.00';
+                    // Reset the stored fare calculations
+                    lastFareCalculation.base = 0;
+                    lastFareCalculation.total = 0;
+                    lastFareCalculation.actualDistance = 0;
+                    // Disable submit button when fare can't be calculated
+                    updateSubmitButton(false, false);
                 }
             });
         }
@@ -892,18 +903,14 @@
          */
         function updateDistanceDisplay() {
             const distanceElement = document.getElementById('imiles');
-            if (distanceElement && distanceElement.textContent !== 'N/A') {
-                const currentDistance = parseFloat(distanceElement.textContent);
-                if (!isNaN(currentDistance)) {
-                    const serviceType = document.querySelector('input[name="service-type"]:checked')?.value;
-                    if (serviceType === 'round-trip') {
-                        // For round trips, double the displayed distance
-                        distanceElement.textContent = `${(currentDistance * 2).toFixed(1)} Miles`;
-                    } else {
-                        // For other service types, show original distance
-                        const originalDistance = currentDistance / 2; // Reverse the doubling
-                        distanceElement.textContent = `${originalDistance.toFixed(1)} Miles`;
-                    }
+            if (distanceElement && distanceElement.textContent !== 'N/A' && lastFareCalculation.actualDistance > 0) {
+                const serviceType = document.querySelector('input[name="service-type"]:checked')?.value;
+                if (serviceType === 'round-trip') {
+                    // For round trips, double the actual distance for display
+                    distanceElement.textContent = `${(lastFareCalculation.actualDistance * 2).toFixed(1)} Miles`;
+                } else {
+                    // For other service types, show the actual distance
+                    distanceElement.textContent = `${lastFareCalculation.actualDistance.toFixed(1)} Miles`;
                 }
             }
         }
@@ -1051,12 +1058,20 @@
 
         function handleFareUpdate() {
             try {
-                const distanceText = document.getElementById('imiles').textContent;
-                const distanceInMiles = parseFloat(distanceText) || 0;
+                // Use the stored actual distance, not the display distance which might be doubled
+                const distanceInMiles = lastFareCalculation.actualDistance || 0;
                 
                 // Base fare is only calculated if we have a distance.
                 if (distanceInMiles > 0) {
-                    lastFareCalculation.base = calculateBaseFare(distanceInMiles);
+                    // Recalculate stop surcharge in case it changed
+                    let stopSurcharge = 0;
+                    const stopDurationSelects = document.querySelectorAll('.stop-duration');
+                    stopDurationSelects.forEach(select => {
+                        const waitTimeMinutes = parseInt(select.value) || 5;
+                        stopSurcharge += waitTimeMinutes; // $1 per minute
+                    });
+                    
+                    lastFareCalculation.base = calculateBaseFare(distanceInMiles) + stopSurcharge;
                 }
                 
                 // Total fare is always updated to reflect changes in tip, payment method, etc.
@@ -1451,67 +1466,22 @@
                 };
             }
             
-            // Check if addresses have red styling (indicating they're invalid)
-            const pickupHasError = pickupInput.style.borderColor === '#dc2626';
-            const dropoffHasError = dropoffInput.style.borderColor === '#dc2626';
-            
-            // If any address has red styling, it's invalid
-            if (pickupHasError) {
-                return {
-                    isValid: false,
-                    message: 'Please enter a valid pickup address or select from the dropdown.'
-                };
-            }
-            
-            if (dropoffHasError) {
-                return {
-                    isValid: false,
-                    message: 'Please enter a valid dropoff address or select from the dropdown.'
-                };
-            }
-            
-            // If addresses have green styling, they're valid
-            const pickupHasSuccess = pickupInput.style.borderColor === '#10b981';
-            const dropoffHasSuccess = dropoffInput.style.borderColor === '#10b981';
-            
-            if (pickupHasSuccess && dropoffHasSuccess) {
+            // Basic check - if both addresses have at least 5 characters, consider them valid
+            // This allows users to type addresses manually without forcing dropdown selection
+            if (pickupAddress.length >= 5 && dropoffAddress.length >= 5) {
+                // Try to calculate fare if not already done
+                const fareText = document.getElementById('ifare').textContent;
+                if (!fareText || fareText === '$0.00') {
+                    calculateFare();
+                }
+                // Don't wait for fare calculation - proceed with submission
                 return { isValid: true, message: '' };
             }
             
-            // For addresses without clear validation status, perform Google API validation
-            try {
-                const pickupValid = await validateAddress(pickupAddress);
-                const dropoffValid = await validateAddress(dropoffAddress);
-                
-                if (!pickupValid) {
-                    // Mark pickup as invalid with red styling
-                    pickupInput.style.borderColor = '#dc2626';
-                    pickupInput.style.backgroundColor = '#fef2f2';
-                    return {
-                        isValid: false,
-                        message: 'Pickup address is not valid. Please check the spelling or select from the dropdown.'
-                    };
-                }
-                
-                if (!dropoffValid) {
-                    // Mark dropoff as invalid with red styling
-                    dropoffInput.style.borderColor = '#dc2626';
-                    dropoffInput.style.backgroundColor = '#fef2f2';
-                    return {
-                        isValid: false,
-                        message: 'Dropoff address is not valid. Please check the spelling or select from the dropdown.'
-                    };
-                }
-                
-                return { isValid: true, message: '' };
-                
-            } catch (error) {
-                console.error('Address validation error during submission:', error);
-                return {
-                    isValid: false,
-                    message: 'Unable to validate addresses. Please try again or select addresses from the dropdown.'
-                };
-            }
+            return {
+                isValid: false,
+                message: 'Please enter complete addresses for pickup and dropoff locations.'
+            };
         }
 
         // =================================================================================
@@ -1541,20 +1511,30 @@
             if (pickupInput) {
                 const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
                 pickupAutocomplete.addListener('place_changed', function() {
-                    // Mark as valid when selected from dropdown
-                    pickupInput.style.borderColor = '#10b981'; // Green border
-                    pickupInput.style.backgroundColor = '#f0fdf4'; // Light green background
-                    pickupInput.dataset.validated = 'true';
-                    
-                    // Immediately clear any existing error messages
+                    // Clear any existing error messages
                     clearAddressError(pickupInput);
                     
                     calculateFare();
                 });
                 
-                // Add manual input handling for pickup location
-                pickupInput.addEventListener('input', debounce(handleManualAddressInput, 1000));
-                pickupInput.addEventListener('blur', handleManualAddressBlur);
+                // Add input handling for pickup location - recalculate fare on change
+                pickupInput.addEventListener('input', debounce(function() {
+                    // Reset fare immediately when user starts typing
+                    document.getElementById('imiles').textContent = 'Calculating...';
+                    document.getElementById('ifare').textContent = 'Calculating...';
+                    
+                    if (pickupInput.value.length > 5 && dropoffInput.value.length > 5) {
+                        calculateFare();
+                    } else {
+                        // Reset if address too short
+                        document.getElementById('imiles').textContent = 'N/A';
+                        document.getElementById('ifare').textContent = '$0.00';
+                        lastFareCalculation.base = 0;
+                        lastFareCalculation.total = 0;
+                        lastFareCalculation.actualDistance = 0;
+                        updateSubmitButton(false, false);
+                    }
+                }, 800));
             }
 
             // Initialize autocomplete for dropoff location
@@ -1562,20 +1542,30 @@
             if (dropoffInput) {
                 const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput, autocompleteOptions);
                 dropoffAutocomplete.addListener('place_changed', function() {
-                    // Mark as valid when selected from dropdown
-                    dropoffInput.style.borderColor = '#10b981'; // Green border
-                    dropoffInput.style.backgroundColor = '#f0fdf4'; // Light green background
-                    dropoffInput.dataset.validated = 'true';
-                    
-                    // Immediately clear any existing error messages
+                    // Clear any existing error messages
                     clearAddressError(dropoffInput);
                     
                     calculateFare();
                 });
                 
-                // Add manual input handling for dropoff location
-                dropoffInput.addEventListener('input', debounce(handleManualAddressInput, 1000));
-                dropoffInput.addEventListener('blur', handleManualAddressBlur);
+                // Add input handling for dropoff location - recalculate fare on change
+                dropoffInput.addEventListener('input', debounce(function() {
+                    // Reset fare immediately when user starts typing
+                    document.getElementById('imiles').textContent = 'Calculating...';
+                    document.getElementById('ifare').textContent = 'Calculating...';
+                    
+                    if (pickupInput.value.length > 5 && dropoffInput.value.length > 5) {
+                        calculateFare();
+                    } else {
+                        // Reset if address too short
+                        document.getElementById('imiles').textContent = 'N/A';
+                        document.getElementById('ifare').textContent = '$0.00';
+                        lastFareCalculation.base = 0;
+                        lastFareCalculation.total = 0;
+                        lastFareCalculation.actualDistance = 0;
+                        updateSubmitButton(false, false);
+                    }
+                }, 800));
             }
             
             addFareCalculationListeners();
@@ -1598,110 +1588,7 @@
         };
     }
 
-    // Handle manual address input for validation and distance calculation
-    async function handleManualAddressInput(event) {
-        const input = event.target;
-        const address = input.value.trim();
-        
-        if (address.length === 0) return; // Don't validate empty inputs
-        
-        // If input is already green (valid), clear any error messages
-        if (input.style.borderColor === '#10b981') {
-            clearAddressError(input);
-            return;
-        }
-        
-        try {
-            // Validate address using Google Geocoding API
-            const isValid = await validateAddress(address);
-            
-            if (isValid) {
-                // Remove any previous error styling
-                input.style.borderColor = '';
-                input.style.backgroundColor = '';
-                clearAddressError(input);
-                
-                // Calculate fare with the manually entered address
-                setTimeout(() => calculateFare(), 500);
-            } else {
-                // Show error styling with inline styles
-                input.style.borderColor = '#dc2626';
-                input.style.backgroundColor = '#fef2f2';
-                
-                // Show error message
-                showAddressError(input, 'Address not found. Please check the spelling or select from the dropdown.');
-            }
-        } catch (error) {
-            console.error('Address validation error:', error);
-            input.style.borderColor = '#dc2626';
-            input.style.backgroundColor = '#fef2f2';
-            showAddressError(input, 'Unable to validate address. Please try again.');
-        }
-    }
-
-    // Handle address input blur for final validation
-    async function handleManualAddressBlur(event) {
-        const input = event.target;
-        const address = input.value.trim();
-        
-        if (address.length === 0) return;
-        
-        // If input is already green (valid), clear any error messages
-        if (input.style.borderColor === '#10b981') {
-            clearAddressError(input);
-            return;
-        }
-        
-        // Only validate if the input doesn't have green styling
-        if (input.style.borderColor !== '#10b981') {
-            try {
-                const isValid = await validateAddress(address);
-                if (!isValid) {
-                    input.style.borderColor = '#dc2626';
-                    input.style.backgroundColor = '#fef2f2';
-                    showAddressError(input, 'Please enter a valid address or select from the dropdown suggestions.');
-                }
-            } catch (error) {
-                console.error('Address validation error on blur:', error);
-                input.style.borderColor = '#dc2626';
-                input.style.backgroundColor = '#fef2f2';
-                showAddressError(input, 'Unable to validate address. Please try again.');
-            }
-        }
-    }
-
-    // Validate address using Google Geocoding API
-    async function validateAddress(address) {
-        return new Promise((resolve) => {
-            if (typeof google === 'undefined' || !google.maps || !google.maps.Geocoder) {
-                // Fallback validation - assume valid if Google Maps not available
-                resolve(true);
-                return;
-            }
-
-            const geocoder = new google.maps.Geocoder();
-            
-            geocoder.geocode({ address: address }, (results, status) => {
-                if (status === 'OK' && results.length > 0) {
-                    const result = results[0];
-                    
-                    // Check if the address is in the Minneapolis area (rough bounds)
-                    const lat = result.geometry.location.lat();
-                    const lng = result.geometry.location.lng();
-                    
-                    const isInMinneapolisArea = lat >= 44.7 && lat <= 45.2 && lng >= -94.0 && lng <= -93.0;
-                    
-                    if (isInMinneapolisArea) {
-                        resolve(true);
-                    } else {
-                        resolve(false);
-                    }
-                } else {
-                    resolve(false);
-                }
-            });
-        });
-    }
+    // Simplified - no validation, just helpers for error display if needed
 
     // Show address error message
     function showAddressError(input, message) {
