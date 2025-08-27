@@ -252,8 +252,7 @@
                                 <div>
                                     <label for="passengers" class="block text-sm font-medium text-slate-700 mb-2">Number of Passengers *</label>
                                     <select id="passengers" name="passengers" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-colors">
-                                        <option value="">Select passengers</option>
-                                        <option value="1">1</option>
+                                        <option value="1" selected>1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
@@ -1123,8 +1122,8 @@
             const maxPassengers = vehiclePassengerLimits[selectedVehicle];
             const currentSelection = passengerSelect.value;
             
-            // Clear existing options except the first one
-            passengerSelect.innerHTML = '<option value="">Select passengers</option>';
+            // Clear existing options
+            passengerSelect.innerHTML = '';
             
             // Add options up to the vehicle limit (matching provided code)
             for (let i = 1; i <= maxPassengers; i++) {
@@ -1132,12 +1131,19 @@
                 option.value = i.toString();
                 option.textContent = i.toString();
                 
-                // Restore previous selection if it's still valid
+                // Restore previous selection if it's still valid, or default to 1
                 if (currentSelection === i.toString()) {
                     option.selected = true;
+                } else if (!currentSelection && i === 1) {
+                    option.selected = true; // Default to 1 passenger
                 }
                 
                 passengerSelect.appendChild(option);
+            }
+            
+            // Ensure we have a default value
+            if (!passengerSelect.value) {
+                passengerSelect.value = '1';
             }
         }
 
