@@ -110,7 +110,7 @@ const EMAIL_TEMPLATES = {
                     <!-- Contact Information -->
                     <div style="text-align: center; margin-top: 40px;">
                         <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 18px;">Need Assistance? We're Here 24/7</h3>
-                        <p style="color: #e4c570; margin: 0; font-size: 22px; font-weight: 600;">(612) 999-5382</p>
+                        <p style="color: #e4c570; margin: 0; font-size: 22px; font-weight: 600;">+1 (612) 999 1462</p>
                         <p style="color: #a0a0a0; margin: 10px 0; font-size: 14px;"><a href="mailto:totaltowncarservice@gmail.com" style="color: #e4c570;">totaltowncarservice@gmail.com</a></p>
                     </div>
                 </div>
@@ -414,7 +414,7 @@ async function sendConfirmationEmails(bookingDetails) {
                         <strong>You must call us to confirm your booking.</strong>
                     </p>
                     <p style="margin: 0; font-size: 18px; font-weight: 600;">
-                        📞 Call us at: <a href="tel:6129995382" style="color: #ffffff; text-decoration: underline;">(612) 999-5382</a>
+                        📞 Call us at: <a href="tel:+16129991462" style="color: #ffffff; text-decoration: underline;">+1 (612) 999 1462</a>
                     </p>
                 </div>`;
         }
