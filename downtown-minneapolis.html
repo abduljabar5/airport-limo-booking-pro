@@ -16,17 +16,14 @@
     <meta name="author" content="Minneapolis Luxury Limo">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://totaltowncar.com/downtown-minneapolis.html">
-    
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11149654120"></script>
-
-    <!-- Google Analytics tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5Y75EN5LWE"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-5Y75EN5LWE');
       gtag('config', 'AW-11149654120');
     </script>
@@ -39,7 +36,12 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "t0mk3hw4bx");
     </script>
-    
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -47,105 +49,180 @@
                 extend: {
                     colors: {
                         gold: {
-                            DEFAULT: 'hsl(45, 100%, 51%)',
-                            500: 'hsl(45, 100%, 51%)',
-                            600: 'hsl(38, 92%, 45%)',
+                            50: '#fefdf8',
+                            100: '#fef9e7',
+                            200: '#fdf0c4',
+                            300: '#fce38a',
+                            400: '#D4AF37',
+                            500: '#C4A030',
+                            600: '#B8960A',
+                            700: '#8B7209',
+                            800: '#6B5807',
+                            900: '#4A3D05',
+                        },
+                        obsidian: {
+                            50: '#f7f7f8',
+                            100: '#eeeef0',
+                            200: '#d9d9dd',
+                            300: '#b8b8bf',
+                            400: '#91919c',
+                            500: '#737380',
+                            600: '#5d5d68',
+                            700: '#4c4c55',
+                            800: '#28282d',
+                            900: '#18181b',
+                            950: '#0a0a0b',
                         }
+                    },
+                    fontFamily: {
+                        'display': ['Cormorant Garamond', 'serif'],
+                        'sans': ['Outfit', 'system-ui', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        'luxe': '0.2em',
                     }
                 }
             }
         }
     </script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/jpeg" href="public/lovable-uploads/ttcs.jpeg">
+    <style>
+        html { scroll-behavior: smooth; }
+        ::selection { background: rgba(212, 175, 55, 0.3); color: #fefdf8; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0b; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #D4AF37, #B8960A); border-radius: 3px; }
+        .header-scrolled { background: rgba(10, 10, 11, 0.95) !important; backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(212, 175, 55, 0.15); }
+        .elegant-link { position: relative; }
+        .elegant-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: linear-gradient(90deg, #D4AF37, transparent); transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .elegant-link:hover::after { width: 100%; }
+        .nav-dropdown { display: none; }
+        .nav-dropdown.show { display: block; }
+    </style>
 </head>
-<body class="min-h-screen bg-background">
+<body class="bg-obsidian-950 text-obsidian-100 font-sans antialiased">
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TV2HRJQP"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TV2HRJQP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
     <!-- Header -->
-    <header class="fixed top-0 w-full bg-black/95 backdrop-blur-sm border-b border-gold/30 z-50">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center space-x-2">
-                    <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service Logo" class="w-12 h-12 rounded-lg object-cover">
-                    <span class="text-xl font-bold text-white">Total Town Car Service</span>
+    <header class="fixed top-0 w-full z-50 transition-all duration-500" id="header">
+        <div class="absolute inset-0 bg-gradient-to-b from-obsidian-950/90 to-obsidian-950/0 pointer-events-none"></div>
+        <nav class="container mx-auto px-6 lg:px-8 relative">
+            <div class="flex items-center justify-between h-20 lg:h-24">
+                <a href="index.html" class="flex items-center gap-4 group">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gold-400/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service" class="relative w-12 h-12 lg:w-14 lg:h-14 rounded-xl object-cover ring-1 ring-white/10">
+                    </div>
+                    <div class="hidden sm:block">
+                        <span class="block text-lg lg:text-xl font-display font-semibold text-white tracking-wide">Total Town Car</span>
+                        <span class="block text-[10px] text-gold-400 tracking-luxe uppercase">Minneapolis</span>
+                    </div>
                 </a>
 
-                <!-- Desktop Navigation -->
-                <nav class="flex items-center space-x-8 max-md:hidden">
-                    <a href="index.html" class="text-gray-300 hover:text-gold transition-colors">Home</a>
-                    <a href="airport-service.html" class="text-gray-300 hover:text-gold transition-colors">Airport Service</a>
-                    <a href="downtown-minneapolis.html" class="text-gold hover:text-yellow-400 transition-colors">Downtown Service</a>
-                    <a href="service-areas.html" class="text-gray-300 hover:text-gold transition-colors">Service Areas</a>
-                    <a href="about.html" class="text-gray-300 hover:text-gold transition-colors">About</a>
-                    <a href="faq.html" class="text-gray-300 hover:text-gold transition-colors">FAQ</a>
-                </nav>
+                <div class="hidden lg:flex items-center gap-10">
+                    <a href="index.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Home</a>
 
-                <!-- Desktop CTAs -->
-                <div class="flex items-center space-x-4 max-md:hidden">
-                    <a href="tel:+16129991462" class="flex items-center space-x-2 text-gray-300 hover:text-gold transition-colors">
-                        <i data-lucide="phone" class="w-4 h-4"></i>
-                        <span>+1 (612) 999 1462</span>
-                    </a>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded">
-                        Book Now
-                    </a>
+                    <!-- Services Dropdown -->
+                    <div class="relative">
+                        <button id="services-dropdown-btn" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300 flex items-center gap-1">
+                            Services
+                            <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div id="services-dropdown" class="nav-dropdown absolute top-full left-0 mt-2 w-56 bg-obsidian-900 border border-white/10 rounded-xl shadow-xl overflow-hidden">
+                            <a href="airport-service.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Airport Transfers</a>
+                            <a href="wedding-transportation.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Wedding Transportation</a>
+                            <a href="corporate-transportation.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Corporate Travel</a>
+                            <a href="prom-homecoming.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Prom & Homecoming</a>
+                            <a href="concert-events.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Concerts & Events</a>
+                            <a href="wine-brewery-tours.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Wine & Brewery Tours</a>
+                            <a href="rochester-mayo-clinic.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Rochester & Mayo Clinic</a>
+                        </div>
+                    </div>
+
+                    <a href="service-areas.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Areas</a>
+                    <a href="about.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">About</a>
+                    <a href="faq.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">FAQ</a>
                 </div>
 
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden text-white">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
+                <div class="flex items-center gap-6">
+                    <a href="tel:+16129995382" class="hidden sm:flex items-center gap-2 text-sm text-obsidian-400 hover:text-gold-400 transition-colors duration-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span class="font-light">(612) 999-5382</span>
+                    </a>
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-obsidian-950 font-medium text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/10 hover:shadow-gold-500/25">
+                        <span>Reserve</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                    <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-gold-400/30 transition-colors" aria-label="Menu">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                </div>
             </div>
+        </nav>
 
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="md:hidden bg-black border-t border-gold/30 hidden">
-                <div class="px-4 py-4 space-y-4">
-                    <a href="index.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Home</a>
-                    <a href="airport-service.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Airport Service</a>
-                    <a href="downtown-minneapolis.html" class="block w-full text-left text-gold hover:text-yellow-400 transition-colors">Downtown Service</a>
-                    <a href="service-areas.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">Service Areas</a>
-                    <a href="about.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">About</a>
-                    <a href="faq.html" class="block w-full text-left text-gray-300 hover:text-gold transition-colors">FAQ</a>
-                    <div class="pt-4 border-t border-gold/30 space-y-3">
-                        <a href="tel:+16129991462" class="flex items-center space-x-2 text-gray-300">
-                            <i data-lucide="phone" class="w-4 h-4"></i>
-                            <span>+1 (612) 999 1462</span>
-                        </a>
-                        <a href="book-a-ride.html" class="block w-full bg-gold hover:bg-gold-600 text-black font-semibold px-4 py-2 rounded text-center">
-                            Book Now
-                        </a>
+        <div id="mobile-menu" class="lg:hidden hidden absolute top-full left-0 w-full bg-obsidian-950/98 backdrop-blur-2xl border-b border-gold-400/10">
+            <div class="container mx-auto px-6 py-8 space-y-1">
+                <a href="index.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">Home</a>
+
+                <!-- Mobile Services Accordion -->
+                <div class="border-b border-white/5">
+                    <button id="mobile-services-btn" class="flex items-center justify-between w-full py-3 text-obsidian-300 hover:text-white font-light tracking-wide transition-colors">
+                        <span>Services</span>
+                        <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="mobile-services-menu" class="hidden pl-4 pb-3 space-y-2">
+                        <a href="airport-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Airport Transfers</a>
+                        <a href="wedding-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Wedding Transportation</a>
+                        <a href="corporate-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Corporate Travel</a>
+                        <a href="prom-homecoming.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Prom & Homecoming</a>
+                        <a href="concert-events.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Concerts & Events</a>
+                        <a href="wine-brewery-tours.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Wine & Brewery Tours</a>
+                        <a href="rochester-mayo-clinic.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Rochester & Mayo Clinic</a>
                     </div>
+                </div>
+
+                <a href="service-areas.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">Service Areas</a>
+                <a href="about.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">About</a>
+                <a href="faq.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide transition-colors">FAQ</a>
+                <div class="pt-6">
+                    <a href="tel:+16129995382" class="flex items-center gap-3 text-gold-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span class="font-medium">(612) 999-5382</span>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="relative min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden pt-16">
-        <div class="absolute inset-0 bg-black/40"></div>
-        
-        <div class="container mx-auto px-4 relative z-10">
+    <section class="relative min-h-[60vh] flex items-center justify-center pt-24 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-obsidian-950 via-obsidian-900 to-obsidian-950"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-gold-900/5 to-transparent"></div>
+        <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-gold-400/[0.03] rounded-full blur-[120px]"></div>
+
+        <div class="container mx-auto px-6 lg:px-8 relative z-10 py-16">
             <div class="text-center max-w-4xl mx-auto">
-                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                    Your Trusted <span class="luxury-text-gradient">Limo and Taxi Service in Downtown Minneapolis</span>
+                <div class="inline-flex items-center gap-3 mb-6">
+                    <div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div>
+                    <span class="text-xs text-gold-400 tracking-luxe uppercase">Downtown Minneapolis</span>
+                    <div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-display font-semibold mb-6 leading-tight">
+                    Your Trusted <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500">Limo and Taxi Service in Downtown Minneapolis</span>
                 </h1>
-                
-                <p class="text-xl md:text-2xl mb-8 text-gray-200 leading-relaxed">
-                    Navigate the heart of Minneapolis in luxury and style. Perfect for corporate events, 
+                <p class="text-xl text-obsidian-400 font-light leading-relaxed max-w-3xl mx-auto mb-10">
+                    Navigate the heart of Minneapolis in luxury and style. Perfect for corporate events,
                     concerts at US Bank Stadium, games at Target Field, and downtown dining experiences.
                 </p>
-                
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105">
-                        Book a Ride to Downtown
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="book-a-ride.html" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/20">
+                        <span>Book a Ride to Downtown</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <a href="tel:+16129991462" class="border-gold text-gold hover:bg-gold hover:text-black border-2 px-8 py-4 text-lg rounded-full transition-all duration-300">
-                        Call +1 (612) 999 1462
+                    <a href="tel:+16129995382" class="inline-flex items-center justify-center gap-2 border border-gold-400/30 text-gold-400 hover:bg-gold-400/10 font-medium px-8 py-4 rounded-full transition-all duration-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span>Call +1 (612) 999 5382</span>
                     </a>
                 </div>
             </div>
@@ -153,113 +230,196 @@
     </section>
 
     <!-- Key Downtown Locations -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Premium Transportation to Key Downtown Locations</h2>
-                <p class="text-lg text-slate-600">Luxury limo and taxi service to Minneapolis' premier destinations</p>
+    <section class="py-20 bg-obsidian-950">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <div class="h-px w-12 bg-gradient-to-r from-transparent to-gold-400/50"></div>
+                    <span class="text-xs text-gold-400 tracking-luxe uppercase">Premier Destinations</span>
+                    <div class="h-px w-12 bg-gradient-to-l from-transparent to-gold-400/50"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-display font-semibold text-white mb-4">Premium Transportation to Key Downtown Locations</h2>
+                <p class="text-lg text-obsidian-400 font-light">Luxury limo and taxi service to Minneapolis' premier destinations</p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
-                    <i data-lucide="building" class="w-16 h-16 text-gold mb-6"></i>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">US Bank Stadium</h3>
-                    <p class="text-slate-600 mb-4">
-                        Luxury transportation to Vikings games, concerts, and major events. Avoid parking hassles 
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- US Bank Stadium -->
+                <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8 hover:border-gold-400/20 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <h3 class="text-xl font-display font-semibold text-white mb-4">US Bank Stadium</h3>
+                    <p class="text-obsidian-400 font-light mb-6">
+                        Luxury transportation to Vikings games, concerts, and major events. Avoid parking hassles
                         and traffic congestion with our premium drop-off and pickup service.
                     </p>
-                    <ul class="text-slate-700 mb-6 space-y-2">
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Event-day scheduling</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Pre-event and post-event service</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Group transportation available</li>
+                    <ul class="text-obsidian-300 mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Event-day scheduling</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Pre-event and post-event service</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Group transportation available</span>
+                        </li>
                     </ul>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg inline-block transition-all duration-300">
-                        Book Stadium Ride
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                        <span>Book Stadium Ride</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
-                
-                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
-                    <i data-lucide="zap" class="w-16 h-16 text-gold mb-6"></i>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Target Field</h3>
-                    <p class="text-slate-600 mb-4">
-                        Minnesota Twins games and special events at Target Field. Skip the parking fees and 
+
+                <!-- Target Field -->
+                <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8 hover:border-gold-400/20 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-display font-semibold text-white mb-4">Target Field</h3>
+                    <p class="text-obsidian-400 font-light mb-6">
+                        Minnesota Twins games and special events at Target Field. Skip the parking fees and
                         crowds with our convenient ballpark transportation service.
                     </p>
-                    <ul class="text-slate-700 mb-6 space-y-2">
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Game-day service</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Corporate outings</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Season ticket holder packages</li>
+                    <ul class="text-obsidian-300 mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Game-day service</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Corporate outings</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Season ticket holder packages</span>
+                        </li>
                     </ul>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg inline-block transition-all duration-300">
-                        Book Baseball Game
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                        <span>Book Baseball Game</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
-                
-                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
-                    <i data-lucide="music" class="w-16 h-16 text-gold mb-6"></i>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">The Armory</h3>
-                    <p class="text-slate-600 mb-4">
-                        Concert and event transportation to Minneapolis' premier music venue. Arrive in style 
+
+                <!-- The Armory -->
+                <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8 hover:border-gold-400/20 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                    </div>
+                    <h3 class="text-xl font-display font-semibold text-white mb-4">The Armory</h3>
+                    <p class="text-obsidian-400 font-light mb-6">
+                        Concert and event transportation to Minneapolis' premier music venue. Arrive in style
                         for concerts, comedy shows, and special performances.
                     </p>
-                    <ul class="text-slate-700 mb-6 space-y-2">
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Concert transportation</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>VIP experience packages</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Late-night pickup service</li>
+                    <ul class="text-obsidian-300 mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Concert transportation</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">VIP experience packages</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Late-night pickup service</span>
+                        </li>
                     </ul>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg inline-block transition-all duration-300">
-                        Book Concert Ride
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                        <span>Book Concert Ride</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
-                
-                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
-                    <i data-lucide="briefcase" class="w-16 h-16 text-gold mb-6"></i>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Convention Centers</h3>
-                    <p class="text-slate-600 mb-4">
-                        Professional transportation to Minneapolis Convention Center and other business venues. 
+
+                <!-- Convention Centers -->
+                <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8 hover:border-gold-400/20 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-display font-semibold text-white mb-4">Convention Centers</h3>
+                    <p class="text-obsidian-400 font-light mb-6">
+                        Professional transportation to Minneapolis Convention Center and other business venues.
                         Perfect for conferences, trade shows, and corporate meetings.
                     </p>
-                    <ul class="text-slate-700 mb-6 space-y-2">
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Corporate accounts</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Multiple daily trips</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Executive car service</li>
+                    <ul class="text-obsidian-300 mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Corporate accounts</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Multiple daily trips</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Executive car service</span>
+                        </li>
                     </ul>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg inline-block transition-all duration-300">
-                        Book Corporate
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                        <span>Book Corporate</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
-                
-                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
-                    <i data-lucide="utensils" class="w-16 h-16 text-gold mb-6"></i>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Fine Dining</h3>
-                    <p class="text-slate-600 mb-4">
-                        Luxury transportation to Minneapolis' finest restaurants and entertainment districts. 
+
+                <!-- Fine Dining -->
+                <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8 hover:border-gold-400/20 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-display font-semibold text-white mb-4">Fine Dining</h3>
+                    <p class="text-obsidian-400 font-light mb-6">
+                        Luxury transportation to Minneapolis' finest restaurants and entertainment districts.
                         Perfect for date nights, business dinners, and special celebrations.
                     </p>
-                    <ul class="text-slate-700 mb-6 space-y-2">
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Restaurant recommendations</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Wait time included</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Multi-stop dining tours</li>
+                    <ul class="text-obsidian-300 mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Restaurant recommendations</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Wait time included</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Multi-stop dining tours</span>
+                        </li>
                     </ul>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg inline-block transition-all duration-300">
-                        Book Dinner Ride
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                        <span>Book Dinner Ride</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
-                
-                <div class="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300 border-t-4 border-gold">
-                    <i data-lucide="bed" class="w-16 h-16 text-gold mb-6"></i>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Downtown Hotels</h3>
-                    <p class="text-slate-600 mb-4">
-                        Premium hotel transportation to Marriott City Center, Hyatt Regency, and other 
+
+                <!-- Downtown Hotels -->
+                <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8 hover:border-gold-400/20 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    </div>
+                    <h3 class="text-xl font-display font-semibold text-white mb-4">Downtown Hotels</h3>
+                    <p class="text-obsidian-400 font-light mb-6">
+                        Premium hotel transportation to Marriott City Center, Hyatt Regency, and other
                         luxury downtown Minneapolis accommodations.
                     </p>
-                    <ul class="text-slate-700 mb-6 space-y-2">
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Hotel partnerships</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>Concierge coordination</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-gold mr-2"></i>VIP guest service</li>
+                    <ul class="text-obsidian-300 mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Hotel partnerships</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">Concierge coordination</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-light">VIP guest service</span>
+                        </li>
                     </ul>
-                    <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg inline-block transition-all duration-300">
-                        Book Hotel Ride
+                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                        <span>Book Hotel Ride</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
             </div>
@@ -267,96 +427,105 @@
     </section>
 
     <!-- Corporate Transportation -->
-    <section class="py-16 bg-slate-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Executive Car Service for Corporate Clients</h2>
-                <p class="text-lg text-slate-600">Professional chauffeured transportation for Minneapolis business professionals</p>
+    <section class="py-20 bg-obsidian-900/20">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <div class="h-px w-12 bg-gradient-to-r from-transparent to-gold-400/50"></div>
+                    <span class="text-xs text-gold-400 tracking-luxe uppercase">Corporate Excellence</span>
+                    <div class="h-px w-12 bg-gradient-to-l from-transparent to-gold-400/50"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-display font-semibold text-white mb-4">Executive Car Service for Corporate Clients</h2>
+                <p class="text-lg text-obsidian-400 font-light">Professional chauffeured transportation for Minneapolis business professionals</p>
             </div>
-            
+
             <div class="max-w-6xl mx-auto">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div>
-                        <h3 class="text-2xl font-bold text-slate-900 mb-6">Why Downtown Minneapolis Businesses Choose Us</h3>
-                        
+                        <h3 class="text-2xl font-display font-semibold text-white mb-8">Why Downtown Minneapolis Businesses Choose Us</h3>
+
                         <div class="space-y-6">
-                            <div class="flex items-start space-x-4">
-                                <div class="flex-shrink-0">
-                                    <i data-lucide="clock" class="w-6 h-6 text-gold"></i>
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-slate-900 mb-2">Punctuality Guaranteed</h4>
-                                    <p class="text-slate-600">Our professional chauffeurs understand the importance of being on time for business meetings and corporate events.</p>
+                                    <h4 class="font-display font-semibold text-white mb-2">Punctuality Guaranteed</h4>
+                                    <p class="text-obsidian-400 font-light text-sm">Our professional chauffeurs understand the importance of being on time for business meetings and corporate events.</p>
                                 </div>
                             </div>
-                            
-                            <div class="flex items-start space-x-4">
-                                <div class="flex-shrink-0">
-                                    <i data-lucide="wifi" class="w-6 h-6 text-gold"></i>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-slate-900 mb-2">Mobile Office Experience</h4>
-                                    <p class="text-slate-600">WiFi-equipped vehicles allow you to stay productive during transit. Take calls, answer emails, and prepare for meetings.</p>
+                                    <h4 class="font-display font-semibold text-white mb-2">Mobile Office Experience</h4>
+                                    <p class="text-obsidian-400 font-light text-sm">WiFi-equipped vehicles allow you to stay productive during transit. Take calls, answer emails, and prepare for meetings.</p>
                                 </div>
                             </div>
-                            
-                            <div class="flex items-start space-x-4">
-                                <div class="flex-shrink-0">
-                                    <i data-lucide="credit-card" class="w-6 h-6 text-gold"></i>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-slate-900 mb-2">Corporate Billing</h4>
-                                    <p class="text-slate-600">Streamlined invoicing and expense reporting. Monthly statements and corporate account management available.</p>
+                                    <h4 class="font-display font-semibold text-white mb-2">Corporate Billing</h4>
+                                    <p class="text-obsidian-400 font-light text-sm">Streamlined invoicing and expense reporting. Monthly statements and corporate account management available.</p>
                                 </div>
                             </div>
-                            
-                            <div class="flex items-start space-x-4">
-                                <div class="flex-shrink-0">
-                                    <i data-lucide="shield-check" class="w-6 h-6 text-gold"></i>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-slate-900 mb-2">Professional Discretion</h4>
-                                    <p class="text-slate-600">Our chauffeurs are trained in confidentiality and professional etiquette, perfect for sensitive business discussions.</p>
+                                    <h4 class="font-display font-semibold text-white mb-2">Professional Discretion</h4>
+                                    <p class="text-obsidian-400 font-light text-sm">Our chauffeurs are trained in confidentiality and professional etiquette, perfect for sensitive business discussions.</p>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="mt-8">
-                            <a href="book-a-ride.html" class="bg-gold hover:bg-yellow-500 text-black font-semibold px-8 py-4 rounded-lg inline-block transition-all duration-300">
-                                Set Up Corporate Account
+
+                        <div class="mt-10">
+                            <a href="book-a-ride.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/20">
+                                <span>Set Up Corporate Account</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                             </a>
                         </div>
                     </div>
-                    
-                    <div class="bg-white shadow-lg rounded-lg p-8">
-                        <h3 class="text-xl font-bold text-slate-900 mb-6 text-center">Popular Corporate Routes</h3>
-                        
+
+                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-8">
+                        <h3 class="text-xl font-display font-semibold text-white mb-8 text-center">Popular Corporate Routes</h3>
+
                         <div class="space-y-4">
-                            <div class="flex justify-between items-center py-2 border-b border-slate-200">
-                                <span class="text-slate-700">MSP Airport ↔ Downtown Minneapolis</span>
-                                <span class="text-gold font-semibold">From $45</span>
+                            <div class="flex justify-between items-center py-3 border-b border-white/[0.04]">
+                                <span class="text-obsidian-300 font-light">MSP Airport ↔ Downtown Minneapolis</span>
+                                <span class="text-gold-400 font-medium">From $45</span>
                             </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-200">
-                                <span class="text-slate-700">Downtown ↔ Bloomington (Mall Area)</span>
-                                <span class="text-gold font-semibold">From $35</span>
+                            <div class="flex justify-between items-center py-3 border-b border-white/[0.04]">
+                                <span class="text-obsidian-300 font-light">Downtown ↔ Bloomington (Mall Area)</span>
+                                <span class="text-gold-400 font-medium">From $35</span>
                             </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-200">
-                                <span class="text-slate-700">Downtown ↔ Edina Business District</span>
-                                <span class="text-gold font-semibold">From $40</span>
+                            <div class="flex justify-between items-center py-3 border-b border-white/[0.04]">
+                                <span class="text-obsidian-300 font-light">Downtown ↔ Edina Business District</span>
+                                <span class="text-gold-400 font-medium">From $40</span>
                             </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-200">
-                                <span class="text-slate-700">Downtown ↔ Minnetonka Corporate</span>
-                                <span class="text-gold font-semibold">From $50</span>
+                            <div class="flex justify-between items-center py-3 border-b border-white/[0.04]">
+                                <span class="text-obsidian-300 font-light">Downtown ↔ Minnetonka Corporate</span>
+                                <span class="text-gold-400 font-medium">From $50</span>
                             </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-200">
-                                <span class="text-slate-700">Hourly Corporate Charter</span>
-                                <span class="text-gold font-semibold">From $75/hr</span>
+                            <div class="flex justify-between items-center py-3 border-b border-white/[0.04]">
+                                <span class="text-obsidian-300 font-light">Hourly Corporate Charter</span>
+                                <span class="text-gold-400 font-medium">From $75/hr</span>
                             </div>
                         </div>
-                        
-                        <div class="mt-6 text-center">
-                            <p class="text-sm text-slate-600 mb-4">*Rates include taxes and standard gratuity</p>
-                            <a href="book-a-ride.html" class="text-gold hover:text-yellow-600 font-semibold">Get Custom Quote →</a>
+
+                        <div class="mt-8 text-center">
+                            <p class="text-xs text-obsidian-500 mb-4">*Rates include taxes and standard gratuity</p>
+                            <a href="book-a-ride.html" class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 font-medium transition-colors">
+                                <span>Get Custom Quote</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -365,76 +534,77 @@
     </section>
 
     <!-- Benefits Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Skip the Parking and Traffic Hassles</h2>
-                <p class="text-lg text-slate-600">Experience the convenience and luxury of professional transportation</p>
+    <section class="py-20 bg-obsidian-950">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <div class="h-px w-12 bg-gradient-to-r from-transparent to-gold-400/50"></div>
+                    <span class="text-xs text-gold-400 tracking-luxe uppercase">Your Advantage</span>
+                    <div class="h-px w-12 bg-gradient-to-l from-transparent to-gold-400/50"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-display font-semibold text-white mb-4">Skip the Parking and Traffic Hassles</h2>
+                <p class="text-lg text-obsidian-400 font-light">Experience the convenience and luxury of professional transportation</p>
             </div>
-            
+
             <div class="max-w-4xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-6">
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 bg-gold/20 p-3 rounded-full">
-                                <i data-lucide="car" class="w-6 h-6 text-gold"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-slate-900 mb-2">No Parking Fees</h3>
-                                <p class="text-slate-600">Save money on expensive downtown parking rates. Event parking at US Bank Stadium and Target Field can cost $20-40.</p>
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                         </div>
-                        
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 bg-gold/20 p-3 rounded-full">
-                                <i data-lucide="navigation" class="w-6 h-6 text-gold"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-slate-900 mb-2">Skip Traffic Stress</h3>
-                                <p class="text-slate-600">Let our professional chauffeurs handle downtown traffic and construction. Relax and arrive refreshed.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 bg-gold/20 p-3 rounded-full">
-                                <i data-lucide="glass-water" class="w-6 h-6 text-gold"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-slate-900 mb-2">Pre-Event Relaxation</h3>
-                                <p class="text-slate-600">Start your evening in luxury. Complimentary beverages and a smooth ride set the perfect mood.</p>
-                            </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-white mb-2">No Parking Fees</h3>
+                            <p class="text-obsidian-400 font-light text-sm">Save money on expensive downtown parking rates. Event parking at US Bank Stadium and Target Field can cost $20-40.</p>
                         </div>
                     </div>
-                    
-                    <div class="space-y-6">
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 bg-gold/20 p-3 rounded-full">
-                                <i data-lucide="shield-check" class="w-6 h-6 text-gold"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-slate-900 mb-2">Safe & Secure</h3>
-                                <p class="text-slate-600">Professional, licensed chauffeurs ensure your safety. No concerns about designated drivers or ride availability.</p>
-                            </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
                         </div>
-                        
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 bg-gold/20 p-3 rounded-full">
-                                <i data-lucide="users" class="w-6 h-6 text-gold"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-slate-900 mb-2">Group Transportation</h3>
-                                <p class="text-slate-600">Keep your group together with our luxury SUVs and executive vans. Perfect for corporate outings and special events.</p>
-                            </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-white mb-2">Skip Traffic Stress</h3>
+                            <p class="text-obsidian-400 font-light text-sm">Let our professional chauffeurs handle downtown traffic and construction. Relax and arrive refreshed.</p>
                         </div>
-                        
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 bg-gold/20 p-3 rounded-full">
-                                <i data-lucide="star" class="w-6 h-6 text-gold"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-slate-900 mb-2">VIP Treatment</h3>
-                                <p class="text-slate-600">Make an impression with luxury transportation. Perfect for client entertainment and special occasions.</p>
-                            </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-white mb-2">Pre-Event Relaxation</h3>
+                            <p class="text-obsidian-400 font-light text-sm">Start your evening in luxury. Complimentary beverages and a smooth ride set the perfect mood.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-white mb-2">Safe & Secure</h3>
+                            <p class="text-obsidian-400 font-light text-sm">Professional, licensed chauffeurs ensure your safety. No concerns about designated drivers or ride availability.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-white mb-2">Group Transportation</h3>
+                            <p class="text-obsidian-400 font-light text-sm">Keep your group together with our luxury SUVs and executive vans. Perfect for corporate outings and special events.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-semibold text-white mb-2">VIP Treatment</h3>
+                            <p class="text-obsidian-400 font-light text-sm">Make an impression with luxury transportation. Perfect for client entertainment and special occasions.</p>
                         </div>
                     </div>
                 </div>
@@ -443,56 +613,121 @@
     </section>
 
     <!-- Event Calendar -->
-    <section class="py-16 bg-slate-100">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Popular Downtown Minneapolis Events</h2>
-                <p class="text-lg text-slate-600">We provide luxury transportation to all major Minneapolis events and venues</p>
+    <section class="py-20 bg-obsidian-900/20">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <div class="h-px w-12 bg-gradient-to-r from-transparent to-gold-400/50"></div>
+                    <span class="text-xs text-gold-400 tracking-luxe uppercase">Events & Venues</span>
+                    <div class="h-px w-12 bg-gradient-to-l from-transparent to-gold-400/50"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-display font-semibold text-white mb-4">Popular Downtown Minneapolis Events</h2>
+                <p class="text-lg text-obsidian-400 font-light">We provide luxury transportation to all major Minneapolis events and venues</p>
             </div>
-            
+
             <div class="max-w-4xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white shadow-lg rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-slate-900 mb-4">Sports Events</h3>
-                        <ul class="space-y-2 text-slate-700">
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Minnesota Vikings (US Bank Stadium)</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Minnesota Twins (Target Field)</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Minnesota Timberwolves (Target Center)</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Minnesota Lynx (Target Center)</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>University of Minnesota Gophers</li>
+                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6 hover:border-gold-400/20 transition-all duration-300">
+                        <h3 class="text-lg font-display font-semibold text-white mb-4">Sports Events</h3>
+                        <ul class="space-y-3 text-obsidian-300">
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Minnesota Vikings (US Bank Stadium)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Minnesota Twins (Target Field)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Minnesota Timberwolves (Target Center)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Minnesota Lynx (Target Center)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">University of Minnesota Gophers</span>
+                            </li>
                         </ul>
                     </div>
-                    
-                    <div class="bg-white shadow-lg rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-slate-900 mb-4">Entertainment</h3>
-                        <ul class="space-y-2 text-slate-700">
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Concerts at The Armory</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>State Theatre performances</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Orpheum Theatre shows</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>First Avenue concerts</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Target Center concerts</li>
+
+                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6 hover:border-gold-400/20 transition-all duration-300">
+                        <h3 class="text-lg font-display font-semibold text-white mb-4">Entertainment</h3>
+                        <ul class="space-y-3 text-obsidian-300">
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Concerts at The Armory</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">State Theatre performances</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Orpheum Theatre shows</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">First Avenue concerts</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Target Center concerts</span>
+                            </li>
                         </ul>
                     </div>
-                    
-                    <div class="bg-white shadow-lg rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-slate-900 mb-4">Business Events</h3>
-                        <ul class="space-y-2 text-slate-700">
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Minneapolis Convention Center</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Corporate headquarters meetings</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Hotel conference events</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Trade shows and exhibitions</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Networking events</li>
+
+                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6 hover:border-gold-400/20 transition-all duration-300">
+                        <h3 class="text-lg font-display font-semibold text-white mb-4">Business Events</h3>
+                        <ul class="space-y-3 text-obsidian-300">
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Minneapolis Convention Center</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Corporate headquarters meetings</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Hotel conference events</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Trade shows and exhibitions</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Networking events</span>
+                            </li>
                         </ul>
                     </div>
-                    
-                    <div class="bg-white shadow-lg rounded-lg p-6">
-                        <h3 class="text-xl font-bold text-slate-900 mb-4">Special Occasions</h3>
-                        <ul class="space-y-2 text-slate-700">
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Wedding venues and receptions</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Anniversary dinners</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Birthday celebrations</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Prom and homecoming</li>
-                            <li class="flex items-center"><i data-lucide="circle" class="w-2 h-2 text-gold mr-3"></i>Bachelor/bachelorette parties</li>
+
+                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6 hover:border-gold-400/20 transition-all duration-300">
+                        <h3 class="text-lg font-display font-semibold text-white mb-4">Special Occasions</h3>
+                        <ul class="space-y-3 text-obsidian-300">
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Wedding venues and receptions</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Anniversary dinners</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Birthday celebrations</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Prom and homecoming</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400 mr-3"></span>
+                                <span class="font-light text-sm">Bachelor/bachelorette parties</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -501,17 +736,21 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 bg-gradient-to-r from-gold to-yellow-500">
-        <div class="container mx-auto px-4">
-            <div class="text-center">
-                <h2 class="text-3xl md:text-4xl font-bold text-black mb-4">Ready to Experience Downtown Minneapolis in Luxury?</h2>
-                <p class="text-lg text-black mb-8">Book your premium downtown transportation today and skip the parking hassles.</p>
+    <section class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-gold-600/20 via-gold-500/10 to-obsidian-950"></div>
+        <div class="absolute inset-0 bg-obsidian-950/80"></div>
+        <div class="container mx-auto px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-6">Ready to Experience Downtown Minneapolis in Luxury?</h2>
+                <p class="text-lg text-obsidian-300 font-light mb-10">Book your premium downtown transportation today and skip the parking hassles.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="book-a-ride.html" class="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105">
-                        Book a Ride to Downtown
+                    <a href="book-a-ride.html" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/20">
+                        <span>Book a Ride to Downtown</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <a href="tel:+16129991462" class="border-2 border-black text-black hover:bg-black hover:text-white font-semibold px-8 py-4 text-lg rounded-full transition-all duration-300">
-                        Call +1 (612) 999 1462
+                    <a href="tel:+16129995382" class="inline-flex items-center justify-center gap-2 border border-gold-400/30 text-gold-400 hover:bg-gold-400/10 font-medium px-8 py-4 rounded-full transition-all duration-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span>Call +1 (612) 999 5382</span>
                     </a>
                 </div>
             </div>
@@ -519,101 +758,139 @@
     </section>
 
     <!-- CTA Booking Section -->
-    <section class="py-16 bg-slate-900">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+    <section class="py-20 bg-obsidian-900/30">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-4">
                     Book Your Downtown Ride
                 </h2>
-                <p class="text-lg text-slate-300 mb-8">
+                <p class="text-lg text-obsidian-400 font-light mb-10">
                     Whether for business or leisure, Total Town Car Service provides reliable and luxurious transportation in downtown Minneapolis.
                 </p>
-                <a href="book-a-ride.html"
-                    class="bg-gold hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 hover:scale-105">
-                    Reserve Your Car
+                <a href="book-a-ride.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/20">
+                    <span>Reserve Your Car</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black text-white py-12 border-t border-gold/30">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-2">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-lg flex items-center justify-center">
-                            <span class="text-black font-bold text-sm">ML</span>
-                        </div>
-                        <span class="text-xl font-bold">Minneapolis Luxury Limo</span>
-                    </div>
-                    <p class="text-gray-300 mb-4 max-w-md">
-                        Your premier luxury transportation service in the Twin Cities. Professional, reliable, and comfortable rides to anywhere you need to go.
-                    </p>
+    <footer class="bg-obsidian-950 border-t border-white/[0.04] py-16">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12 mb-12">
+                <div class="col-span-2">
+                    <a href="index.html" class="flex items-center gap-3 mb-4">
+                        <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car" class="w-10 h-10 rounded-xl object-cover ring-1 ring-white/10">
+                        <span class="text-lg font-display font-semibold text-white">Total Town Car</span>
+                    </a>
+                    <p class="text-obsidian-500 font-light mb-4 max-w-xs">Minneapolis' premier executive car service. Professional chauffeurs, impeccable vehicles, 24/7 availability.</p>
                     <div class="space-y-2">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
-                            <a href="tel:+16129991462" class="text-gray-300 hover:text-gold transition-colors">+1 (612) 999 1462</a>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="mail" class="w-4 h-4 text-gold"></i>
-                            <a href="mailto:totaltowncarservice@gmail.com" class="text-gray-300 hover:text-gold transition-colors">totaltowncarservice@gmail.com</a>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-gold"></i>
-                            <span class="text-gray-300">Minneapolis, MN 55401</span>
-                        </div>
+                        <a href="tel:+16129995382" class="flex items-center gap-2 text-obsidian-400 hover:text-gold-400 transition-colors text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            <span>(612) 999-5382</span>
+                        </a>
+                        <a href="mailto:totaltowncarservice@gmail.com" class="flex items-center gap-2 text-obsidian-400 hover:text-gold-400 transition-colors text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <span>totaltowncarservice@gmail.com</span>
+                        </a>
                     </div>
                 </div>
-
                 <div>
-                    <h3 class="text-lg font-semibold mb-4 text-gold">Downtown Services</h3>
+                    <h4 class="text-xs text-obsidian-400 tracking-luxe uppercase mb-4">Services</h4>
                     <ul class="space-y-2">
-                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">US Bank Stadium</a></li>
-                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Target Field</a></li>
-                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Corporate Transportation</a></li>
-                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Convention Center</a></li>
+                        <li><a href="airport-service.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Airport Transfers</a></li>
+                        <li><a href="downtown-minneapolis.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Corporate Travel</a></li>
+                        <li><a href="book-a-ride.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Wedding Transport</a></li>
+                        <li><a href="book-a-ride.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Hourly Charter</a></li>
                     </ul>
                 </div>
-
                 <div>
-                    <h3 class="text-lg font-semibold mb-4 text-gold">Quick Links</h3>
+                    <h4 class="text-xs text-obsidian-400 tracking-luxe uppercase mb-4">Service Areas</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-300 hover:text-gold transition-colors">Home</a></li>
-                        <li><a href="airport-service.html" class="text-gray-300 hover:text-gold transition-colors">Airport Service</a></li>
-                        <li><a href="service-areas.html" class="text-gray-300 hover:text-gold transition-colors">Service Areas</a></li>
-                        <li><a href="book-a-ride.html" class="text-gray-300 hover:text-gold transition-colors">Book a Ride</a></li>
+                        <li><a href="service-areas.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Minneapolis</a></li>
+                        <li><a href="service-areas.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">St. Paul</a></li>
+                        <li><a href="service-areas.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Bloomington</a></li>
+                        <li><a href="service-areas.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">View All</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs text-obsidian-400 tracking-luxe uppercase mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">About Us</a></li>
+                        <li><a href="faq.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs text-obsidian-400 tracking-luxe uppercase mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="terms.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="text-sm text-obsidian-500 hover:text-gold-400 transition-colors">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
-
-            <div class="border-t border-gold/30 mt-8 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-gray-400 text-sm">
-                        © 2024 Minneapolis Luxury Limo. All rights reserved. Licensed & Insured.
-                    </div>
-                    <div class="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" class="text-gray-400 hover:text-gold text-sm transition-colors">Privacy Policy</a>
-                        <a href="#" class="text-gray-400 hover:text-gold text-sm transition-colors">Terms of Service</a>
-                    </div>
+            <div class="pt-8 border-t border-white/[0.04] flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-obsidian-600">© 2026 Total Town Car Service. All rights reserved. Licensed & Insured.</p>
+                <div class="flex gap-4">
+                    <a href="terms.html" class="text-xs text-obsidian-500 hover:text-gold-400 transition-colors">Terms</a>
+                    <a href="privacy.html" class="text-xs text-obsidian-500 hover:text-gold-400 transition-colors">Privacy</a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Sticky Mobile CTA Bar -->
+    <div class="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-obsidian-950/95 backdrop-blur-lg border-t border-white/10 p-4" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+        <div class="flex gap-3 max-w-lg mx-auto">
+            <a href="book-a-ride.html" class="flex-1 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold py-3.5 rounded-xl transition-all text-center shadow-lg shadow-gold-500/20">
+                Book Now
+            </a>
+            <a href="tel:+16129995382" class="flex items-center justify-center gap-2 bg-obsidian-800 hover:bg-obsidian-700 text-white font-medium py-3.5 px-5 rounded-xl transition-all border border-white/10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+                <span>Call</span>
+            </a>
+        </div>
+    </div>
+    <style>@media (max-width: 1023px) { footer { padding-bottom: 100px !important; } }</style>
+
     <script>
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('mobile-menu-button').addEventListener('click', function() {
-                const mobileMenu = document.getElementById('mobile-menu');
-                mobileMenu.classList.toggle('hidden');
-            });
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) { header.classList.add('header-scrolled'); }
+            else { header.classList.remove('header-scrolled'); }
+        });
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn?.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+
+        // Mobile Services Accordion
+        document.getElementById('mobile-services-btn')?.addEventListener('click', function() {
+            const menu = document.getElementById('mobile-services-menu');
+            const icon = this.querySelector('svg');
+            menu?.classList.toggle('hidden');
+            icon?.classList.toggle('rotate-180');
         });
 
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+        // Desktop Services Dropdown (click-based)
+        document.getElementById('services-dropdown-btn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('services-dropdown');
+            const icon = this.querySelector('svg');
+            dropdown?.classList.toggle('show');
+            icon?.classList.toggle('rotate-180');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('services-dropdown');
+            const btn = document.getElementById('services-dropdown-btn');
+            if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+                btn.querySelector('svg')?.classList.remove('rotate-180');
+            }
+        });
     </script>
 </body>
-</html> 
+</html>

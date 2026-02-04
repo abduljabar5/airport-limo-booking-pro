@@ -1,53 +1,102 @@
-import stripe from 'stripe';
+import Stripe from 'stripe';
 
-const stripeClient = stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const handler = async (event) => {
-  // We're only allowing POST requests to this function
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
-    const { amount, customer_email, success_url, cancel_url } = JSON.parse(event.body);
+    const booking = JSON.parse(event.body);
 
-    // Basic validation
-    if (typeof amount !== 'number' || amount <= 0 || !customer_email) {
-      return { statusCode: 400, body: 'Invalid request body' };
+    // Validate required fields
+    if (!booking.amount || !booking.email) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
     }
 
-    // Create a Checkout Session with the amount and description
-    const session = await stripeClient.checkout.sessions.create({
+    // Generate confirmation number
+    const confirmationNumber = 'TTC-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+    // Build success URL with booking data for confirmation page
+    const bookingParams = new URLSearchParams({
+      confirmation: confirmationNumber,
+      paid: 'true'
+    });
+
+    const successUrl = `${booking.success_url}?${bookingParams.toString()}`;
+
+    // Build product description with upsells
+    const upsellParts = [];
+    if (booking.roundTrip) upsellParts.push('Round Trip');
+    if (booking.meetAndGreet) upsellParts.push('Meet & Greet');
+    const upsellText = upsellParts.length ? ` (${upsellParts.join(', ')})` : '';
+
+    // Create Stripe Checkout Session
+    const session = await stripe.checkout.sessions.create({
       line_items: [{
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Limo Ride Booking',
-            description: 'Book a limo ride for your next event.',
+            name: `${booking.vehicle || 'Sedan'} - Airport Transfer${upsellText}`,
+            description: `${booking.pickup} → ${booking.dropoff} on ${booking.date} at ${booking.time}`,
           },
-          unit_amount: amount, // Amount is already in cents from the client
+          unit_amount: booking.amount, // Amount in cents
         },
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: success_url,
-      cancel_url: cancel_url,
-      customer_email: customer_email,
+      success_url: successUrl,
+      cancel_url: booking.cancel_url,
+      customer_email: booking.email,
+      metadata: {
+        confirmationNumber,
+        customerName: booking.name,
+        customerPhone: booking.phone,
+        customerEmail: booking.email,
+        pickup: booking.pickup,
+        dropoff: booking.dropoff,
+        date: booking.date,
+        time: booking.time,
+        vehicle: booking.vehicle,
+        passengers: booking.passengers,
+        flight: booking.flight || '',
+        notes: booking.notes || '',
+        baseFare: booking.baseFare,
+        roundTrip: booking.roundTrip ? 'true' : 'false',
+        roundTripDiscount: booking.roundTripDiscount || 0,
+        returnDate: booking.returnDate || '',
+        returnTime: booking.returnTime || '',
+        meetAndGreet: booking.meetAndGreet ? 'true' : 'false',
+        meetAndGreetPrice: booking.meetAndGreetPrice || 0,
+        discount: booking.discount || 0,
+        promoCode: booking.promoCode || '',
+        tip: booking.tip,
+        total: booking.total
+      },
       payment_intent_data: {
-        description: `Limo ride for ${customer_email}`,
+        description: `TTC Booking: ${booking.name} - ${booking.date}`,
         metadata: {
-          customer_email: customer_email,
-          service_date: new Date().toISOString(),
+          confirmationNumber,
+          customer: booking.name,
+          phone: booking.phone
         }
       },
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ url: session.url }), // Return the session URL
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: session.url,
+        confirmationNumber
+      }),
     };
   } catch (error) {
-    console.error('Error creating Stripe session:', error);
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    console.error('Stripe session error:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
   }
-}; 
+};
