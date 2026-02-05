@@ -16,7 +16,7 @@ export const handler = async (event) => {
 
     // Owner details
     const OWNER_EMAIL = 'abduljabar.nur.5@gmail.com';
-    const OWNER_PHONE = '+16128367123';
+    const OWNER_PHONE = '+16129995382';
     const FROM_EMAIL = 'bookings@totaltowncar.com';
     const FROM_NAME = 'Total Town Car Service';
     const TWILIO_FROM = '+16129991462';
