@@ -1,5 +1,130 @@
-// Process Booking - Sends email and SMS confirmations
-// Uses Mailjet for emails, Twilio for SMS
+// Process Booking - Sends email, SMS, calendar events, reminders, and review requests
+// Uses Resend for emails, Twilio for SMS, Google Calendar API for events
+import crypto from 'crypto';
+
+// ========================================
+// UTILITY FUNCTIONS
+// ========================================
+
+function parseBookingDateTime(dateStr, timeStr) {
+  const months = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
+  const datePart = dateStr.replace(/^[A-Za-z]+,\s*/, '');
+  const dateMatch = datePart.match(/([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
+  if (!dateMatch) return null;
+  const timeMatch = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!timeMatch) return null;
+  let hours = parseInt(timeMatch[1], 10);
+  const minutes = parseInt(timeMatch[2], 10);
+  const period = timeMatch[3].toUpperCase();
+  if (period === 'PM' && hours !== 12) hours += 12;
+  if (period === 'AM' && hours === 12) hours = 0;
+  return new Date(parseInt(dateMatch[3], 10), months[dateMatch[1]], parseInt(dateMatch[2], 10), hours, minutes, 0);
+}
+
+function centralToUTCISO(localDate) {
+  const year = localDate.getFullYear();
+  const marchSecondSunday = new Date(year, 2, 1);
+  marchSecondSunday.setDate(1 + (7 - marchSecondSunday.getDay()) % 7 + 7);
+  const novFirstSunday = new Date(year, 10, 1);
+  novFirstSunday.setDate(1 + (7 - novFirstSunday.getDay()) % 7);
+  const isDST = localDate >= marchSecondSunday && localDate < novFirstSunday;
+  const offsetHours = isDST ? 5 : 6;
+  const utc = new Date(localDate.getTime() + offsetHours * 60 * 60 * 1000);
+  return utc.toISOString();
+}
+
+function createGoogleJWT(serviceAccount) {
+  const now = Math.floor(Date.now() / 1000);
+  const header = { alg: 'RS256', typ: 'JWT' };
+  const payload = { iss: serviceAccount.client_email, scope: 'https://www.googleapis.com/auth/calendar.events', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 };
+  const encode = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
+  const unsignedToken = `${encode(header)}.${encode(payload)}`;
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.update(unsignedToken);
+  const signature = sign.sign(serviceAccount.private_key, 'base64url');
+  return `${unsignedToken}.${signature}`;
+}
+
+async function getGoogleAccessToken(serviceAccount) {
+  const jwt = createGoogleJWT(serviceAccount);
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: jwt })
+  });
+  if (!response.ok) throw new Error(`Google OAuth failed: ${await response.text()}`);
+  const data = await response.json();
+  return data.access_token;
+}
+
+async function createCalendarEvent(accessToken, booking, estimatedMinutes) {
+  const bookingDate = parseBookingDateTime(booking.date, booking.time);
+  if (!bookingDate) throw new Error('Could not parse booking date/time');
+  const endDate = new Date(bookingDate.getTime() + estimatedMinutes * 60 * 1000);
+  const pad = (n) => String(n).padStart(2, '0');
+  const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+  const event = {
+    summary: `🚗 ${booking.name} - ${booking.pickup} → ${booking.dropoff}`,
+    description: [
+      `Confirmation: ${booking.confirmationNumber}`,
+      `Customer: ${booking.name}`,
+      `Phone: ${booking.phone}`,
+      `Email: ${booking.email}`,
+      `Vehicle: ${booking.vehicle}`,
+      `Passengers: ${booking.passengers || '1'}`,
+      `Fare: $${booking.total}`,
+      `Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Pay Driver'}`,
+      booking.flight ? `Flight: ${booking.flight}` : '',
+      booking.notes ? `Notes: ${booking.notes}` : ''
+    ].filter(Boolean).join('\n'),
+    location: booking.pickup,
+    start: { dateTime: fmt(bookingDate), timeZone: 'America/Chicago' },
+    end: { dateTime: fmt(endDate), timeZone: 'America/Chicago' },
+    reminders: { useDefault: false, overrides: [{ method: 'popup', minutes: 60 }, { method: 'popup', minutes: 1440 }] }
+  };
+
+  const calendarId = 'totaltowncarservice@gmail.com';
+  const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(event)
+  });
+  if (!response.ok) throw new Error(`Calendar API failed: ${await response.text()}`);
+  return await response.json();
+}
+
+function generateCalendarLink(booking, estimatedMinutes) {
+  const bookingDate = parseBookingDateTime(booking.date, booking.time);
+  if (!bookingDate) return '';
+  const endDate = new Date(bookingDate.getTime() + estimatedMinutes * 60 * 1000);
+  const pad = (n) => String(n).padStart(2, '0');
+  const fmt = (d) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  const text = encodeURIComponent(`Town Car Service - ${booking.pickup} → ${booking.dropoff}`);
+  const dates = `${fmt(bookingDate)}/${fmt(endDate)}`;
+  const details = encodeURIComponent(`Confirmation: ${booking.confirmationNumber}\nVehicle: ${booking.vehicle}\nPickup: ${booking.pickup}\nDropoff: ${booking.dropoff}\nTotal: $${booking.total}\n\nQuestions? Call (612) 999-5382`);
+  const location = encodeURIComponent(booking.pickup);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}&location=${location}&ctz=America/Chicago`;
+}
+
+async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to, body, sendAt) {
+  const twilioAuth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+  const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+    method: 'POST',
+    headers: { 'Authorization': `Basic ${twilioAuth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ MessagingServiceSid: messagingServiceSid, To: to, Body: body, ScheduleType: 'fixed', SendAt: sendAt })
+  });
+  return response.ok ? 'scheduled' : 'failed';
+}
+
+async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subject, html, scheduledAt) {
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: `${fromName} <${fromEmail}>`, to: [toEmail], subject, html, scheduled_at: scheduledAt })
+  });
+  return response.ok ? 'scheduled' : 'failed';
+}
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -15,7 +140,7 @@ export const handler = async (event) => {
     }
 
     // Owner details
-    const OWNER_EMAIL = 'abduljabar.nur.5@gmail.com';
+    const OWNER_EMAIL = 'totaltowncarservice@gmail.com';
     const OWNER_PHONE = '+16129995382';
     const FROM_EMAIL = 'bookings@totaltowncar.com';
     const FROM_NAME = 'Total Town Car Service';
@@ -52,41 +177,41 @@ export const handler = async (event) => {
     const dropoffLinkShort = 'https://maps.google.com/?q=' + encodeURIComponent(booking.dropoff);
 
     // Results tracking
-    const results = { email: null, sms: null };
+    const results = { email: null, sms: null, calendar: null, reminders: null };
+
+    // Generate calendar link for customer email
+    const calendarLink = generateCalendarLink(booking, estimatedMinutes);
 
     // ========================================
-    // SEND EMAILS VIA MAILJET
+    // SEND EMAILS VIA RESEND
     // ========================================
-    if (process.env.MAILJET_API_KEY && process.env.MAILJET_SECRET_KEY) {
-      const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet);
+    if (process.env.RESEND_API_KEY) {
+      const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet, calendarLink);
       const ownerHtml = generateOwnerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet);
 
-      const mailjetBody = {
-        Messages: [
-          {
-            From: { Email: FROM_EMAIL, Name: FROM_NAME },
-            To: [{ Email: booking.email, Name: booking.name }],
-            Subject: `Booking Confirmation - ${booking.date}`,
-            HTMLPart: customerHtml
-          },
-          {
-            From: { Email: FROM_EMAIL, Name: FROM_NAME },
-            To: [{ Email: OWNER_EMAIL, Name: 'Total Town Car Service' }],
-            Subject: `NEW BOOKING - ${booking.name} - ${booking.date}`,
-            HTMLPart: ownerHtml
-          }
-        ]
-      };
+      const resendBody = [
+        {
+          from: `${FROM_NAME} <${FROM_EMAIL}>`,
+          to: [booking.email],
+          subject: `Booking Confirmation - ${booking.date}`,
+          html: customerHtml
+        },
+        {
+          from: `${FROM_NAME} <${FROM_EMAIL}>`,
+          to: [OWNER_EMAIL],
+          subject: `NEW BOOKING - ${booking.name} - ${booking.date}`,
+          html: ownerHtml
+        }
+      ];
 
       try {
-        const mailjetAuth = Buffer.from(`${process.env.MAILJET_API_KEY}:${process.env.MAILJET_SECRET_KEY}`).toString('base64');
-        const emailResponse = await fetch('https://api.mailjet.com/v3.1/send', {
+        const emailResponse = await fetch('https://api.resend.com/emails/batch', {
           method: 'POST',
           headers: {
-            'Authorization': `Basic ${mailjetAuth}`,
+            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(mailjetBody)
+          body: JSON.stringify(resendBody)
         });
         results.email = emailResponse.ok ? 'sent' : 'failed';
       } catch (e) {
@@ -193,6 +318,75 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
       }
     }
 
+    // ========================================
+    // CREATE GOOGLE CALENDAR EVENT
+    // ========================================
+    if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+      try {
+        const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+        const accessToken = await getGoogleAccessToken(serviceAccount);
+        await createCalendarEvent(accessToken, booking, estimatedMinutes);
+        results.calendar = 'created';
+      } catch (e) {
+        console.error('Calendar error:', e);
+        results.calendar = 'error';
+      }
+    }
+
+    // ========================================
+    // SCHEDULE REMINDER EMAILS + REVIEW REQUEST
+    // ========================================
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const bookingDate = parseBookingDateTime(booking.date, booking.time);
+        if (bookingDate) {
+          const now = new Date();
+          const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+          const reminderResults = [];
+
+          // 24-hour reminder
+          const reminder24h = new Date(bookingDate.getTime() - 24 * 60 * 60 * 1000);
+          if (reminder24h > now && (reminder24h.getTime() - now.getTime()) < THIRTY_DAYS_MS) {
+            const r = await scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - Tomorrow at ${booking.time}`, generateReminderEmail(booking, 'tomorrow', pickupLink), centralToUTCISO(reminder24h));
+            reminderResults.push(`24h: ${r}`);
+          }
+
+          // 1-hour reminder (email + SMS)
+          const reminder1h = new Date(bookingDate.getTime() - 60 * 60 * 1000);
+          if (reminder1h > now && (reminder1h.getTime() - now.getTime()) < THIRTY_DAYS_MS) {
+            const r = await scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - ${booking.time} Today`, generateReminderEmail(booking, 'in 1 hour', pickupLink), centralToUTCISO(reminder1h));
+            reminderResults.push(`1h: ${r}`);
+
+            if (process.env.TWILIO_MESSAGING_SERVICE_SID) {
+              const customerPhone = booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, '');
+              const smsR = await scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h));
+              reminderResults.push(`1h_sms: ${smsR}`);
+            }
+          }
+
+          // Post-ride review request - email + SMS (ride end + 15 min buffer)
+          const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
+          if (rideEnd > now && (rideEnd.getTime() - now.getTime()) < THIRTY_DAYS_MS) {
+            const r = await scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride? - Total Town Car Service', generateReviewEmail(booking), centralToUTCISO(rideEnd));
+            reminderResults.push(`review: ${r}`);
+
+            if (process.env.TWILIO_MESSAGING_SERVICE_SID) {
+              const customerPhone = booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, '');
+              const smsR = await scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd));
+              reminderResults.push(`review_sms: ${smsR}`);
+            }
+          }
+
+          results.reminders = reminderResults.join(', ') || 'none_scheduled';
+        } else {
+          results.reminders = 'parse_error';
+        }
+      } catch (e) {
+        console.error('Reminder scheduling error:', e);
+        results.reminders = 'error';
+      }
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -216,7 +410,7 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
 // EMAIL TEMPLATES
 // ========================================
 
-function generateCustomerEmail(booking, total, baseFare, discount, tip, processingFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, roundTripDiscount, returnDate, returnTime, hasMeetAndGreet, meetAndGreetPrice) {
+function generateCustomerEmail(booking, total, baseFare, discount, tip, processingFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, roundTripDiscount, returnDate, returnTime, hasMeetAndGreet, meetAndGreetPrice, calendarLink) {
   const hasTip = parseFloat(tip.replace('$', '')) > 0;
   const durationText = estimatedMinutes < 60
     ? `~${estimatedMinutes} minutes`
@@ -354,6 +548,15 @@ function generateCustomerEmail(booking, total, baseFare, discount, tip, processi
             </ul>
         </div>
 
+        ${calendarLink ? `
+        <!-- ADD TO CALENDAR -->
+        <div style="text-align: center; padding: 20px 0; margin-bottom: 15px;">
+            <a href="${calendarLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #b8962e 100%); color: #0d0d0d; padding: 16px 35px; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px;">
+                Add to Calendar
+            </a>
+            <div style="color: #a0a0a0; font-size: 12px; margin-top: 8px;">Opens in Google Calendar</div>
+        </div>` : ''}
+
         <!-- CONTACT -->
         <div style="text-align: center; padding: 25px 0; border-top: 1px solid #333;">
             <div style="color: #ffffff; font-size: 16px; margin-bottom: 10px;">Questions or changes?</div>
@@ -483,6 +686,79 @@ function generateOwnerEmail(booking, total, baseFare, discount, tip, processingF
     <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-top: 1px solid #333;">
         <div style="color: #D4AF37; font-size: 14px; font-weight: 600;">TOTAL TOWN CAR SERVICE</div>
         <div style="color: #666; font-size: 12px; margin-top: 5px;">Premium Transportation</div>
+    </div>
+</div>`;
+}
+
+function generateReminderEmail(booking, hoursBeforeText, pickupLink) {
+  return `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d;">
+    <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); padding: 40px 30px; text-align: center; border-bottom: 2px solid #D4AF37;">
+        <div style="color: #D4AF37; font-size: 28px; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">TOTAL TOWN CAR SERVICE</div>
+        <div style="color: #ffffff; font-size: 18px; font-weight: 400;">Ride Reminder</div>
+    </div>
+    <div style="padding: 30px; color: #ffffff;">
+        <div style="font-size: 22px; font-weight: 600; margin-bottom: 15px;">Hi ${booking.name},</div>
+        <div style="color: #a0a0a0; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+            Your ride is ${hoursBeforeText}! Here are your trip details:
+        </div>
+        <div style="background-color: #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #333;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr><td style="padding: 8px 0; color: #888;">Date:</td><td style="padding: 8px 0; color: #D4AF37; font-weight: 700;">${booking.date}</td></tr>
+                <tr><td style="padding: 8px 0; color: #888;">Time:</td><td style="padding: 8px 0; color: #D4AF37; font-weight: 700;">${booking.time}</td></tr>
+                <tr><td style="padding: 8px 0; color: #888;">Pickup:</td><td style="padding: 8px 0; color: #ffffff;">${booking.pickup}</td></tr>
+                <tr><td style="padding: 8px 0; color: #888;">Dropoff:</td><td style="padding: 8px 0; color: #ffffff;">${booking.dropoff}</td></tr>
+                <tr><td style="padding: 8px 0; color: #888;">Vehicle:</td><td style="padding: 8px 0; color: #ffffff;">${booking.vehicle}</td></tr>
+                <tr><td style="padding: 8px 0; color: #888;">Confirmation:</td><td style="padding: 8px 0; color: #D4AF37;">${booking.confirmationNumber}</td></tr>
+            </table>
+        </div>
+        <div style="text-align: center; margin: 25px 0;">
+            <a href="${pickupLink}" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #b8962e 100%); color: #0d0d0d; padding: 14px 30px; text-decoration: none; border-radius: 25px; font-weight: 700; font-size: 15px;">View Pickup Location</a>
+        </div>
+        <div style="text-align: center; padding: 20px 0; border-top: 1px solid #333;">
+            <div style="color: #ffffff; font-size: 15px; margin-bottom: 8px;">Need to make changes?</div>
+            <a href="tel:6129995382" style="color: #D4AF37; font-size: 22px; font-weight: 700; text-decoration: none;">(612) 999-5382</a>
+        </div>
+    </div>
+    <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-top: 1px solid #333;">
+        <div style="color: #D4AF37; font-size: 14px; font-weight: 600;">TOTAL TOWN CAR SERVICE</div>
+        <div style="color: #666; font-size: 12px; margin-top: 5px;">Premium Transportation in the Twin Cities</div>
+    </div>
+</div>`;
+}
+
+function generateReviewEmail(booking) {
+  return `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d;">
+    <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); padding: 40px 30px; text-align: center; border-bottom: 2px solid #D4AF37;">
+        <div style="color: #D4AF37; font-size: 28px; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">TOTAL TOWN CAR SERVICE</div>
+        <div style="color: #ffffff; font-size: 18px; font-weight: 400;">How was your ride?</div>
+    </div>
+    <div style="padding: 30px; color: #ffffff;">
+        <div style="font-size: 22px; font-weight: 600; margin-bottom: 15px;">Hi ${booking.name},</div>
+        <div style="color: #a0a0a0; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+            We hope you had a wonderful experience with Total Town Car Service. Your feedback means the world to us and helps other customers find reliable transportation.
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+            <div style="color: #D4AF37; font-size: 48px; margin-bottom: 15px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <a href="https://g.page/r/CTPz6LhEWh5bEBM/review" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #b8962e 100%); color: #0d0d0d; padding: 18px 45px; text-decoration: none; border-radius: 30px; font-weight: 800; font-size: 18px;">
+                Leave a Review
+            </a>
+            <div style="color: #a0a0a0; font-size: 12px; margin-top: 10px;">Takes less than a minute</div>
+        </div>
+        <div style="background-color: #1a1a1a; border-radius: 12px; padding: 20px; margin-top: 25px; border: 1px solid #333; text-align: center;">
+            <div style="color: #a0a0a0; font-size: 14px; margin-bottom: 8px;">Your trip on ${booking.date}</div>
+            <div style="color: #ffffff; font-size: 14px;">${booking.pickup} &rarr; ${booking.dropoff}</div>
+            <div style="color: #888; font-size: 12px; margin-top: 5px;">Confirmation: ${booking.confirmationNumber}</div>
+        </div>
+        <div style="text-align: center; padding: 25px 0; border-top: 1px solid #333; margin-top: 25px;">
+            <div style="color: #ffffff; font-size: 15px; margin-bottom: 5px;">Book your next ride</div>
+            <a href="https://totaltowncar.com/book-a-ride.html" style="color: #D4AF37; font-size: 16px; font-weight: 700; text-decoration: none;">totaltowncar.com</a>
+        </div>
+    </div>
+    <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-top: 1px solid #333;">
+        <div style="color: #D4AF37; font-size: 14px; font-weight: 600;">TOTAL TOWN CAR SERVICE</div>
+        <div style="color: #666; font-size: 12px; margin-top: 5px;">Premium Transportation in the Twin Cities</div>
     </div>
 </div>`;
 }

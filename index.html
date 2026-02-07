@@ -54,7 +54,6 @@
     <meta name="twitter:image" content="https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="public/favicon.ico">
     <link rel="icon" type="image/jpeg" href="public/lovable-uploads/ttcs.jpeg">
     <link rel="apple-touch-icon" href="public/lovable-uploads/ttcs.jpeg">
 
@@ -1418,6 +1417,27 @@
                 el.style.opacity = '1';
             });
 
+            // Set default date/time - minimum 2 hours in advance
+            const now = new Date();
+            const minBookingTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+            if (now.getHours() >= 22) {
+                minBookingTime.setDate(minBookingTime.getDate() + 1);
+                minBookingTime.setHours(9, 0, 0, 0);
+            } else {
+                minBookingTime.setMinutes(Math.ceil(minBookingTime.getMinutes() / 15) * 15);
+            }
+            const dateInput = document.getElementById('date');
+            const timeInput = document.getElementById('time');
+            if (dateInput) {
+                dateInput.min = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                if (!dateInput.value) {
+                    dateInput.value = `${minBookingTime.getFullYear()}-${String(minBookingTime.getMonth()+1).padStart(2,'0')}-${String(minBookingTime.getDate()).padStart(2,'0')}`;
+                }
+            }
+            if (timeInput && !timeInput.value) {
+                timeInput.value = `${String(minBookingTime.getHours()).padStart(2,'0')}:${String(minBookingTime.getMinutes()).padStart(2,'0')}`;
+            }
+
             // Check for saved booking data
             checkSavedBooking();
         });
@@ -1487,6 +1507,7 @@
         function showExitModal() {
             if (exitIntentShown) return;
             if (sessionStorage.getItem('exitModalShown')) return;
+            if (sessionStorage.getItem('ttc_pending_booking') || localStorage.getItem('ttc_pending_booking')) return;
 
             document.getElementById('exit-intent-modal')?.classList.remove('hidden');
             exitIntentShown = true;

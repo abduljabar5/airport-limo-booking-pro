@@ -38,7 +38,6 @@
     <link rel="canonical" href="https://totaltowncar.com/book">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="public/favicon.ico">
     <link rel="icon" type="image/jpeg" href="public/lovable-uploads/ttcs.jpeg">
 
     <!-- Preconnect -->
@@ -1581,11 +1580,11 @@
 
             // Set minimum date
             if (dateInput) {
-                dateInput.min = now.toISOString().split('T')[0];
+                dateInput.min = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
                 // Set default date if empty
                 if (!dateInput.value) {
-                    const dateStr = minBookingTime.toISOString().split('T')[0];
+                    const dateStr = `${minBookingTime.getFullYear()}-${String(minBookingTime.getMonth()+1).padStart(2,'0')}-${String(minBookingTime.getDate()).padStart(2,'0')}`;
                     dateInput.value = dateStr;
                 }
                 // Always sync to booking.data
