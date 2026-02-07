@@ -104,7 +104,7 @@ function generateCalendarLink(booking, estimatedMinutes) {
   const dates = `${fmt(bookingDate)}/${fmt(endDate)}`;
   const details = encodeURIComponent(`Confirmation: ${booking.confirmationNumber}\nVehicle: ${booking.vehicle}\nPickup: ${booking.pickup}\nDropoff: ${booking.dropoff}\nTotal: $${booking.total}\n\nQuestions? Call (612) 999-5382`);
   const location = encodeURIComponent(booking.pickup);
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}&location=${location}&ctz=America/Chicago`;
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=${text}&amp;dates=${dates}&amp;details=${details}&amp;location=${location}&amp;ctz=America/Chicago`;
 }
 
 async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to, body, sendAt) {
