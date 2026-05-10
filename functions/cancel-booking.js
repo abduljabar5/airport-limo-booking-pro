@@ -31,7 +31,7 @@ async function cancelResendEmail(apiKey, emailId) {
     if (r.ok) return 'cancelled';
     if (r.status === 404) return 'not_found';
     const txt = await r.text();
-    console.error('Resend cancel failed:', emailId, r.status, txt);
+    console.error(`Resend cancel failed for ${emailId}: HTTP ${r.status} ${r.statusText} - ${txt}`);
     return 'failed';
   } catch (e) {
     console.error('Resend cancel error:', e);
