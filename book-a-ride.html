@@ -2599,6 +2599,13 @@
                         // Booking notifications are handled server-side by the Stripe webhook
                         // (see functions/stripe-webhook.js) once payment completes — no need to
                         // stash booking data in client storage anymore.
+                        // We DO stash a small display-only summary in sessionStorage so the
+                        // confirmation page can render a printable receipt after Stripe redirects back.
+                        sessionStorage.setItem('ttc_last_booking', JSON.stringify({
+                            ...bookingPayload,
+                            confirmationNumber: result.confirmationNumber,
+                            paymentMethod: 'online'
+                        }));
                         clearSavedForm();
                         localStorage.removeItem('ttc_promo');
                         window.location.href = result.url;
@@ -2625,6 +2632,10 @@
                         try { errMsg = (await bookingResponse.json()).error || ''; } catch (_) {}
                         throw new Error(errMsg || `Booking failed (${bookingResponse.status})`);
                     }
+
+                    // Stash display-only summary so the confirmation page can render a
+                    // printable receipt (helpful when the email lands in spam).
+                    sessionStorage.setItem('ttc_last_booking', JSON.stringify(bookingPayload));
 
                     // Clear saved form data
                     clearSavedForm();

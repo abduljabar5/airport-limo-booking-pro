@@ -115,21 +115,59 @@
             <p class="text-obsidian-400 font-light mb-8 text-lg">Your reservation has been successfully placed. Check your email and phone for confirmation details.</p>
 
             <!-- Confirmation Number -->
-            <div class="bg-obsidian-900/50 border border-white/[0.06] rounded-2xl p-6 mb-8">
+            <div class="bg-obsidian-900/50 border border-white/[0.06] rounded-2xl p-6 mb-6">
                 <div class="text-xs text-obsidian-500 uppercase tracking-widest mb-2">Confirmation Number</div>
                 <div class="text-3xl font-mono font-bold text-gold-400" id="confirmation-number">TTC-XXXX</div>
             </div>
 
             <!-- Discount Applied Badge (hidden by default) -->
-            <div id="discount-badge" class="hidden bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-8 flex items-center justify-center gap-3">
+            <div id="discount-badge" class="hidden bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6 flex items-center justify-center gap-3">
                 <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <span class="text-emerald-400 font-medium">10% discount applied with code <span id="promo-code-display" class="font-mono">FIRST10</span></span>
             </div>
 
+            <!-- Booking Details Receipt (hidden if no sessionStorage data) -->
+            <div id="booking-receipt" class="hidden bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 mb-6 text-left">
+                <h2 class="text-sm font-semibold text-white mb-4 uppercase tracking-wide flex items-center justify-between">
+                    <span>Trip Details</span>
+                    <button onclick="window.print()" class="text-[10px] tracking-luxe text-obsidian-500 hover:text-gold-400 transition-colors">Print receipt</button>
+                </h2>
+                <dl class="space-y-3 text-sm">
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]">
+                        <dt class="text-obsidian-500 flex-shrink-0">When</dt>
+                        <dd class="text-white text-right" id="receipt-when">—</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]">
+                        <dt class="text-obsidian-500 flex-shrink-0">Pickup</dt>
+                        <dd class="text-white text-right" id="receipt-pickup">—</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]">
+                        <dt class="text-obsidian-500 flex-shrink-0">Dropoff</dt>
+                        <dd class="text-white text-right" id="receipt-dropoff">—</dd>
+                    </div>
+                    <div id="receipt-return-row" class="hidden flex justify-between gap-4 pb-3 border-b border-white/[0.04]">
+                        <dt class="text-obsidian-500 flex-shrink-0">Return</dt>
+                        <dd class="text-white text-right" id="receipt-return">—</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]">
+                        <dt class="text-obsidian-500 flex-shrink-0">Vehicle</dt>
+                        <dd class="text-white text-right" id="receipt-vehicle">—</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]">
+                        <dt class="text-obsidian-500 flex-shrink-0">Total</dt>
+                        <dd class="text-gold-400 font-semibold text-right" id="receipt-total">—</dd>
+                    </div>
+                    <div class="flex justify-between gap-4">
+                        <dt class="text-obsidian-500 flex-shrink-0">Payment</dt>
+                        <dd class="text-white text-right" id="receipt-payment">—</dd>
+                    </div>
+                </dl>
+            </div>
+
             <!-- What's Next -->
-            <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 mb-8 text-left">
+            <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 mb-3 text-left">
                 <h2 class="text-sm font-semibold text-white mb-4 uppercase tracking-wide">What's Next?</h2>
                 <ul class="space-y-3 text-sm text-obsidian-400">
                     <li class="flex items-start gap-3">
@@ -152,6 +190,9 @@
                     </li>
                 </ul>
             </div>
+            <p class="text-xs text-obsidian-500 mb-8 text-center">
+                Don't see the email within a few minutes? Check your spam folder, or call <a href="tel:6129995382" class="text-gold-400 hover:text-gold-300">(612) 999-5382</a>.
+            </p>
 
             <!-- Actions -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -196,10 +237,40 @@
 
             document.getElementById('confirmation-number').textContent = confirmation;
 
+            // Render trip-detail receipt if the booking flow stashed a summary
+            // in sessionStorage. This keeps the page useful even if the email
+            // ends up in spam.
+            try {
+                const stashed = sessionStorage.getItem('ttc_last_booking');
+                if (stashed) {
+                    const b = JSON.parse(stashed);
+                    if (b && (b.confirmationNumber === confirmation)) {
+                        const receipt = document.getElementById('booking-receipt');
+                        const setText = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+                        setText('receipt-when', `${b.date || ''} at ${b.time || ''}`);
+                        setText('receipt-pickup', b.pickup || '—');
+                        setText('receipt-dropoff', b.dropoff || '—');
+                        setText('receipt-vehicle', `${b.vehicle || '—'}${b.passengers ? ` · ${b.passengers} passenger${b.passengers > 1 ? 's' : ''}` : ''}`);
+                        setText('receipt-total', `$${b.total || 0}${b.paymentMethod === 'online' ? ' (paid)' : ''}`);
+                        setText('receipt-payment', b.paymentMethod === 'online' ? 'Paid online' : 'Pay driver upon arrival');
+                        if (b.roundTrip && b.returnDate && b.returnTime) {
+                            setText('receipt-return', `${b.returnDate} at ${b.returnTime}`);
+                            const row = document.getElementById('receipt-return-row');
+                            if (row) row.classList.remove('hidden');
+                        }
+                        if (receipt) receipt.classList.remove('hidden');
+                    }
+                }
+            } catch (e) {
+                // Non-fatal — page still works without the receipt block
+                console.warn('Could not render booking receipt:', e);
+            }
+
             // Clear any saved booking draft / pending booking data
             localStorage.removeItem('ttc_booking_draft');
             localStorage.removeItem('ttc_pending_booking');
             sessionStorage.removeItem('ttc_pending_booking');
+            sessionStorage.removeItem('ttc_last_booking');
             localStorage.removeItem('ttc_promo');
 
             if (promoFromUrl) {

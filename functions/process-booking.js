@@ -36,13 +36,56 @@ function centralToUTCISO(localDate) {
 function createGoogleJWT(serviceAccount) {
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
-  const payload = { iss: serviceAccount.client_email, scope: 'https://www.googleapis.com/auth/calendar.events', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 };
+  const payload = {
+    iss: serviceAccount.client_email,
+    scope: 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/spreadsheets',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600
+  };
   const encode = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
   const unsignedToken = `${encode(header)}.${encode(payload)}`;
   const sign = crypto.createSign('RSA-SHA256');
   sign.update(unsignedToken);
   const signature = sign.sign(serviceAccount.private_key, 'base64url');
   return `${unsignedToken}.${signature}`;
+}
+
+// Append a booking row to a Google Sheet via the Sheets API.
+// Requires BOOKINGS_SHEET_ID env var and the spreadsheet shared with the
+// service account email (Editor access).
+async function appendBookingToSheet(accessToken, sheetId, booking) {
+  const row = [
+    booking.confirmationNumber || '',
+    new Date().toISOString(),
+    booking.date || '',
+    booking.time || '',
+    booking.name || '',
+    booking.phone || '',
+    booking.email || '',
+    booking.pickup || '',
+    booking.dropoff || '',
+    booking.vehicle || '',
+    String(booking.passengers || ''),
+    String(booking.distance || ''),
+    `$${booking.total || 0}`,
+    booking.paymentMethod === 'online' ? 'Paid Online' : 'Pay Driver',
+    booking.roundTrip ? `Yes (return ${booking.returnDate || ''} ${booking.returnTime || ''})` : 'No',
+    booking.meetAndGreet ? 'Yes' : 'No',
+    booking.promoCode || '',
+    booking.flight || '',
+    booking.notes || ''
+  ];
+  // Append to the first sheet/tab. valueInputOption=USER_ENTERED lets Google
+  // parse dates and dollar amounts as native types (handy for sorting/filters).
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values/A:S:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [row] })
+  });
+  if (!response.ok) throw new Error(`Sheets API failed: ${await response.text()}`);
+  return await response.json();
 }
 
 async function getGoogleAccessToken(serviceAccount) {
@@ -312,19 +355,45 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
   };
 
   // ----------------------------------------
-  // Calendar task (Google)
+  // Google task (Calendar event + Sheets append)
+  // One OAuth token covers both APIs; the two API calls run in parallel.
   // ----------------------------------------
-  const calendarTask = async () => {
-    if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) return 'skipped';
+  const googleTask = async () => {
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+      return { calendar: 'skipped', sheet: 'skipped' };
+    }
+    let accessToken;
     try {
       const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-      const accessToken = await getGoogleAccessToken(serviceAccount);
-      await createCalendarEvent(accessToken, booking, estimatedMinutes);
-      return 'created';
+      accessToken = await getGoogleAccessToken(serviceAccount);
     } catch (e) {
-      console.error('Calendar error:', e);
-      return 'error';
+      console.error('Google OAuth error:', e);
+      return { calendar: 'error', sheet: 'error' };
     }
+
+    const calendarPromise = (async () => {
+      try {
+        await createCalendarEvent(accessToken, booking, estimatedMinutes);
+        return 'created';
+      } catch (e) {
+        console.error('Calendar error:', e);
+        return 'error';
+      }
+    })();
+
+    const sheetPromise = (async () => {
+      if (!process.env.BOOKINGS_SHEET_ID) return 'skipped';
+      try {
+        await appendBookingToSheet(accessToken, process.env.BOOKINGS_SHEET_ID, booking);
+        return 'appended';
+      } catch (e) {
+        console.error('Sheets error:', e);
+        return 'error';
+      }
+    })();
+
+    const [calendar, sheet] = await Promise.all([calendarPromise, sheetPromise]);
+    return { calendar, sheet };
   };
 
   // ----------------------------------------
@@ -375,12 +444,14 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
   };
 
   // Run all top-level tasks in parallel
-  const [email, sms, calendar, reminders] = await Promise.all([
+  const [email, sms, google, reminders] = await Promise.all([
     emailTask(),
     smsTask(),
-    calendarTask(),
+    googleTask(),
     remindersTask()
   ]);
+  const calendar = google.calendar;
+  const sheet = google.sheet;
 
   // ----------------------------------------
   // Backup alert: if BOTH owner email and owner SMS failed,
@@ -438,7 +509,7 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
     }
   }
 
-  return { email, sms, calendar, reminders, backupAlert };
+  return { email, sms, calendar, sheet, reminders, backupAlert };
 }
 
 // ========================================
