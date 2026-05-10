@@ -71,10 +71,6 @@
                     <div class="flex items-center gap-3">
                         <input id="filter-input" type="text" placeholder="Filter by name, conf #, address..."
                                class="px-3 py-2 bg-obsidian-800/40 border border-white/[0.06] rounded-lg text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 text-xs w-72">
-                        <label class="flex items-center gap-2 text-xs text-obsidian-400 cursor-pointer">
-                            <input id="show-cancelled" type="checkbox" class="accent-gold-400">
-                            <span>Show cancelled</span>
-                        </label>
                     </div>
                     <button id="refresh-btn" type="button" class="text-xs text-obsidian-400 hover:text-gold-400 transition-colors flex items-center gap-1.5" title="Refresh">
                         <span>↻</span> Refresh
@@ -216,6 +212,32 @@
         return '<span class="text-[10px] tracking-luxe uppercase bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded">Upcoming</span>';
     }
 
+    // Live countdown / "X ago" string. For cancelled bookings, returns null.
+    // Gets a color hint based on urgency (urgent = within 1 hour upcoming).
+    function countdownText(rec) {
+        if (rec.cancelled) return { text: '', urgent: false };
+        const tt = tripTime(rec.booking);
+        if (!tt) return { text: '', urgent: false };
+        const diff = tt - Date.now();
+        if (diff <= 0) {
+            // Past
+            const ago = Math.abs(diff);
+            const m = Math.floor(ago / 60000);
+            const h = Math.floor(m / 60);
+            const d = Math.floor(h / 24);
+            if (d >= 1) return { text: `${d}d ago`, urgent: false };
+            if (h >= 1) return { text: `${h}h ago`, urgent: false };
+            return { text: `${m}m ago`, urgent: false };
+        }
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        if (days >= 1) return { text: `in ${days}d ${hours % 24}h`, urgent: false };
+        if (hours >= 1) return { text: `in ${hours}h ${minutes % 60}m`, urgent: hours < 2 };
+        if (minutes >= 1) return { text: `in ${minutes}m`, urgent: true };
+        return { text: 'imminent', urgent: true };
+    }
+
     function renderRow(rec) {
         const b = rec.booking || {};
         const fade = rec.cancelled ? 'opacity-50' : '';
@@ -223,18 +245,25 @@
             ? `<span class="text-[11px] text-obsidian-600 italic">cancelled</span>`
             : `<button data-conf="${escapeHtml(rec.confirmationNumber)}" class="row-cancel text-[11px] uppercase tracking-luxe px-3 py-1.5 rounded-md bg-red-500/15 hover:bg-red-500/25 text-red-200 transition-colors">Cancel</button>`;
 
+        const cd = countdownText(rec);
+        const cdClass = cd.urgent ? 'text-amber-300 font-semibold' : 'text-obsidian-400';
+        const countdownHtml = cd.text
+            ? `<span class="text-obsidian-600 mx-1">·</span><span class="countdown ${cdClass}" data-tt="${tripTime(b)}" data-cancelled="${rec.cancelled ? '1' : '0'}">${escapeHtml(cd.text)}</span>`
+            : '';
+
         return `
         <div class="bookings-row ${fade} bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-4 hover:border-white/10 transition-colors">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-3 mb-1">
+                    <div class="flex items-center gap-3 mb-1 flex-wrap">
                         <span class="font-mono text-sm text-gold-400">${escapeHtml(rec.confirmationNumber)}</span>
                         ${statusBadge(rec)}
                         <span class="text-xs text-obsidian-500">$${escapeHtml(b.total)}${b.paymentMethod === 'online' ? ' · paid' : ' · cash'}</span>
                     </div>
                     <div class="text-sm text-white truncate">${escapeHtml(b.name || '(no name)')} · ${escapeHtml(b.phone || '')}</div>
                     <div class="text-xs text-obsidian-400 truncate mt-1">
-                        <span class="text-obsidian-300">${escapeHtml(b.date || '')}</span>${b.time ? ` at <span class="text-obsidian-300">${escapeHtml(b.time)}</span>` : ''} ·
+                        <span class="text-obsidian-300">${escapeHtml(b.date || '')}</span>${b.time ? ` at <span class="text-obsidian-300">${escapeHtml(b.time)}</span>` : ''}${countdownHtml}
+                        <span class="text-obsidian-600 mx-1">·</span>
                         ${escapeHtml(shortLoc(b.pickup))} → ${escapeHtml(shortLoc(b.dropoff))}
                     </div>
                 </div>
@@ -243,11 +272,43 @@
         </div>`;
     }
 
+    // Refresh just the countdown spans without re-rendering the whole list.
+    // Called every minute so the times stay live.
+    function updateCountdowns() {
+        document.querySelectorAll('.countdown').forEach(el => {
+            const tt = parseFloat(el.dataset.tt);
+            const cancelled = el.dataset.cancelled === '1';
+            if (cancelled || !tt) { el.textContent = ''; return; }
+            const diff = tt - Date.now();
+            let text, urgent = false;
+            if (diff <= 0) {
+                const ago = Math.abs(diff);
+                const m = Math.floor(ago / 60000);
+                const h = Math.floor(m / 60);
+                const d = Math.floor(h / 24);
+                if (d >= 1) text = `${d}d ago`;
+                else if (h >= 1) text = `${h}h ago`;
+                else text = `${m}m ago`;
+            } else {
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                if (days >= 1) text = `in ${days}d ${hours % 24}h`;
+                else if (hours >= 1) { text = `in ${hours}h ${minutes % 60}m`; urgent = hours < 2; }
+                else if (minutes >= 1) { text = `in ${minutes}m`; urgent = true; }
+                else { text = 'imminent'; urgent = true; }
+            }
+            el.textContent = text;
+            el.classList.toggle('text-amber-300', urgent);
+            el.classList.toggle('font-semibold', urgent);
+            el.classList.toggle('text-obsidian-400', !urgent);
+        });
+    }
+
     function applyFilter() {
         const filterText = document.getElementById('filter-input').value.trim().toLowerCase();
-        const showCancelled = document.getElementById('show-cancelled').checked;
+        // Show ALL bookings — no status filter.
         const list = bookingsCache.filter(rec => {
-            if (rec.cancelled && !showCancelled) return false;
             if (!filterText) return true;
             const hay = [
                 rec.confirmationNumber,
@@ -260,17 +321,18 @@
             return hay.includes(filterText);
         });
 
-        // Sort: upcoming first (asc by trip date), then past (desc), cancelled mixed in by date
+        // Sort: upcoming non-cancelled first (asc by trip date — soonest first),
+        // then past + cancelled by date desc.
         list.sort((a, b) => {
             const ta = tripTime(a.booking);
             const tb = tripTime(b.booking);
             const now = Date.now();
-            const aUpcoming = ta >= now;
-            const bUpcoming = tb >= now;
+            const aUpcoming = !a.cancelled && ta >= now;
+            const bUpcoming = !b.cancelled && tb >= now;
             if (aUpcoming && !bUpcoming) return -1;
             if (!aUpcoming && bUpcoming) return 1;
             if (aUpcoming) return ta - tb;       // soonest upcoming first
-            return tb - ta;                      // most recent past first
+            return tb - ta;                      // most recent past/cancelled first
         });
 
         const container = document.getElementById('bookings-list');
@@ -283,11 +345,13 @@
             });
         }
 
+        const now = Date.now();
         const total = bookingsCache.length;
-        const upcoming = bookingsCache.filter(r => !r.cancelled && tripTime(r.booking) >= Date.now()).length;
+        const upcoming = bookingsCache.filter(r => !r.cancelled && tripTime(r.booking) >= now).length;
+        const past = bookingsCache.filter(r => !r.cancelled && tripTime(r.booking) < now).length;
         const cancelled = bookingsCache.filter(r => r.cancelled).length;
         document.getElementById('list-status').textContent =
-            `${total} total · ${upcoming} upcoming · ${cancelled} cancelled`;
+            `${total} total · ${upcoming} upcoming · ${past} past · ${cancelled} cancelled`;
     }
 
     async function loadBookings() {
@@ -338,7 +402,8 @@
 
         document.getElementById('refresh-btn')?.addEventListener('click', loadBookings);
         document.getElementById('filter-input')?.addEventListener('input', applyFilter);
-        document.getElementById('show-cancelled')?.addEventListener('change', applyFilter);
+        // Tick countdowns every minute so upcoming-trip times stay live.
+        setInterval(updateCountdowns, 60 * 1000);
 
         document.getElementById('cancel-form').addEventListener('submit', async (e) => {
             e.preventDefault();
