@@ -577,37 +577,39 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
 
 // ========================================
 // HTTP HANDLER (used by pay-driver flow)
+// V2 syntax: required so the Netlify Blobs context is auto-injected
+// (processBooking writes booking records to a Netlify Blobs store).
 // ========================================
 
-export const handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+function jsonResponse(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export default async (req, context) => {
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   try {
-    const booking = JSON.parse(event.body);
+    const booking = await req.json();
 
     if (!booking.email || !booking.phone || !booking.pickup || !booking.dropoff) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
+      return jsonResponse(400, { error: 'Missing required fields' });
     }
 
     const results = await processBooking(booking);
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        success: true,
-        confirmationNumber: booking.confirmationNumber,
-        results
-      })
-    };
+    return jsonResponse(200, {
+      success: true,
+      confirmationNumber: booking.confirmationNumber,
+      results
+    });
   } catch (error) {
     console.error('Process booking error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+    return jsonResponse(500, { error: error.message });
   }
 };
 

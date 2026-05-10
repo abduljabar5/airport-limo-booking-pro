@@ -1,6 +1,6 @@
 // List Bookings - Admin endpoint that returns all booking records
-// from the 'bookings' Netlify Blob store. Used by cancel-booking.html
-// so the owner can see and cancel without going to Google Sheets.
+// from the 'bookings' Netlify Blob store. V2 (modern) function syntax
+// is required so the Netlify runtime auto-injects Blobs context.
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
 
@@ -9,19 +9,26 @@ function tokensMatch(a, b) {
   try { return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b)); } catch (_) { return false; }
 }
 
-export const handler = async (event) => {
-  if (event.httpMethod !== 'GET' && event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+function jsonResponse(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export default async (req, context) => {
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
-  const authHeader = event.headers['authorization'] || event.headers['Authorization'] || '';
+  const authHeader = req.headers.get('authorization') || '';
   const token = authHeader.replace(/^Bearer\s+/i, '').trim();
   const expected = process.env.CANCEL_ADMIN_TOKEN;
   if (!expected) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'CANCEL_ADMIN_TOKEN not configured' }) };
+    return jsonResponse(500, { error: 'CANCEL_ADMIN_TOKEN not configured' });
   }
   if (!tokensMatch(token, expected)) {
-    return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+    return jsonResponse(401, { error: 'Unauthorized' });
   }
 
   try {
@@ -32,7 +39,6 @@ export const handler = async (event) => {
         try {
           const rec = await store.get(b.key, { type: 'json' });
           if (!rec) return null;
-          // Return only the fields the UI needs (keeps response small)
           return {
             confirmationNumber: rec.confirmationNumber || b.key,
             createdAt: rec.createdAt || null,
@@ -64,14 +70,9 @@ export const handler = async (event) => {
     );
 
     const list = records.filter(Boolean);
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ count: list.length, bookings: list })
-    };
+    return jsonResponse(200, { count: list.length, bookings: list });
   } catch (e) {
     console.error('list-bookings error:', e);
-    return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
+    return jsonResponse(500, { error: e.message });
   }
 };

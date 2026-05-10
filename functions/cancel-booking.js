@@ -185,30 +185,37 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
-// ----- Handler -----
-export const handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+// ----- Handler (V2 syntax — required for Netlify Blobs auto-context) -----
+function jsonResponse(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export default async (req, context) => {
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   // Auth
-  const authHeader = event.headers['authorization'] || event.headers['Authorization'] || '';
+  const authHeader = req.headers.get('authorization') || '';
   const token = authHeader.replace(/^Bearer\s+/i, '').trim();
   const expected = process.env.CANCEL_ADMIN_TOKEN;
   if (!expected) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'CANCEL_ADMIN_TOKEN not configured' }) };
+    return jsonResponse(500, { error: 'CANCEL_ADMIN_TOKEN not configured' });
   }
   if (!tokensMatch(token, expected)) {
-    return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+    return jsonResponse(401, { error: 'Unauthorized' });
   }
 
   // Parse input
   let payload;
-  try { payload = JSON.parse(event.body || '{}'); } catch (_) { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
+  try { payload = await req.json(); } catch (_) { return jsonResponse(400, { error: 'Invalid JSON' }); }
   const confirmationNumber = String(payload.confirmationNumber || '').trim().toUpperCase();
   const reason = String(payload.reason || '').trim().slice(0, 500);
   if (!confirmationNumber) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Missing confirmation number' }) };
+    return jsonResponse(400, { error: 'Missing confirmation number' });
   }
 
   // Look up booking
@@ -218,17 +225,17 @@ export const handler = async (event) => {
     rec = await store.get(confirmationNumber, { type: 'json' });
   } catch (e) {
     console.error('Blob lookup error:', e);
-    return { statusCode: 500, body: JSON.stringify({ error: 'Lookup failed' }) };
+    return jsonResponse(500, { error: 'Lookup failed' });
   }
   if (!rec) {
-    return { statusCode: 404, body: JSON.stringify({ error: `No booking found for ${confirmationNumber}` }) };
+    return jsonResponse(404, { error: `No booking found for ${confirmationNumber}` });
   }
   if (rec.cancelled) {
-    return { statusCode: 200, body: JSON.stringify({
+    return jsonResponse(200, {
       ok: true,
       already: true,
       message: `Booking ${confirmationNumber} was already cancelled at ${rec.cancelledAt}.`
-    }) };
+    });
   }
 
   const customer = rec.booking || {};
@@ -328,17 +335,13 @@ export const handler = async (event) => {
     console.error('Failed to update record after cancel:', e);
   }
 
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      ok: true,
-      confirmationNumber,
-      customer: { name: customer.name, email: customer.email, phone: customer.phone },
-      results: rec.cancellationResults,
-      stripeRefundReminder: customer.paymentMethod === 'online'
-        ? 'This booking was paid online — issue the refund manually in Stripe Dashboard.'
-        : null
-    })
-  };
+  return jsonResponse(200, {
+    ok: true,
+    confirmationNumber,
+    customer: { name: customer.name, email: customer.email, phone: customer.phone },
+    results: rec.cancellationResults,
+    stripeRefundReminder: customer.paymentMethod === 'online'
+      ? 'This booking was paid online — issue the refund manually in Stripe Dashboard.'
+      : null
+  });
 };
