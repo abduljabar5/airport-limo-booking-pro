@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings · Admin — Total Town Car</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/jpeg" href="public/lovable-uploads/ttcs.jpeg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                colors: {
+                    gold: { 400: '#D4AF37', 500: '#C4A030' },
+                    obsidian: { 400: '#91919c', 500: '#737380', 600: '#5d5d68', 700: '#4c4c55', 800: '#28282d', 900: '#18181b', 950: '#0a0a0b' }
+                },
+                fontFamily: { 'display': ['Cormorant Garamond', 'serif'], 'sans': ['Outfit', 'system-ui', 'sans-serif'] },
+                letterSpacing: { 'luxe': '0.2em' }
+            } }
+        }
+    </script>
+    <style>
+        ::selection { background: rgba(212, 175, 55, 0.3); color: #fefdf8; }
+    </style>
+</head>
+<body class="bg-obsidian-950 text-white font-sans min-h-screen flex flex-col">
+
+<header class="py-6 border-b border-white/5">
+    <div class="max-w-3xl mx-auto px-6 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3">
+            <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service" class="w-10 h-10 rounded-xl object-cover ring-1 ring-white/10">
+            <div>
+                <div class="text-lg font-display font-semibold text-white tracking-wide">Total Town Car</div>
+                <div class="text-[10px] text-gold-400 tracking-luxe uppercase">Bookings · Admin</div>
+            </div>
+        </a>
+    </div>
+</header>
+
+<main class="flex-1 px-6 py-12">
+    <div class="max-w-4xl mx-auto w-full">
+
+        <!-- Auth gate -->
+        <section id="auth-gate" class="hidden bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-6 max-w-xl mx-auto">
+            <h2 class="text-red-400 font-semibold mb-2">Admin token required</h2>
+            <p class="text-sm text-obsidian-300 mb-4">Append <code class="text-gold-400">?k=YOUR_TOKEN</code> to the URL, or paste it below to save in this browser.</p>
+            <div class="flex gap-2">
+                <input id="manual-token" type="password" placeholder="Paste admin token" class="flex-1 px-4 py-3 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 text-sm">
+                <button onclick="saveToken()" class="px-5 py-3 bg-gold-400 hover:bg-gold-500 text-obsidian-950 rounded-xl font-medium text-sm">Save</button>
+            </div>
+        </section>
+
+        <!-- Admin -->
+        <section id="form-section" class="hidden">
+            <div class="flex items-end justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-display font-semibold mb-1">Bookings</h1>
+                    <p class="text-obsidian-400 font-light text-sm">Click <strong class="text-red-300">Cancel</strong> on any row to send the customer a cancellation email + SMS, cancel scheduled reminders, and remove the calendar event.</p>
+                </div>
+                <button type="button" onclick="clearToken()" class="text-[11px] text-obsidian-500 hover:text-gold-400 transition-colors uppercase tracking-luxe">Sign out</button>
+            </div>
+
+            <!-- Booking list -->
+            <section id="list-section">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <input id="filter-input" type="text" placeholder="Filter by name, conf #, address..."
+                               class="px-3 py-2 bg-obsidian-800/40 border border-white/[0.06] rounded-lg text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 text-xs w-72">
+                        <label class="flex items-center gap-2 text-xs text-obsidian-400 cursor-pointer">
+                            <input id="show-cancelled" type="checkbox" class="accent-gold-400">
+                            <span>Show cancelled</span>
+                        </label>
+                    </div>
+                    <button id="refresh-btn" type="button" class="text-xs text-obsidian-400 hover:text-gold-400 transition-colors flex items-center gap-1.5" title="Refresh">
+                        <span>↻</span> Refresh
+                    </button>
+                </div>
+                <div id="list-status" class="text-xs text-obsidian-500 mb-3"></div>
+                <div id="bookings-list" class="space-y-2"></div>
+            </section>
+
+            <!-- Result panel -->
+            <div id="result" class="hidden mt-6 rounded-2xl p-6 border"></div>
+
+            <!-- Cancellation form (modal) -->
+            <div id="cancel-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm">
+                <div class="bg-obsidian-900 border border-white/10 rounded-2xl p-6 max-w-md w-full">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h2 class="text-lg font-display font-semibold text-white">Cancel booking</h2>
+                            <p id="modal-conf" class="text-xs font-mono text-gold-400 mt-1">TTC-XXXXXX</p>
+                        </div>
+                        <button type="button" onclick="closeCancelModal()" class="text-obsidian-500 hover:text-white text-xl leading-none">&times;</button>
+                    </div>
+                    <form id="cancel-form" class="space-y-4">
+                        <input type="hidden" id="confirmation" name="confirmation">
+                        <div>
+                            <label for="reason" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Reason <span class="text-obsidian-500 normal-case">(optional, shown to customer)</span></label>
+                            <textarea id="reason" name="reason" rows="3"
+                                      placeholder="e.g., Driver illness — sorry for the inconvenience."
+                                      class="w-full px-4 py-3 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 font-light resize-none text-sm"></textarea>
+                        </div>
+                        <p class="text-[11px] text-obsidian-500">Refund must be issued manually in Stripe.</p>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="closeCancelModal()" class="flex-1 py-3 bg-obsidian-800 hover:bg-obsidian-700 text-white font-medium rounded-xl text-sm">Keep booking</button>
+                            <button id="submit-btn" type="submit"
+                                    class="flex-1 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold rounded-xl text-sm">
+                                Cancel booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="py-6 border-t border-white/5">
+    <div class="max-w-3xl mx-auto px-6 text-center text-xs text-obsidian-600">
+        Internal admin tool · Total Town Car Service
+    </div>
+</footer>
+
+<script>
+    const TOKEN_STORAGE_KEY = 'ttc_admin_cancel_token';
+
+    function getToken() {
+        const url = new URLSearchParams(window.location.search);
+        const fromUrl = url.get('k');
+        if (fromUrl) {
+            localStorage.setItem(TOKEN_STORAGE_KEY, fromUrl);
+            // Strip the token from the URL so it doesn't sit in history/screenshots
+            window.history.replaceState({}, '', window.location.pathname);
+            return fromUrl;
+        }
+        return localStorage.getItem(TOKEN_STORAGE_KEY);
+    }
+
+    function saveToken() {
+        const v = document.getElementById('manual-token').value.trim();
+        if (!v) return;
+        localStorage.setItem(TOKEN_STORAGE_KEY, v);
+        renderState();
+    }
+
+    function clearToken() {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+        renderState();
+    }
+
+    function renderState() {
+        const token = getToken();
+        const authGate = document.getElementById('auth-gate');
+        const formSection = document.getElementById('form-section');
+        if (token) {
+            authGate.classList.add('hidden');
+            formSection.classList.remove('hidden');
+        } else {
+            authGate.classList.remove('hidden');
+            formSection.classList.add('hidden');
+        }
+    }
+
+    function showResult(html, kind) {
+        const r = document.getElementById('result');
+        const colors = {
+            success: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-100',
+            warn: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-100',
+            error: 'bg-red-500/10 border-red-500/30 text-red-100'
+        };
+        r.className = `mt-6 rounded-2xl p-6 border ${colors[kind] || colors.success}`;
+        r.innerHTML = html;
+        r.classList.remove('hidden');
+        setTimeout(() => r.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    }
+
+    function fmtItem(label, value) {
+        const ok = ['cancelled', 'sent', 'deleted'].includes(value);
+        const skip = ['skipped', 'no_id', 'no_sid', 'not_found'].includes(value);
+        const cls = ok ? 'text-emerald-300' : (skip ? 'text-obsidian-400' : 'text-red-300');
+        return `<li><span class="text-obsidian-400">${label}:</span> <span class="${cls} font-mono text-xs">${value}</span></li>`;
+    }
+
+    // ----- Booking list -----
+    let bookingsCache = [];
+
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function shortLoc(s) {
+        const str = String(s || '');
+        const first = str.split(',')[0];
+        return first.length > 38 ? first.slice(0, 36) + '…' : first;
+    }
+
+    // Heuristic: parse the booking's display date+time into a Date for sorting.
+    // Format coming from the booking flow: "Wed, May 10, 2026" + "9:30 AM"
+    function tripTime(b) {
+        if (!b || !b.date) return 0;
+        const t = `${b.date} ${b.time || '12:00 AM'}`;
+        const ms = Date.parse(t);
+        return Number.isFinite(ms) ? ms : 0;
+    }
+
+    function statusBadge(rec) {
+        if (rec.cancelled) return '<span class="text-[10px] tracking-luxe uppercase bg-red-500/15 text-red-300 px-2 py-0.5 rounded">Cancelled</span>';
+        const tt = tripTime(rec.booking);
+        if (tt && tt < Date.now()) return '<span class="text-[10px] tracking-luxe uppercase bg-obsidian-700 text-obsidian-300 px-2 py-0.5 rounded">Past</span>';
+        return '<span class="text-[10px] tracking-luxe uppercase bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded">Upcoming</span>';
+    }
+
+    function renderRow(rec) {
+        const b = rec.booking || {};
+        const fade = rec.cancelled ? 'opacity-50' : '';
+        const cancelBtn = rec.cancelled
+            ? `<span class="text-[11px] text-obsidian-600 italic">cancelled</span>`
+            : `<button data-conf="${escapeHtml(rec.confirmationNumber)}" class="row-cancel text-[11px] uppercase tracking-luxe px-3 py-1.5 rounded-md bg-red-500/15 hover:bg-red-500/25 text-red-200 transition-colors">Cancel</button>`;
+
+        return `
+        <div class="bookings-row ${fade} bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-4 hover:border-white/10 transition-colors">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-1">
+                        <span class="font-mono text-sm text-gold-400">${escapeHtml(rec.confirmationNumber)}</span>
+                        ${statusBadge(rec)}
+                        <span class="text-xs text-obsidian-500">$${escapeHtml(b.total)}${b.paymentMethod === 'online' ? ' · paid' : ' · cash'}</span>
+                    </div>
+                    <div class="text-sm text-white truncate">${escapeHtml(b.name || '(no name)')} · ${escapeHtml(b.phone || '')}</div>
+                    <div class="text-xs text-obsidian-400 truncate mt-1">
+                        <span class="text-obsidian-300">${escapeHtml(b.date || '')}</span>${b.time ? ` at <span class="text-obsidian-300">${escapeHtml(b.time)}</span>` : ''} ·
+                        ${escapeHtml(shortLoc(b.pickup))} → ${escapeHtml(shortLoc(b.dropoff))}
+                    </div>
+                </div>
+                <div class="flex-shrink-0">${cancelBtn}</div>
+            </div>
+        </div>`;
+    }
+
+    function applyFilter() {
+        const filterText = document.getElementById('filter-input').value.trim().toLowerCase();
+        const showCancelled = document.getElementById('show-cancelled').checked;
+        const list = bookingsCache.filter(rec => {
+            if (rec.cancelled && !showCancelled) return false;
+            if (!filterText) return true;
+            const hay = [
+                rec.confirmationNumber,
+                rec.booking?.name,
+                rec.booking?.phone,
+                rec.booking?.email,
+                rec.booking?.pickup,
+                rec.booking?.dropoff
+            ].join(' ').toLowerCase();
+            return hay.includes(filterText);
+        });
+
+        // Sort: upcoming first (asc by trip date), then past (desc), cancelled mixed in by date
+        list.sort((a, b) => {
+            const ta = tripTime(a.booking);
+            const tb = tripTime(b.booking);
+            const now = Date.now();
+            const aUpcoming = ta >= now;
+            const bUpcoming = tb >= now;
+            if (aUpcoming && !bUpcoming) return -1;
+            if (!aUpcoming && bUpcoming) return 1;
+            if (aUpcoming) return ta - tb;       // soonest upcoming first
+            return tb - ta;                      // most recent past first
+        });
+
+        const container = document.getElementById('bookings-list');
+        if (list.length === 0) {
+            container.innerHTML = `<div class="text-sm text-obsidian-500 italic text-center py-8">No bookings to show.</div>`;
+        } else {
+            container.innerHTML = list.map(renderRow).join('');
+            container.querySelectorAll('.row-cancel').forEach(btn => {
+                btn.addEventListener('click', () => openCancelModal(btn.dataset.conf));
+            });
+        }
+
+        const total = bookingsCache.length;
+        const upcoming = bookingsCache.filter(r => !r.cancelled && tripTime(r.booking) >= Date.now()).length;
+        const cancelled = bookingsCache.filter(r => r.cancelled).length;
+        document.getElementById('list-status').textContent =
+            `${total} total · ${upcoming} upcoming · ${cancelled} cancelled`;
+    }
+
+    async function loadBookings() {
+        const token = getToken();
+        if (!token) return;
+        const status = document.getElementById('list-status');
+        status.textContent = 'Loading...';
+        try {
+            const res = await fetch('/.netlify/functions/list-bookings', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.status === 401) {
+                clearToken();
+                renderState();
+                return;
+            }
+            if (!res.ok) {
+                status.textContent = 'Failed to load bookings.';
+                return;
+            }
+            const data = await res.json();
+            bookingsCache = data.bookings || [];
+            applyFilter();
+        } catch (e) {
+            status.textContent = `Failed to load: ${e.message}`;
+        }
+    }
+
+    function openCancelModal(confirmationNumber) {
+        document.getElementById('confirmation').value = confirmationNumber;
+        document.getElementById('modal-conf').textContent = confirmationNumber;
+        document.getElementById('reason').value = '';
+        document.getElementById('cancel-modal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('reason').focus(), 50);
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancel-modal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeCancelModal();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderState();
+        if (getToken()) loadBookings();
+
+        document.getElementById('refresh-btn')?.addEventListener('click', loadBookings);
+        document.getElementById('filter-input')?.addEventListener('input', applyFilter);
+        document.getElementById('show-cancelled')?.addEventListener('change', applyFilter);
+
+        document.getElementById('cancel-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = getToken();
+            if (!token) { renderState(); return; }
+
+            const confirmation = document.getElementById('confirmation').value.trim().toUpperCase();
+            const reason = document.getElementById('reason').value.trim();
+            if (!confirmation) return;
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Cancelling...';
+
+            try {
+                const res = await fetch('/.netlify/functions/cancel-booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ confirmationNumber: confirmation, reason })
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (res.status === 401) {
+                    showResult(`<strong>Unauthorized.</strong> The admin token is wrong or missing.`, 'error');
+                    clearToken();
+                    renderState();
+                    return;
+                }
+                if (res.status === 404) {
+                    showResult(`<strong>Booking not found.</strong> No record for ${confirmation}.`, 'error');
+                    return;
+                }
+                if (data.already) {
+                    showResult(`<strong>Already cancelled.</strong> ${data.message}`, 'warn');
+                    return;
+                }
+                if (!res.ok) {
+                    showResult(`<strong>Error.</strong> ${data.error || 'Unknown error'}`, 'error');
+                    return;
+                }
+
+                const reminderHtml = (data.results.reminders || [])
+                    .map(r => fmtItem(r.purpose, r.result))
+                    .join('') || '<li class="text-obsidian-500 italic text-xs">No scheduled reminders to cancel.</li>';
+
+                showResult(`
+                    <h3 class="font-semibold text-white mb-3">Cancelled ${data.confirmationNumber}</h3>
+                    <p class="text-sm text-obsidian-300 mb-4">Customer: <strong>${data.customer.name || ''}</strong> · ${data.customer.email || ''} · ${data.customer.phone || ''}</p>
+                    <ul class="space-y-1 text-sm">
+                        ${fmtItem('Customer email', data.results.customerEmail)}
+                        ${fmtItem('Customer SMS', data.results.customerSms)}
+                        ${fmtItem('Owner SMS', data.results.ownerSms)}
+                        ${fmtItem('Calendar event', data.results.calendar)}
+                    </ul>
+                    <h4 class="text-xs uppercase tracking-luxe text-obsidian-400 mt-5 mb-2">Reminders</h4>
+                    <ul class="space-y-1 text-sm">${reminderHtml}</ul>
+                    ${data.stripeRefundReminder ? `<div class="mt-5 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg text-yellow-100 text-sm"><strong>⚠️ ${data.stripeRefundReminder}</strong></div>` : ''}
+                `, 'success');
+
+                document.getElementById('reason').value = '';
+                closeCancelModal();
+                // Refresh the list so the row flips to Cancelled state
+                loadBookings();
+            } catch (err) {
+                showResult(`<strong>Network error.</strong> ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Cancel booking';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
