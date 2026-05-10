@@ -180,82 +180,37 @@
 
     <script>
         // Handle confirmation page
-        document.addEventListener('DOMContentLoaded', async () => {
+        // Booking notifications (email/SMS/calendar) are sent server-side:
+        //   - Pay-driver flow: by the /process-booking function during submission
+        //   - Online-payment flow: by the /stripe-webhook function after Stripe confirms payment
+        // This page only displays the confirmation; it no longer triggers any backend work.
+        document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const confirmation = urlParams.get('confirmation');
-            const paid = urlParams.get('paid');
             const promoFromUrl = urlParams.get('promo');
 
-            if (confirmation) {
-                document.getElementById('confirmation-number').textContent = confirmation;
-
-                // Clear saved booking draft so "continue where you left off" resets
-                localStorage.removeItem('ttc_booking_draft');
-
-                // Show discount badge if promo code in URL (cash payments)
-                if (promoFromUrl) {
-                    const discountBadge = document.getElementById('discount-badge');
-                    const promoCodeDisplay = document.getElementById('promo-code-display');
-                    if (discountBadge) {
-                        discountBadge.classList.remove('hidden');
-                    }
-                    if (promoCodeDisplay) {
-                        promoCodeDisplay.textContent = promoFromUrl;
-                    }
-                    // Clean URL
-                    window.history.replaceState({}, '', `/confirmation.html?confirmation=${confirmation}`);
-                }
-
-                // If returning from Stripe payment, send confirmations
-                if (paid === 'true') {
-                    // Get stored booking data (try sessionStorage first, then localStorage)
-                    let storedBooking = sessionStorage.getItem('ttc_pending_booking');
-                    if (!storedBooking) {
-                        storedBooking = localStorage.getItem('ttc_pending_booking');
-                    }
-
-                    if (storedBooking) {
-                        const bookingData = JSON.parse(storedBooking);
-                        bookingData.confirmationNumber = confirmation;
-
-                        // Show discount badge if promo was applied
-                        if (bookingData.promoCode && bookingData.discount > 0) {
-                            const discountBadge = document.getElementById('discount-badge');
-                            const promoCodeDisplay = document.getElementById('promo-code-display');
-                            if (discountBadge) {
-                                discountBadge.classList.remove('hidden');
-                            }
-                            if (promoCodeDisplay) {
-                                promoCodeDisplay.textContent = bookingData.promoCode;
-                            }
-                        }
-
-                        // Send confirmation emails and SMS
-                        try {
-                            await fetch('/.netlify/functions/process-booking', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(bookingData)
-                            });
-                        } catch (e) {
-                            console.error('Failed to send confirmations:', e);
-                        }
-
-                        // Clear stored data
-                        sessionStorage.removeItem('ttc_pending_booking');
-                        localStorage.removeItem('ttc_pending_booking');
-
-                        // Clear promo code from localStorage
-                        localStorage.removeItem('ttc_promo');
-                    }
-
-                    // Clean URL (remove query params)
-                    window.history.replaceState({}, '', `/confirmation.html?confirmation=${confirmation}`);
-                }
-            } else {
-                // No confirmation number, redirect to booking
+            if (!confirmation) {
                 window.location.href = '/book-a-ride.html';
+                return;
             }
+
+            document.getElementById('confirmation-number').textContent = confirmation;
+
+            // Clear any saved booking draft / pending booking data
+            localStorage.removeItem('ttc_booking_draft');
+            localStorage.removeItem('ttc_pending_booking');
+            sessionStorage.removeItem('ttc_pending_booking');
+            localStorage.removeItem('ttc_promo');
+
+            if (promoFromUrl) {
+                const discountBadge = document.getElementById('discount-badge');
+                const promoCodeDisplay = document.getElementById('promo-code-display');
+                if (discountBadge) discountBadge.classList.remove('hidden');
+                if (promoCodeDisplay) promoCodeDisplay.textContent = promoFromUrl;
+            }
+
+            // Strip query params from URL for a clean look
+            window.history.replaceState({}, '', `/confirmation.html?confirmation=${confirmation}`);
         });
     </script>
 </body>

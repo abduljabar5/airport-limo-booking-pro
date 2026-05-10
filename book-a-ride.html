@@ -35,7 +35,94 @@
     <title>Book Your Ride | Total Town Car Service - Minneapolis</title>
     <meta name="description" content="Book your luxury car service in Minneapolis. Easy 3-step booking, instant confirmation, no hidden fees. Airport transfers, corporate travel, special events.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://totaltowncar.com/book">
+    <link rel="canonical" href="https://totaltowncar.com/book-a-ride.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Total Town Car Service">
+    <meta property="og:url" content="https://totaltowncar.com/book-a-ride.html">
+    <meta property="og:title" content="Book Your Ride | Total Town Car Service - Minneapolis">
+    <meta property="og:description" content="Book your luxury car service in Minneapolis. Easy 3-step booking, instant confirmation, no hidden fees. Airport transfers, corporate travel, special events.">
+    <meta property="og:image" content="https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Book Your Ride | Total Town Car Service - Minneapolis">
+    <meta name="twitter:description" content="Book your luxury car service in Minneapolis. Easy 3-step booking, instant confirmation, no hidden fees.">
+    <meta name="twitter:image" content="https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg">
+
+    <!-- Structured data: bookable Service with ReserveAction -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": "https://totaltowncar.com/book-a-ride.html#webpage",
+        "url": "https://totaltowncar.com/book-a-ride.html",
+        "name": "Book Your Ride | Total Town Car Service",
+        "description": "Book luxury car service in Minneapolis online. 3-step booking, instant quote, instant confirmation, no hidden fees.",
+        "isPartOf": {"@id": "https://totaltowncar.com/#business"},
+        "primaryImageOfPage": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://totaltowncar.com/"},
+                {"@type": "ListItem", "position": 2, "name": "Book a Ride", "item": "https://totaltowncar.com/book-a-ride.html"}
+            ]
+        },
+        "mainEntity": {
+            "@type": "Service",
+            "@id": "https://totaltowncar.com/book-a-ride.html#service",
+            "name": "Book Town Car / Limo / Taxi - Minneapolis & Twin Cities",
+            "description": "Online booking for chauffeured ground transportation in the Minneapolis-St. Paul metro area: airport transfers, corporate travel, weddings, prom, concerts, wine tours, and Mayo Clinic transfers.",
+            "provider": {"@id": "https://totaltowncar.com/#business"},
+            "areaServed": {
+                "@type": "AdministrativeArea",
+                "name": "Minneapolis-St. Paul Metropolitan Area"
+            },
+            "serviceType": ["Limousine Service", "Taxi Service", "Black Car Service", "Airport Transfer"],
+            "audience": {"@type": "Audience", "audienceType": "Travelers, Corporate, Weddings, Events"},
+            "offers": [
+                {
+                    "@type": "Offer",
+                    "name": "Taxi",
+                    "priceCurrency": "USD",
+                    "price": "49.00",
+                    "description": "Up to 4 passengers, Twin Cities metro starting rate."
+                },
+                {
+                    "@type": "Offer",
+                    "name": "Luxury Sedan",
+                    "priceCurrency": "USD",
+                    "price": "59.00",
+                    "description": "Up to 3 passengers, MSP airport to downtown Minneapolis starting rate."
+                },
+                {
+                    "@type": "Offer",
+                    "name": "SUV",
+                    "priceCurrency": "USD",
+                    "price": "69.00",
+                    "description": "Up to 6 passengers, MSP airport to downtown Minneapolis starting rate."
+                }
+            ],
+            "potentialAction": {
+                "@type": "ReserveAction",
+                "name": "Book a Ride",
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": "https://totaltowncar.com/book-a-ride.html",
+                    "actionPlatform": [
+                        "http://schema.org/DesktopWebPlatform",
+                        "http://schema.org/MobileWebPlatform"
+                    ]
+                },
+                "result": {
+                    "@type": "Reservation",
+                    "name": "Town Car Reservation"
+                }
+            }
+        }
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="public/lovable-uploads/ttcs.jpeg">
@@ -599,17 +686,18 @@
                                     <label class="vehicle-card relative cursor-pointer">
                                         <input type="radio" name="vehicle" value="taxi" class="sr-only">
                                         <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
-                                            <div class="text-sm font-medium text-white">Economy</div>
+                                            <div class="text-sm font-medium text-white">Taxi</div>
                                             <div class="text-xs text-obsidian-500 mt-1">1-4 guests</div>
                                             <div class="text-gold-400 font-semibold mt-2 text-sm">From $49</div>
                                         </div>
                                     </label>
-                                    <label class="vehicle-card relative cursor-pointer">
-                                        <input type="radio" name="vehicle" value="van" class="sr-only">
-                                        <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
-                                            <div class="text-sm font-medium text-white">Van</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">7-14 guests</div>
-                                            <div class="text-gold-400 font-semibold mt-2 text-sm">From $199</div>
+                                    <label class="vehicle-card relative cursor-not-allowed opacity-60" title="Van service is temporarily unavailable">
+                                        <input type="radio" name="vehicle" value="van" class="sr-only" disabled>
+                                        <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300">
+                                            <div class="text-sm font-medium text-obsidian-400 line-through">Van</div>
+                                            <div class="text-xs text-obsidian-600 mt-1">7-14 guests</div>
+                                            <div class="text-obsidian-600 font-semibold mt-2 text-sm line-through">From $199</div>
+                                            <div class="absolute top-2 right-2 px-2 py-0.5 bg-obsidian-700/80 text-[9px] uppercase tracking-luxe text-obsidian-300 rounded">Unavailable</div>
                                         </div>
                                     </label>
                                 </div>
@@ -651,6 +739,9 @@
                                     name="phone"
                                     placeholder="(612) 555-1234"
                                     required
+                                    inputmode="tel"
+                                    autocomplete="tel-national"
+                                    maxlength="14"
                                     class="input-luxury w-full px-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
                                 >
                             </div>
@@ -1812,7 +1903,17 @@
             });
 
             document.getElementById('phone')?.addEventListener('input', (e) => {
-                booking.data.phone = e.target.value;
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                let formatted = digits;
+                if (digits.length >= 7) {
+                    formatted = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+                } else if (digits.length >= 4) {
+                    formatted = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+                } else if (digits.length > 0) {
+                    formatted = `(${digits}`;
+                }
+                e.target.value = formatted;
+                booking.data.phone = formatted;
                 saveFormData();
             });
 
@@ -2205,7 +2306,7 @@
                 bookingElements.summaryDatetime.textContent = formattedDateTime;
             }
 
-            const vehicleNames = { sedan: 'Sedan', suv: 'SUV', taxi: 'Economy', van: 'Van' };
+            const vehicleNames = { sedan: 'Sedan', suv: 'SUV', taxi: 'Taxi', van: 'Van' };
             const vehicleName = vehicleNames[booking.data.vehicle] || 'Sedan';
             bookingElements.summaryVehicle.textContent = vehicleName;
 
@@ -2384,6 +2485,29 @@
 
             if (!validateCurrentStep()) return;
 
+            // Re-check the 2-hour-advance rule. The user may have spent enough time
+            // on the form that the originally-valid pickup time is now too close
+            // (or in the past).
+            if (booking.data.date && booking.data.time) {
+                const selectedDateTime = new Date(booking.data.date + 'T' + booking.data.time);
+                const now = new Date();
+                const minBookingTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+                if (selectedDateTime < now) {
+                    showToast('Your selected pickup time is in the past. Please pick a new time.', 'error');
+                    booking.currentStep = 1;
+                    updateStepUI();
+                    saveFormData();
+                    return;
+                }
+                if (selectedDateTime < minBookingTime) {
+                    showToast('Bookings must be at least 2 hours in advance. Please pick a new time.', 'error');
+                    booking.currentStep = 1;
+                    updateStepUI();
+                    saveFormData();
+                    return;
+                }
+            }
+
             const termsCheckbox = document.getElementById('terms');
             if (!termsCheckbox.checked) {
                 showToast('Please agree to the terms and conditions', 'error');
@@ -2416,6 +2540,15 @@
             const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
             const formattedTime = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
+            // Format return date/time for display (AM/PM, never military)
+            let formattedReturnDate = '';
+            let formattedReturnTime = '';
+            if (booking.data.returnDate && booking.data.returnTime) {
+                const returnDateObj = new Date(booking.data.returnDate + 'T' + booking.data.returnTime);
+                formattedReturnDate = returnDateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                formattedReturnTime = returnDateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            }
+
             // Prepare booking data
             const bookingPayload = {
                 name: booking.data.name,
@@ -2425,7 +2558,7 @@
                 dropoff: booking.data.dropoff,
                 date: formattedDate,
                 time: formattedTime,
-                vehicle: booking.data.vehicle.charAt(0).toUpperCase() + booking.data.vehicle.slice(1),
+                vehicle: ({ sedan: 'Sedan', suv: 'SUV', taxi: 'Taxi', van: 'Van' })[booking.data.vehicle] || booking.data.vehicle,
                 passengers: booking.data.passengers,
                 flight: booking.data.flight,
                 notes: booking.data.notes,
@@ -2433,8 +2566,8 @@
                 baseFare: booking.data.baseFare,
                 roundTrip: booking.data.roundtrip,
                 roundTripDiscount: booking.data.roundtripDiscount,
-                returnDate: booking.data.returnDate,
-                returnTime: booking.data.returnTime,
+                returnDate: formattedReturnDate,
+                returnTime: formattedReturnTime,
                 meetAndGreet: booking.data.meetgreet,
                 meetAndGreetPrice: booking.data.meetgreet ? booking.data.meetgreetPrice : 0,
                 discount: booking.data.discount,
@@ -2463,14 +2596,11 @@
                     const result = await response.json();
 
                     if (result.url) {
-                        // Store booking data for after payment success (use both for reliability)
-                        const pendingBooking = JSON.stringify({
-                            ...bookingPayload,
-                            confirmationNumber: result.confirmationNumber
-                        });
-                        sessionStorage.setItem('ttc_pending_booking', pendingBooking);
-                        localStorage.setItem('ttc_pending_booking', pendingBooking);
-                        // Redirect to Stripe
+                        // Booking notifications are handled server-side by the Stripe webhook
+                        // (see functions/stripe-webhook.js) once payment completes — no need to
+                        // stash booking data in client storage anymore.
+                        clearSavedForm();
+                        localStorage.removeItem('ttc_promo');
                         window.location.href = result.url;
                         return;
                     } else {
@@ -2481,12 +2611,20 @@
                     const confirmationNumber = 'TTC-' + Math.random().toString(36).substr(2, 6).toUpperCase();
                     bookingPayload.confirmationNumber = confirmationNumber;
 
-                    // Send confirmation emails and SMS
-                    await fetch('/.netlify/functions/process-booking', {
+                    // Send confirmation emails and SMS. If the function fails, do NOT
+                    // redirect — the customer would see a "Confirmed!" page while we
+                    // have no record of the booking on our end.
+                    const bookingResponse = await fetch('/.netlify/functions/process-booking', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bookingPayload)
                     });
+
+                    if (!bookingResponse.ok) {
+                        let errMsg = '';
+                        try { errMsg = (await bookingResponse.json()).error || ''; } catch (_) {}
+                        throw new Error(errMsg || `Booking failed (${bookingResponse.status})`);
+                    }
 
                     // Clear saved form data
                     clearSavedForm();

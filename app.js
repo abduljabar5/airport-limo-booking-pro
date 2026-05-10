@@ -12,8 +12,8 @@ const CONFIG = {
     rates: {
         sedan: { base: 59.00, min: 65.00, perMile: 3.30 },
         suv: { base: 69.00, min: 75.00, perMile: 3.60 },
-        van: { base: 250.00, min: 250.00, perMile: 3.50 },
-        taxi: { base: 53.00, min: 55.00, perMile: 3.20 }
+        van: { base: 199.00, min: 199.00, perMile: 3.50 },
+        taxi: { base: 49.00, min: 55.00, perMile: 3.20 }
     },
     fees: {
         airport: 15.00,

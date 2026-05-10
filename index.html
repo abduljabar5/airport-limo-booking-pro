@@ -397,25 +397,197 @@
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "@id": "https://totaltowncar.com",
+        "@type": ["LocalBusiness", "LimousineService", "TaxiService"],
+        "@id": "https://totaltowncar.com/#business",
         "name": "Total Town Car Service",
-        "description": "Premium black car and limousine service in Minneapolis.",
+        "alternateName": ["MSP Total Town Car Service", "Total Town Car"],
+        "description": "Over 10,000 rides served. Premium black car, limousine, and taxi service serving the Minneapolis-St. Paul (Twin Cities) metro area. MSP airport transfers, corporate travel, weddings, prom, concerts, wine tours, and long-distance trips to Rochester / Mayo Clinic. 24/7 availability with professional, fully licensed chauffeurs. 5.0-star rated on Google.",
+        "slogan": "Premium Transportation in the Twin Cities",
         "url": "https://totaltowncar.com",
+        "logo": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
+        "image": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
         "telephone": "+1-612-999-5382",
         "email": "totaltowncarservice@gmail.com",
+        "priceRange": "$$",
+        "currenciesAccepted": "USD",
+        "paymentAccepted": ["Cash", "Credit Card", "Debit Card"],
         "address": {
             "@type": "PostalAddress",
             "addressLocality": "Minneapolis",
             "addressRegion": "MN",
+            "postalCode": "55401",
             "addressCountry": "US"
         },
-        "priceRange": "$$$",
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 44.9778,
+            "longitude": -93.2650
+        },
+        "openingHoursSpecification": [{
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "opens": "00:00",
+            "closes": "23:59"
+        }],
+        "sameAs": [
+            "https://www.google.com/maps?cid=6565784557959312179"
+        ],
+        "areaServed": [
+            {"@type": "City", "name": "Minneapolis", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Saint Paul", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Bloomington", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Edina", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Eden Prairie", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Minnetonka", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Wayzata", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Plymouth", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Maple Grove", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Burnsville", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Eagan", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Roseville", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Hopkins", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Richfield", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Lakeville", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Woodbury", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Chanhassen", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
+            {"@type": "City", "name": "Rochester", "containedInPlace": {"@type": "State", "name": "Minnesota"}}
+        ],
+        "serviceArea": {
+            "@type": "GeoCircle",
+            "geoMidpoint": {
+                "@type": "GeoCoordinates",
+                "latitude": 44.9778,
+                "longitude": -93.2650
+            },
+            "geoRadius": "100000"
+        },
+        "knowsAbout": [
+            "MSP airport transportation",
+            "Minneapolis-St. Paul International Airport transfers",
+            "luxury black car service",
+            "corporate transportation",
+            "wedding transportation",
+            "prom and homecoming limo service",
+            "concert and event transportation",
+            "wine and brewery tours",
+            "Mayo Clinic transportation from Minneapolis",
+            "long-distance Twin Cities transportation"
+        ],
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Transportation Services",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "name": "MSP Airport Transfer (Sedan)",
+                    "description": "Luxury sedan service to/from Minneapolis-St. Paul International Airport. Up to 3 passengers.",
+                    "priceSpecification": {
+                        "@type": "PriceSpecification",
+                        "price": "59.00",
+                        "priceCurrency": "USD",
+                        "valueAddedTaxIncluded": true
+                    },
+                    "itemOffered": {"@type": "Service", "name": "Airport Transfer - Sedan"}
+                },
+                {
+                    "@type": "Offer",
+                    "name": "MSP Airport Transfer (SUV)",
+                    "description": "Luxury SUV service to/from Minneapolis-St. Paul International Airport. Up to 6 passengers.",
+                    "priceSpecification": {
+                        "@type": "PriceSpecification",
+                        "price": "69.00",
+                        "priceCurrency": "USD",
+                        "valueAddedTaxIncluded": true
+                    },
+                    "itemOffered": {"@type": "Service", "name": "Airport Transfer - SUV"}
+                },
+                {
+                    "@type": "Offer",
+                    "name": "Taxi",
+                    "description": "Twin Cities metro taxi service. Up to 4 passengers.",
+                    "priceSpecification": {
+                        "@type": "PriceSpecification",
+                        "price": "49.00",
+                        "priceCurrency": "USD",
+                        "valueAddedTaxIncluded": true
+                    },
+                    "itemOffered": {"@type": "Service", "name": "Taxi"}
+                }
+            ]
+        },
+        "potentialAction": {
+            "@type": "ReserveAction",
+            "name": "Book a Ride",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://totaltowncar.com/book-a-ride.html",
+                "actionPlatform": [
+                    "http://schema.org/DesktopWebPlatform",
+                    "http://schema.org/MobileWebPlatform"
+                ]
+            },
+            "result": {
+                "@type": "Reservation",
+                "name": "Town Car Reservation"
+            }
+        },
         "aggregateRating": {
             "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "reviewCount": "247"
-        }
+            "ratingValue": "5.0",
+            "reviewCount": "25",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "review": [
+            {
+                "@type": "Review",
+                "author": {"@type": "Person", "name": "Peter L."},
+                "datePublished": "2025-12-08",
+                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+                "reviewBody": "Excellent service! I asked to be picked up at 2:15 am for a 5am flight and he arrived early, calling me at 2 am. Very friendly and accommodating. Excellent black SUV. I will use them again!",
+                "publisher": {"@type": "Organization", "name": "Google"}
+            },
+            {
+                "@type": "Review",
+                "author": {"@type": "Person", "name": "Khatuna M."},
+                "datePublished": "2026-01-08",
+                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+                "reviewBody": "Excellent driver — safe, punctual with a super clean car. The ride was smooth and comfortable. Highly recommended!",
+                "publisher": {"@type": "Organization", "name": "Google"}
+            },
+            {
+                "@type": "Review",
+                "author": {"@type": "Person", "name": "Angela B."},
+                "datePublished": "2025-12-08",
+                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+                "reviewBody": "Very clean car, fantastic driving and exceptional service. I will be using this service every time.",
+                "publisher": {"@type": "Organization", "name": "Google"}
+            },
+            {
+                "@type": "Review",
+                "author": {"@type": "Person", "name": "Timmy"},
+                "datePublished": "2025-12-08",
+                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+                "reviewBody": "Known this driver for years. Use him on every trip to airport. Stand up dude.",
+                "publisher": {"@type": "Organization", "name": "Google"}
+            },
+            {
+                "@type": "Review",
+                "author": {"@type": "Person", "name": "Sharon K."},
+                "datePublished": "2025-12-08",
+                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+                "reviewBody": "Courteous, safe and punctual. Great experience. Nor was amazing!",
+                "publisher": {"@type": "Organization", "name": "Google"}
+            },
+            {
+                "@type": "Review",
+                "author": {"@type": "Person", "name": "Jibril H."},
+                "datePublished": "2026-04-17",
+                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+                "reviewBody": "Very nice service, polite and punctual.",
+                "publisher": {"@type": "Organization", "name": "Google"}
+            }
+        ]
     }
     </script>
 </head>
@@ -604,11 +776,12 @@
                         </p>
 
                         <!-- Review Badge -->
-                        <div class="inline-flex items-center gap-2 mb-8">
+                        <a href="https://www.google.com/maps?cid=6565784557959312179" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mb-8 hover:text-gold-300 transition-colors">
+                            <span class="text-white font-medium">10,000+ rides</span>
+                            <span class="text-obsidian-600">·</span>
                             <span class="text-gold-400">★★★★★</span>
-                            <span class="text-white font-medium">4.9</span>
-                            <span class="text-obsidian-500 text-sm">from 200+ reviews</span>
-                        </div>
+                            <span class="text-obsidian-500 text-sm">5.0 on Google</span>
+                        </a>
 
                         <!-- Trust indicators -->
                         <div class="flex flex-wrap justify-center lg:justify-start gap-8 mb-12">
@@ -630,7 +803,7 @@
                         <div class="grid grid-cols-3 gap-8 max-w-md mx-auto lg:mx-0">
                             <div class="text-center lg:text-left">
                                 <div class="flex items-center justify-center lg:justify-start gap-1 mb-1">
-                                    <span class="text-3xl lg:text-4xl font-display font-semibold text-white">4.9</span>
+                                    <span class="text-3xl lg:text-4xl font-display font-semibold text-white">5.0</span>
                                     <span class="text-gold-400 text-lg">★</span>
                                 </div>
                                 <div class="text-[10px] text-obsidian-500 tracking-luxe uppercase">Rating</div>
@@ -1090,31 +1263,34 @@
                         </div>
                     </div>
 
-                    <!-- Van -->
-                    <div class="group bg-obsidian-900/40 border border-white/[0.04] rounded-2xl overflow-hidden hover:border-gold-400/20 transition-all duration-500">
+                    <!-- Van (temporarily unavailable) -->
+                    <div class="group bg-obsidian-900/40 border border-white/[0.04] rounded-2xl overflow-hidden transition-all duration-500 relative opacity-60">
+                        <div class="absolute top-4 right-4 z-10">
+                            <span class="text-[10px] tracking-luxe uppercase bg-obsidian-700 text-obsidian-200 px-3 py-1 rounded-full font-medium">Temporarily Unavailable</span>
+                        </div>
                         <div class="aspect-[4/3] bg-obsidian-900 relative overflow-hidden">
                             <img src="images/fleet/van.jpeg"
                                  alt="Mercedes Sprinter"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                 class="w-full h-full object-cover grayscale"
                                  loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/20 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/40 to-transparent"></div>
                         </div>
                         <div class="p-6">
-                            <h3 class="text-lg font-display font-semibold text-white mb-1">Executive Van</h3>
-                            <p class="text-xs text-obsidian-500 mb-4">Mercedes Sprinter • Ford Transit</p>
-                            <ul class="space-y-2 text-sm text-obsidian-400 mb-4">
+                            <h3 class="text-lg font-display font-semibold text-obsidian-300 mb-1">Executive Van</h3>
+                            <p class="text-xs text-obsidian-600 mb-4">Mercedes Sprinter • Ford Transit</p>
+                            <ul class="space-y-2 text-sm text-obsidian-500 mb-4">
                                 <li class="flex items-center gap-2">
-                                    <div class="w-1 h-1 bg-gold-400 rounded-full"></div>
+                                    <div class="w-1 h-1 bg-obsidian-600 rounded-full"></div>
                                     Up to 14 passengers
                                 </li>
                                 <li class="flex items-center gap-2">
-                                    <div class="w-1 h-1 bg-gold-400 rounded-full"></div>
+                                    <div class="w-1 h-1 bg-obsidian-600 rounded-full"></div>
                                     10+ bags capacity
                                 </li>
                             </ul>
                             <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                                <span class="text-gold-400 font-semibold">From $199</span>
-                                <a href="book-a-ride.html" class="text-xs text-obsidian-500 hover:text-gold-400 transition-colors">Reserve →</a>
+                                <span class="text-obsidian-500 font-semibold line-through">From $199</span>
+                                <a href="tel:6129995382" class="text-xs text-obsidian-500 hover:text-gold-400 transition-colors">Call for groups →</a>
                             </div>
                         </div>
                     </div>
@@ -1154,69 +1330,134 @@
             </div>
         </section>
 
-        <!-- Testimonials -->
+        <!-- Testimonials / Google Reviews -->
         <section class="py-24 lg:py-32 bg-obsidian-950" id="reviews">
             <div class="container mx-auto px-6 lg:px-8">
                 <!-- Section Header -->
-                <div class="text-center max-w-2xl mx-auto mb-20">
+                <div class="text-center max-w-2xl mx-auto mb-16">
                     <div class="inline-flex items-center gap-4 mb-6">
                         <div class="h-px w-12 bg-gradient-to-r from-transparent to-gold-400/50"></div>
-                        <span class="text-xs text-gold-400 tracking-luxe uppercase">Testimonials</span>
+                        <span class="text-xs text-gold-400 tracking-luxe uppercase">Google Reviews</span>
                         <div class="h-px w-12 bg-gradient-to-l from-transparent to-gold-400/50"></div>
                     </div>
                     <h2 class="text-3xl lg:text-5xl font-display font-semibold text-white mb-6">
-                        Client Experiences
+                        What Our Riders Say
                     </h2>
-                    <div class="flex items-center justify-center gap-2 text-gold-400">
-                        <span class="text-xl">★★★★★</span>
-                        <span class="text-obsidian-400 font-light">4.9 from 247 reviews</span>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                        <span class="text-white font-light">10,000+ rides served</span>
+                        <span class="hidden sm:inline text-obsidian-600">·</span>
+                        <span class="flex items-center gap-2">
+                            <span class="text-xl text-gold-400">★★★★★</span>
+                            <span class="text-obsidian-300 font-light">5.0 on Google</span>
+                        </span>
                     </div>
                 </div>
 
-                <!-- Testimonials Grid -->
+                <!-- Reviews Grid (real Google reviews — verified on Google Business Profile) -->
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
-                        <div class="flex text-gold-400 text-sm mb-4">★★★★★</div>
+                    <article class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-gold-400 text-sm">★★★★★</div>
+                            <span class="text-[10px] text-obsidian-500 uppercase tracking-luxe">Dec 2025</span>
+                        </div>
                         <p class="text-obsidian-300 font-light leading-relaxed mb-6">
-                            "Impeccable service from start to finish. The driver was waiting at arrivals, the SUV was immaculate, and I arrived at my meeting with time to spare."
+                            "Excellent service! I asked to be picked up at 2:15 am for a 5am flight and he arrived early, calling me at 2 am. Very friendly and accommodating. Excellent black SUV. I will use them again!"
                         </p>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">SJ</div>
+                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">PL</div>
                             <div>
-                                <div class="text-sm font-medium text-white">Sarah J.</div>
-                                <div class="text-xs text-obsidian-500">Executive, Edina</div>
+                                <div class="text-sm font-medium text-white">Peter L.</div>
+                                <div class="text-xs text-obsidian-500">Local Guide · Google review</div>
                             </div>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
-                        <div class="flex text-gold-400 text-sm mb-4">★★★★★</div>
+                    <article class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-gold-400 text-sm">★★★★★</div>
+                            <span class="text-[10px] text-obsidian-500 uppercase tracking-luxe">Jan 2026</span>
+                        </div>
                         <p class="text-obsidian-300 font-light leading-relaxed mb-6">
-                            "We use Total Town Car for all our corporate client transportation. Professional, punctual, and our clients are always impressed."
+                            "Excellent driver — safe, punctual with a super clean car. The ride was smooth and comfortable. Highly recommended!"
                         </p>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">MC</div>
+                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">KM</div>
                             <div>
-                                <div class="text-sm font-medium text-white">Michael C.</div>
-                                <div class="text-xs text-obsidian-500">Corporate Account</div>
+                                <div class="text-sm font-medium text-white">Khatuna M.</div>
+                                <div class="text-xs text-obsidian-500">Google review</div>
                             </div>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
-                        <div class="flex text-gold-400 text-sm mb-4">★★★★★</div>
+                    <article class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-gold-400 text-sm">★★★★★</div>
+                            <span class="text-[10px] text-obsidian-500 uppercase tracking-luxe">Apr 2026</span>
+                        </div>
                         <p class="text-obsidian-300 font-light leading-relaxed mb-6">
-                            "Made our wedding day absolutely perfect. The car was stunning, the driver was courteous, and every detail was handled beautifully."
+                            "Very nice service, polite and punctual."
                         </p>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">JW</div>
+                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">JH</div>
                             <div>
-                                <div class="text-sm font-medium text-white">Jennifer W.</div>
-                                <div class="text-xs text-obsidian-500">Wedding, Wayzata</div>
+                                <div class="text-sm font-medium text-white">Jibril H.</div>
+                                <div class="text-xs text-obsidian-500">Google review</div>
                             </div>
                         </div>
-                    </div>
+                    </article>
+
+                    <article class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-gold-400 text-sm">★★★★★</div>
+                            <span class="text-[10px] text-obsidian-500 uppercase tracking-luxe">Dec 2025</span>
+                        </div>
+                        <p class="text-obsidian-300 font-light leading-relaxed mb-6">
+                            "Known this driver for years. Use him on every trip to airport. Stand up dude."
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">T</div>
+                            <div>
+                                <div class="text-sm font-medium text-white">Timmy</div>
+                                <div class="text-xs text-obsidian-500">Google review</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-gold-400 text-sm">★★★★★</div>
+                            <span class="text-[10px] text-obsidian-500 uppercase tracking-luxe">Dec 2025</span>
+                        </div>
+                        <p class="text-obsidian-300 font-light leading-relaxed mb-6">
+                            "Very clean car, fantastic driving and exceptional service. I will be using this service every time."
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">AB</div>
+                            <div>
+                                <div class="text-sm font-medium text-white">Angela B.</div>
+                                <div class="text-xs text-obsidian-500">Google review</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-8 hover:border-gold-400/10 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-gold-400 text-sm">★★★★★</div>
+                            <span class="text-[10px] text-obsidian-500 uppercase tracking-luxe">Dec 2025</span>
+                        </div>
+                        <p class="text-obsidian-300 font-light leading-relaxed mb-6">
+                            "Courteous, safe and punctual. Great experience. Nor was amazing!"
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 font-medium text-sm">SK</div>
+                            <div>
+                                <div class="text-sm font-medium text-white">Sharon K.</div>
+                                <div class="text-xs text-obsidian-500">Local Guide · Google review</div>
+                            </div>
+                        </div>
+                    </article>
                 </div>
+
             </div>
         </section>
 

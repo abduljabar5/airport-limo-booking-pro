@@ -126,110 +126,82 @@ async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subje
   return response.ok ? 'scheduled' : 'failed';
 }
 
-export const handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
+// ========================================
+// MAIN BOOKING PROCESSOR
+// ========================================
+// Exported so both the HTTP handler and the Stripe webhook can call it.
+// All independent I/O (emails, SMS, calendar, reminders) runs in parallel.
 
-  try {
-    const booking = JSON.parse(event.body);
+export async function processBooking(booking) {
+  const OWNER_EMAIL = 'totaltowncarservice@gmail.com';
+  const OWNER_PHONE = '+16129995382';
+  const FROM_EMAIL = 'bookings@totaltowncar.com';
+  const FROM_NAME = 'Total Town Car Service';
+  const TWILIO_FROM = '+16129991462';
 
-    // Validate required fields
-    if (!booking.email || !booking.phone || !booking.pickup || !booking.dropoff) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
+  // Format data
+  const formattedTotal = '$' + (booking.total || 0);
+  const formattedBase = '$' + (booking.baseFare || booking.total || 0);
+  const formattedDiscount = '$' + (booking.discount || 0);
+  const formattedTip = '$' + (booking.tip || 0);
+  const formattedFee = '$' + (booking.processingFee || 0);
+  const hasDiscount = (booking.discount || 0) > 0;
+  const hasProcessingFee = (booking.processingFee || 0) > 0;
+  const promoCode = booking.promoCode || '';
+  const distance = booking.distance || 0;
+  const estimatedMinutes = booking.duration || Math.round(distance * 1.5);
+
+  const isRoundTrip = booking.roundTrip || false;
+  const roundTripDiscount = booking.roundTripDiscount || 0;
+  const formattedRoundTripDiscount = '$' + roundTripDiscount;
+  const returnDate = booking.returnDate || '';
+  const returnTime = booking.returnTime || '';
+  const hasMeetAndGreet = booking.meetAndGreet || false;
+  const meetAndGreetPrice = booking.meetAndGreetPrice || 15;
+  const formattedMeetAndGreet = '$' + meetAndGreetPrice;
+
+  const pickupLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(booking.pickup);
+  const dropoffLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(booking.dropoff);
+
+  const calendarLink = generateCalendarLink(booking, estimatedMinutes);
+  const customerPhone = booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, '');
+
+  // ----------------------------------------
+  // Email task (Resend batch)
+  // ----------------------------------------
+  const emailTask = async () => {
+    if (!process.env.RESEND_API_KEY) return 'skipped';
+    const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet, calendarLink);
+    const ownerHtml = generateOwnerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet);
+    try {
+      const r = await fetch('https://api.resend.com/emails/batch', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify([
+          { from: `${FROM_NAME} <${FROM_EMAIL}>`, to: [booking.email], subject: `Booking Confirmation - ${booking.date}`, html: customerHtml },
+          { from: `${FROM_NAME} <${FROM_EMAIL}>`, to: [OWNER_EMAIL], subject: `NEW BOOKING - ${booking.name} - ${booking.date}`, html: ownerHtml }
+        ])
+      });
+      return r.ok ? 'sent' : 'failed';
+    } catch (e) {
+      console.error('Email error:', e);
+      return 'error';
+    }
+  };
+
+  // ----------------------------------------
+  // SMS tasks (Twilio - customer + owner sent in parallel)
+  // ----------------------------------------
+  const smsTask = async () => {
+    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
+      return { customer: 'skipped', owner: 'skipped' };
     }
 
-    // Owner details
-    const OWNER_EMAIL = 'totaltowncarservice@gmail.com';
-    const OWNER_PHONE = '+16129995382';
-    const FROM_EMAIL = 'bookings@totaltowncar.com';
-    const FROM_NAME = 'Total Town Car Service';
-    const TWILIO_FROM = '+16129991462';
-
-    // Format data
-    const formattedTotal = '$' + (booking.total || 0);
-    const formattedBase = '$' + (booking.baseFare || booking.total || 0);
-    const formattedDiscount = '$' + (booking.discount || 0);
-    const formattedTip = '$' + (booking.tip || 0);
-    const formattedFee = '$' + (booking.processingFee || 0);
-    const hasDiscount = (booking.discount || 0) > 0;
-    const hasProcessingFee = (booking.processingFee || 0) > 0;
-    const promoCode = booking.promoCode || '';
-    const distance = booking.distance || 0;
-    const estimatedMinutes = booking.duration || Math.round(distance * 1.5); // Use actual duration from Google Maps, fallback to estimate
-
-    // Upsell data
-    const isRoundTrip = booking.roundTrip || false;
-    const roundTripDiscount = booking.roundTripDiscount || 0;
-    const formattedRoundTripDiscount = '$' + roundTripDiscount;
-    const returnDate = booking.returnDate || '';
-    const returnTime = booking.returnTime || '';
-    const hasMeetAndGreet = booking.meetAndGreet || false;
-    const meetAndGreetPrice = booking.meetAndGreetPrice || 15;
-    const formattedMeetAndGreet = '$' + meetAndGreetPrice;
-
-    // Full links for email (more descriptive)
-    const pickupLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(booking.pickup);
-    const dropoffLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(booking.dropoff);
-
-    // Short links for SMS (better clickability)
-    const pickupLinkShort = 'https://maps.google.com/?q=' + encodeURIComponent(booking.pickup);
-    const dropoffLinkShort = 'https://maps.google.com/?q=' + encodeURIComponent(booking.dropoff);
-
-    // Results tracking
-    const results = { email: null, sms: null, calendar: null, reminders: null };
-
-    // Generate calendar link for customer email
-    const calendarLink = generateCalendarLink(booking, estimatedMinutes);
-
-    // ========================================
-    // SEND EMAILS VIA RESEND
-    // ========================================
-    if (process.env.RESEND_API_KEY) {
-      const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet, calendarLink);
-      const ownerHtml = generateOwnerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet);
-
-      const resendBody = [
-        {
-          from: `${FROM_NAME} <${FROM_EMAIL}>`,
-          to: [booking.email],
-          subject: `Booking Confirmation - ${booking.date}`,
-          html: customerHtml
-        },
-        {
-          from: `${FROM_NAME} <${FROM_EMAIL}>`,
-          to: [OWNER_EMAIL],
-          subject: `NEW BOOKING - ${booking.name} - ${booking.date}`,
-          html: ownerHtml
-        }
-      ];
-
-      try {
-        const emailResponse = await fetch('https://api.resend.com/emails/batch', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(resendBody)
-        });
-        results.email = emailResponse.ok ? 'sent' : 'failed';
-      } catch (e) {
-        console.error('Email error:', e);
-        results.email = 'error';
-      }
-    }
-
-    // ========================================
-    // SEND SMS VIA TWILIO
-    // ========================================
-    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-      // Premium customer SMS - clean and professional
-      const roundTripLine = isRoundTrip ? `\n🔄 ROUND TRIP` : '';
-      const returnLine = isRoundTrip && returnDate ? `\nRETURN: ${returnDate} at ${returnTime}` : '';
-      const meetGreetLine = hasMeetAndGreet ? `\n👤 Meet & Greet included` : '';
-      const discountLine = hasDiscount ? `\nDiscount (${promoCode}): -${formattedDiscount}` : '';
-      const customerSms = `TOTAL TOWN CAR SERVICE
+    const roundTripLine = isRoundTrip ? `\n🔄 ROUND TRIP` : '';
+    const returnLine = isRoundTrip && returnDate ? `\nRETURN: ${returnDate} at ${returnTime}` : '';
+    const meetGreetLine = hasMeetAndGreet ? `\n👤 Meet & Greet included` : '';
+    const discountLine = hasDiscount ? `\nDiscount (${promoCode}): -${formattedDiscount}` : '';
+    const customerSms = `TOTAL TOWN CAR SERVICE
 ━━━━━━━━━━━━━━━━━━
 
 Booking Confirmed
@@ -246,21 +218,18 @@ Total: ${formattedTotal}${booking.paymentMethod === 'online' ? ' (Paid)' : ''}
 Your driver will arrive on time.
 Questions? (612) 999-5382`;
 
-      // Driver SMS - clean format with full details
-      const ownerDiscountLine = hasDiscount ? `\n🏷️ DISCOUNT: -${formattedDiscount} (${promoCode})` : '';
-      const ownerRoundTripLine = isRoundTrip ? `\n🔄 ROUND TRIP` : '';
-      const ownerReturnLine = isRoundTrip && returnDate ? `\n🔙 RETURN: ${returnDate} at ${returnTime}` : '';
-      const ownerMeetGreetLine = hasMeetAndGreet ? `\n👤 MEET & GREET (+${formattedMeetAndGreet})` : '';
-      const ownerSms = `🚨 NEW BOOKING 🚨
+    const ownerDiscountLine = hasDiscount ? `\n🏷️ DISCOUNT: -${formattedDiscount} (${promoCode})` : '';
+    const ownerRoundTripLine = isRoundTrip ? `\n🔄 ROUND TRIP` : '';
+    const ownerReturnLine = isRoundTrip && returnDate ? `\n🔙 RETURN: ${returnDate} at ${returnTime}` : '';
+    const ownerMeetGreetLine = hasMeetAndGreet ? `\n👤 MEET & GREET (+${formattedMeetAndGreet})` : '';
+    const ownerSms = `🚨 NEW BOOKING 🚨
 
 💰 FARE: ${formattedTotal}${ownerDiscountLine}${ownerRoundTripLine}${ownerMeetGreetLine}
 🗓️ WHEN: ${booking.date} at ${booking.time}${ownerReturnLine}
 
 📍 PICKUP: ${booking.pickup}
-${pickupLinkShort}
 
 🏁 DROPOFF: ${booking.dropoff}
-${dropoffLinkShort}
 
 👤 ${booking.name}
 📞 ${booking.phone}
@@ -269,123 +238,171 @@ ${dropoffLinkShort}
 Vehicle: ${booking.vehicle}
 Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking.flight ? `\nFlight: ${booking.flight}` : ''}${booking.notes ? `\nNotes: ${booking.notes}` : ''}`;
 
-      const twilioAuth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
-      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`;
+    const twilioAuth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`;
+    const sendSms = (to, body) => fetch(twilioUrl, {
+      method: 'POST',
+      headers: { 'Authorization': `Basic ${twilioAuth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ From: TWILIO_FROM, To: to, Body: body })
+    });
 
-      try {
-        // SMS to customer
-        const customerSmsResponse = await fetch(twilioUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${twilioAuth}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            From: TWILIO_FROM,
-            To: booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, ''),
-            Body: customerSms
-          })
-        });
+    try {
+      const [customerRes, ownerRes] = await Promise.all([
+        sendSms(customerPhone, customerSms),
+        sendSms(OWNER_PHONE, ownerSms)
+      ]);
+      if (!customerRes.ok) console.error('Customer SMS failed:', await customerRes.text());
+      if (!ownerRes.ok) console.error('Owner SMS failed:', await ownerRes.text());
+      return {
+        customer: customerRes.ok ? 'sent' : 'failed',
+        owner: ownerRes.ok ? 'sent' : 'failed'
+      };
+    } catch (e) {
+      console.error('SMS error:', e);
+      return { customer: 'error', owner: 'error' };
+    }
+  };
 
-        if (!customerSmsResponse.ok) {
-          const errorData = await customerSmsResponse.text();
-          console.error('Customer SMS failed:', errorData);
-        }
+  // ----------------------------------------
+  // Calendar task (Google)
+  // ----------------------------------------
+  const calendarTask = async () => {
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) return 'skipped';
+    try {
+      const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+      const accessToken = await getGoogleAccessToken(serviceAccount);
+      await createCalendarEvent(accessToken, booking, estimatedMinutes);
+      return 'created';
+    } catch (e) {
+      console.error('Calendar error:', e);
+      return 'error';
+    }
+  };
 
-        // SMS to owner
-        const ownerSmsResponse = await fetch(twilioUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${twilioAuth}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            From: TWILIO_FROM,
-            To: OWNER_PHONE,
-            Body: ownerSms
-          })
-        });
+  // ----------------------------------------
+  // Reminders task (parallel scheduling of all reminders)
+  // ----------------------------------------
+  const remindersTask = async () => {
+    if (!process.env.RESEND_API_KEY) return 'skipped';
+    try {
+      const bookingDate = parseBookingDateTime(booking.date, booking.time);
+      if (!bookingDate) return 'parse_error';
 
-        if (!ownerSmsResponse.ok) {
-          const errorData = await ownerSmsResponse.text();
-          console.error('Owner SMS failed:', errorData);
-        }
+      const now = new Date();
+      const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+      const inWindow = (d) => d > now && (d.getTime() - now.getTime()) < THIRTY_DAYS_MS;
+      const reminder24h = new Date(bookingDate.getTime() - 24 * 60 * 60 * 1000);
+      const reminder1h = new Date(bookingDate.getTime() - 60 * 60 * 1000);
+      const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
+      const hasMessagingService = !!process.env.TWILIO_MESSAGING_SERVICE_SID;
 
-        results.sms = customerSmsResponse.ok && ownerSmsResponse.ok ? 'sent' : 'partial';
-      } catch (e) {
-        console.error('SMS error:', e);
-        results.sms = 'error';
+      const jobs = [];
+      if (inWindow(reminder24h)) {
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - Tomorrow at ${booking.time}`, generateReminderEmail(booking, 'tomorrow', pickupLink), centralToUTCISO(reminder24h)).then(r => `24h: ${r}`));
       }
+      if (inWindow(reminder1h)) {
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - ${booking.time} Today`, generateReminderEmail(booking, 'in 1 hour', pickupLink), centralToUTCISO(reminder1h)).then(r => `1h: ${r}`));
+        if (hasMessagingService) {
+          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h)).then(r => `1h_sms: ${r}`));
+        }
+      }
+      if (inWindow(rideEnd)) {
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride? - Total Town Car Service', generateReviewEmail(booking), centralToUTCISO(rideEnd)).then(r => `review: ${r}`));
+        if (hasMessagingService) {
+          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd)).then(r => `review_sms: ${r}`));
+        }
+      }
+
+      if (!jobs.length) return 'none_scheduled';
+      const settled = await Promise.all(jobs);
+      return settled.join(', ');
+    } catch (e) {
+      console.error('Reminder scheduling error:', e);
+      return 'error';
+    }
+  };
+
+  // Run all top-level tasks in parallel
+  const [email, sms, calendar, reminders] = await Promise.all([
+    emailTask(),
+    smsTask(),
+    calendarTask(),
+    remindersTask()
+  ]);
+
+  // ----------------------------------------
+  // Backup alert: if BOTH owner email and owner SMS failed,
+  // fire a one-line alert to OWNER_BACKUP_EMAIL so the booking isn't missed.
+  // We don't trigger when channels are 'skipped' (intentionally not configured).
+  // ----------------------------------------
+  let backupAlert = 'not_needed';
+  const ownerEmailDelivered = email === 'sent';
+  const ownerSmsDelivered = sms.owner === 'sent';
+  const emailAttempted = email !== 'skipped';
+  const smsAttempted = sms.owner !== 'skipped';
+
+  if (emailAttempted && smsAttempted && !ownerEmailDelivered && !ownerSmsDelivered
+      && process.env.OWNER_BACKUP_EMAIL && process.env.RESEND_API_KEY) {
+    try {
+      const alertHtml = `
+<div style="font-family: -apple-system, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px;">
+  <h2 style="color: #b91c1c; margin-bottom: 8px;">⚠️ Booking notification failure</h2>
+  <p>The booking below was confirmed (and charged, if online) but <strong>both the primary owner email and SMS failed to deliver</strong>. Customer notifications may have succeeded — see the function logs for details.</p>
+  <table style="border-collapse: collapse; margin-top: 16px; font-size: 14px;">
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Confirmation:</td><td><strong>${booking.confirmationNumber || '(none)'}</strong></td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Name:</td><td>${booking.name || ''}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Phone:</td><td><a href="tel:${booking.phone}">${booking.phone || ''}</a></td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Email:</td><td>${booking.email || ''}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Date / Time:</td><td>${booking.date || ''} at ${booking.time || ''}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Pickup:</td><td>${booking.pickup || ''}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Dropoff:</td><td>${booking.dropoff || ''}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Vehicle:</td><td>${booking.vehicle || ''}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Total:</td><td>$${booking.total || 0}</td></tr>
+    <tr><td style="padding: 4px 12px 4px 0; color: #555;">Payment:</td><td>${booking.paymentMethod === 'online' ? 'Paid Online' : 'Pay Driver'}</td></tr>
+  </table>
+  <p style="margin-top: 16px; color: #555; font-size: 13px;">Delivery results — email: ${email}, owner SMS: ${sms.owner}. Check Netlify function logs for the underlying errors.</p>
+</div>`;
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: `${FROM_NAME} <${FROM_EMAIL}>`,
+          to: [process.env.OWNER_BACKUP_EMAIL],
+          subject: `⚠️ BOOKING ALERT - ${booking.confirmationNumber || 'unknown'} - notifications failed`,
+          html: alertHtml
+        })
+      });
+      backupAlert = r.ok ? 'sent' : 'failed';
+      if (!r.ok) console.error('Backup alert failed:', await r.text());
+    } catch (e) {
+      console.error('Backup alert error:', e);
+      backupAlert = 'error';
+    }
+  }
+
+  return { email, sms, calendar, reminders, backupAlert };
+}
+
+// ========================================
+// HTTP HANDLER (used by pay-driver flow)
+// ========================================
+
+export const handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
+  try {
+    const booking = JSON.parse(event.body);
+
+    if (!booking.email || !booking.phone || !booking.pickup || !booking.dropoff) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
     }
 
-    // ========================================
-    // CREATE GOOGLE CALENDAR EVENT
-    // ========================================
-    if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
-      try {
-        const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-        const accessToken = await getGoogleAccessToken(serviceAccount);
-        await createCalendarEvent(accessToken, booking, estimatedMinutes);
-        results.calendar = 'created';
-      } catch (e) {
-        console.error('Calendar error:', e);
-        results.calendar = 'error';
-      }
-    }
-
-    // ========================================
-    // SCHEDULE REMINDER EMAILS + REVIEW REQUEST
-    // ========================================
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const bookingDate = parseBookingDateTime(booking.date, booking.time);
-        if (bookingDate) {
-          const now = new Date();
-          const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-          const reminderResults = [];
-
-          // 24-hour reminder
-          const reminder24h = new Date(bookingDate.getTime() - 24 * 60 * 60 * 1000);
-          if (reminder24h > now && (reminder24h.getTime() - now.getTime()) < THIRTY_DAYS_MS) {
-            const r = await scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - Tomorrow at ${booking.time}`, generateReminderEmail(booking, 'tomorrow', pickupLink), centralToUTCISO(reminder24h));
-            reminderResults.push(`24h: ${r}`);
-          }
-
-          // 1-hour reminder (email + SMS)
-          const reminder1h = new Date(bookingDate.getTime() - 60 * 60 * 1000);
-          if (reminder1h > now && (reminder1h.getTime() - now.getTime()) < THIRTY_DAYS_MS) {
-            const r = await scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - ${booking.time} Today`, generateReminderEmail(booking, 'in 1 hour', pickupLink), centralToUTCISO(reminder1h));
-            reminderResults.push(`1h: ${r}`);
-
-            if (process.env.TWILIO_MESSAGING_SERVICE_SID) {
-              const customerPhone = booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, '');
-              const smsR = await scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h));
-              reminderResults.push(`1h_sms: ${smsR}`);
-            }
-          }
-
-          // Post-ride review request - email + SMS (ride end + 15 min buffer)
-          const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
-          if (rideEnd > now && (rideEnd.getTime() - now.getTime()) < THIRTY_DAYS_MS) {
-            const r = await scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride? - Total Town Car Service', generateReviewEmail(booking), centralToUTCISO(rideEnd));
-            reminderResults.push(`review: ${r}`);
-
-            if (process.env.TWILIO_MESSAGING_SERVICE_SID) {
-              const customerPhone = booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, '');
-              const smsR = await scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd));
-              reminderResults.push(`review_sms: ${smsR}`);
-            }
-          }
-
-          results.reminders = reminderResults.join(', ') || 'none_scheduled';
-        } else {
-          results.reminders = 'parse_error';
-        }
-      } catch (e) {
-        console.error('Reminder scheduling error:', e);
-        results.reminders = 'error';
-      }
-    }
+    const results = await processBooking(booking);
 
     return {
       statusCode: 200,
@@ -396,7 +413,6 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
         results
       })
     };
-
   } catch (error) {
     console.error('Process booking error:', error);
     return {
