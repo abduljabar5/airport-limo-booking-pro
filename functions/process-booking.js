@@ -1,6 +1,7 @@
 // Process Booking - Sends email, SMS, calendar events, reminders, and review requests
 // Uses Resend for emails, Twilio for SMS, Google Calendar API for events
 import crypto from 'crypto';
+import { getStore } from '@netlify/blobs';
 
 // ========================================
 // UTILITY FUNCTIONS
@@ -157,7 +158,13 @@ async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to,
     headers: { 'Authorization': `Basic ${twilioAuth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ MessagingServiceSid: messagingServiceSid, To: to, Body: body, ScheduleType: 'fixed', SendAt: sendAt })
   });
-  return response.ok ? 'scheduled' : 'failed';
+  if (!response.ok) return { status: 'failed', sid: null };
+  try {
+    const data = await response.json();
+    return { status: 'scheduled', sid: data.sid || null };
+  } catch (e) {
+    return { status: 'scheduled', sid: null };
+  }
 }
 
 async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subject, html, text, scheduledAt, refId) {
@@ -175,7 +182,13 @@ async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subje
       headers: refId ? { 'X-Entity-Ref-ID': refId } : undefined
     })
   });
-  return response.ok ? 'scheduled' : 'failed';
+  if (!response.ok) return { status: 'failed', id: null };
+  try {
+    const data = await response.json();
+    return { status: 'scheduled', id: data.id || null };
+  } catch (e) {
+    return { status: 'scheduled', id: null };
+  }
 }
 
 // Strip HTML to a safe plain-text fallback (Resend includes both for deliverability).
@@ -373,11 +386,11 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
 
     const calendarPromise = (async () => {
       try {
-        await createCalendarEvent(accessToken, booking, estimatedMinutes);
-        return 'created';
+        const eventResp = await createCalendarEvent(accessToken, booking, estimatedMinutes);
+        return { status: 'created', eventId: eventResp?.id || null };
       } catch (e) {
         console.error('Calendar error:', e);
-        return 'error';
+        return { status: 'error', eventId: null };
       }
     })();
 
@@ -392,8 +405,8 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
       }
     })();
 
-    const [calendar, sheet] = await Promise.all([calendarPromise, sheetPromise]);
-    return { calendar, sheet };
+    const [calendarResult, sheet] = await Promise.all([calendarPromise, sheetPromise]);
+    return { calendar: calendarResult.status, calendarEventId: calendarResult.eventId, sheet };
   };
 
   // ----------------------------------------
@@ -414,37 +427,45 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
       const hasMessagingService = !!process.env.TWILIO_MESSAGING_SERVICE_SID;
 
       const refId = booking.confirmationNumber || '';
+      // Each scheduling call returns {status, id|sid}. We tag the result with the
+      // reminder type so the cancellation flow knows what each ID is for.
       const jobs = [];
       if (inWindow(reminder24h)) {
         const html24 = generateReminderEmail(booking, 'tomorrow', pickupLink);
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: tomorrow at ${booking.time}`, html24, htmlToText(html24), centralToUTCISO(reminder24h), refId).then(r => `24h: ${r}`));
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: tomorrow at ${booking.time}`, html24, htmlToText(html24), centralToUTCISO(reminder24h), refId)
+          .then(r => ({ purpose: '24h_email', kind: 'email', id: r.id, status: r.status })));
       }
       if (inWindow(reminder1h)) {
         const html1 = generateReminderEmail(booking, 'in 1 hour', pickupLink);
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: ${booking.time} today`, html1, htmlToText(html1), centralToUTCISO(reminder1h), refId).then(r => `1h: ${r}`));
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: ${booking.time} today`, html1, htmlToText(html1), centralToUTCISO(reminder1h), refId)
+          .then(r => ({ purpose: '1h_email', kind: 'email', id: r.id, status: r.status })));
         if (hasMessagingService) {
-          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h)).then(r => `1h_sms: ${r}`));
+          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h))
+            .then(r => ({ purpose: '1h_sms', kind: 'sms', sid: r.sid, status: r.status })));
         }
       }
       if (inWindow(rideEnd)) {
         const htmlReview = generateReviewEmail(booking);
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride with Total Town Car?', htmlReview, htmlToText(htmlReview), centralToUTCISO(rideEnd), refId).then(r => `review: ${r}`));
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride with Total Town Car?', htmlReview, htmlToText(htmlReview), centralToUTCISO(rideEnd), refId)
+          .then(r => ({ purpose: 'review_email', kind: 'email', id: r.id, status: r.status })));
         if (hasMessagingService) {
-          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd)).then(r => `review_sms: ${r}`));
+          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd))
+            .then(r => ({ purpose: 'review_sms', kind: 'sms', sid: r.sid, status: r.status })));
         }
       }
 
-      if (!jobs.length) return 'none_scheduled';
-      const settled = await Promise.all(jobs);
-      return settled.join(', ');
+      if (!jobs.length) return { summary: 'none_scheduled', items: [] };
+      const items = await Promise.all(jobs);
+      const summary = items.map(it => `${it.purpose}: ${it.status}`).join(', ');
+      return { summary, items };
     } catch (e) {
       console.error('Reminder scheduling error:', e);
-      return 'error';
+      return { summary: 'error', items: [] };
     }
   };
 
   // Run all top-level tasks in parallel
-  const [email, sms, google, reminders] = await Promise.all([
+  const [email, sms, google, remindersResult] = await Promise.all([
     emailTask(),
     smsTask(),
     googleTask(),
@@ -452,6 +473,48 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
   ]);
   const calendar = google.calendar;
   const sheet = google.sheet;
+  const reminders = remindersResult.summary;
+
+  // Persist a record of this booking in Netlify Blobs so the cancellation
+  // function can look it up later by confirmation number and clean up
+  // scheduled reminders / calendar event.
+  let stored = 'skipped';
+  if (booking.confirmationNumber) {
+    try {
+      const store = getStore('bookings');
+      await store.setJSON(booking.confirmationNumber, {
+        confirmationNumber: booking.confirmationNumber,
+        createdAt: new Date().toISOString(),
+        cancelled: false,
+        booking: {
+          name: booking.name,
+          email: booking.email,
+          phone: booking.phone,
+          date: booking.date,
+          time: booking.time,
+          pickup: booking.pickup,
+          dropoff: booking.dropoff,
+          vehicle: booking.vehicle,
+          passengers: booking.passengers,
+          total: booking.total,
+          paymentMethod: booking.paymentMethod,
+          roundTrip: booking.roundTrip,
+          returnDate: booking.returnDate,
+          returnTime: booking.returnTime,
+          notes: booking.notes,
+          flight: booking.flight,
+          promoCode: booking.promoCode
+        },
+        scheduledItems: remindersResult.items || [],
+        calendarEventId: google.calendarEventId,
+        notificationResults: { email, sms, calendar, sheet, reminders }
+      });
+      stored = 'saved';
+    } catch (e) {
+      console.error('Blob store error:', e);
+      stored = 'error';
+    }
+  }
 
   // ----------------------------------------
   // Backup alert: if BOTH owner email and owner SMS failed,
@@ -509,7 +572,7 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
     }
   }
 
-  return { email, sms, calendar, sheet, reminders, backupAlert };
+  return { email, sms, calendar, sheet, reminders, backupAlert, stored };
 }
 
 // ========================================
