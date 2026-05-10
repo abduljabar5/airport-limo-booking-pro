@@ -117,13 +117,42 @@ async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to,
   return response.ok ? 'scheduled' : 'failed';
 }
 
-async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subject, html, scheduledAt) {
+async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subject, html, text, scheduledAt, refId) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: `${fromName} <${fromEmail}>`, to: [toEmail], subject, html, scheduled_at: scheduledAt })
+    body: JSON.stringify({
+      from: `${fromName} <${fromEmail}>`,
+      to: [toEmail],
+      reply_to: 'totaltowncarservice@gmail.com',
+      subject,
+      html,
+      text,
+      scheduled_at: scheduledAt,
+      headers: refId ? { 'X-Entity-Ref-ID': refId } : undefined
+    })
   });
   return response.ok ? 'scheduled' : 'failed';
+}
+
+// Strip HTML to a safe plain-text fallback (Resend includes both for deliverability).
+function htmlToText(html) {
+  return String(html || '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li|tr|h[1-6])>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '- ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#9733;/g, '*')
+    .replace(/&rarr;/g, '->')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 // ========================================
@@ -173,13 +202,32 @@ export async function processBooking(booking) {
     if (!process.env.RESEND_API_KEY) return 'skipped';
     const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet, calendarLink);
     const ownerHtml = generateOwnerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet);
+    const customerText = generateCustomerText(booking, formattedTotal, estimatedMinutes, isRoundTrip, returnDate, returnTime, hasMeetAndGreet, hasDiscount, formattedDiscount, promoCode);
+    const ownerText = generateOwnerText(booking, formattedTotal, hasDiscount, formattedDiscount, promoCode, isRoundTrip, returnDate, returnTime, hasMeetAndGreet);
+    const refId = booking.confirmationNumber || '';
     try {
       const r = await fetch('https://api.resend.com/emails/batch', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify([
-          { from: `${FROM_NAME} <${FROM_EMAIL}>`, to: [booking.email], subject: `Booking Confirmation - ${booking.date}`, html: customerHtml },
-          { from: `${FROM_NAME} <${FROM_EMAIL}>`, to: [OWNER_EMAIL], subject: `NEW BOOKING - ${booking.name} - ${booking.date}`, html: ownerHtml }
+          {
+            from: `${FROM_NAME} <${FROM_EMAIL}>`,
+            to: [booking.email],
+            reply_to: OWNER_EMAIL,
+            subject: `Your ride is confirmed — ${booking.confirmationNumber || booking.date}`,
+            html: customerHtml,
+            text: customerText,
+            headers: { 'X-Entity-Ref-ID': refId }
+          },
+          {
+            from: `${FROM_NAME} <${FROM_EMAIL}>`,
+            to: [OWNER_EMAIL],
+            reply_to: booking.email,
+            subject: `NEW BOOKING - ${booking.name} - ${booking.date}`,
+            html: ownerHtml,
+            text: ownerText,
+            headers: { 'X-Entity-Ref-ID': refId }
+          }
         ])
       });
       return r.ok ? 'sent' : 'failed';
@@ -296,18 +344,22 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
       const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
       const hasMessagingService = !!process.env.TWILIO_MESSAGING_SERVICE_SID;
 
+      const refId = booking.confirmationNumber || '';
       const jobs = [];
       if (inWindow(reminder24h)) {
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - Tomorrow at ${booking.time}`, generateReminderEmail(booking, 'tomorrow', pickupLink), centralToUTCISO(reminder24h)).then(r => `24h: ${r}`));
+        const html24 = generateReminderEmail(booking, 'tomorrow', pickupLink);
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: tomorrow at ${booking.time}`, html24, htmlToText(html24), centralToUTCISO(reminder24h), refId).then(r => `24h: ${r}`));
       }
       if (inWindow(reminder1h)) {
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride Reminder - ${booking.time} Today`, generateReminderEmail(booking, 'in 1 hour', pickupLink), centralToUTCISO(reminder1h)).then(r => `1h: ${r}`));
+        const html1 = generateReminderEmail(booking, 'in 1 hour', pickupLink);
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: ${booking.time} today`, html1, htmlToText(html1), centralToUTCISO(reminder1h), refId).then(r => `1h: ${r}`));
         if (hasMessagingService) {
           jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h)).then(r => `1h_sms: ${r}`));
         }
       }
       if (inWindow(rideEnd)) {
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride? - Total Town Car Service', generateReviewEmail(booking), centralToUTCISO(rideEnd)).then(r => `review: ${r}`));
+        const htmlReview = generateReviewEmail(booking);
+        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride with Total Town Car?', htmlReview, htmlToText(htmlReview), centralToUTCISO(rideEnd), refId).then(r => `review: ${r}`));
         if (hasMessagingService) {
           jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd)).then(r => `review_sms: ${r}`));
         }
@@ -371,8 +423,11 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
         body: JSON.stringify({
           from: `${FROM_NAME} <${FROM_EMAIL}>`,
           to: [process.env.OWNER_BACKUP_EMAIL],
+          reply_to: OWNER_EMAIL,
           subject: `⚠️ BOOKING ALERT - ${booking.confirmationNumber || 'unknown'} - notifications failed`,
-          html: alertHtml
+          html: alertHtml,
+          text: htmlToText(alertHtml),
+          headers: { 'X-Entity-Ref-ID': booking.confirmationNumber || 'alert' }
         })
       });
       backupAlert = r.ok ? 'sent' : 'failed';
@@ -425,6 +480,65 @@ export const handler = async (event) => {
 // ========================================
 // EMAIL TEMPLATES
 // ========================================
+
+// Plain-text version of the customer confirmation. Sent alongside HTML so providers
+// that demote HTML-only mail (notably Gmail) treat the message as legit.
+function generateCustomerText(booking, total, estimatedMinutes, isRoundTrip, returnDate, returnTime, hasMeetAndGreet, hasDiscount, discount, promoCode) {
+  const lines = [
+    `Hi ${booking.name},`,
+    ``,
+    `Your ride with Total Town Car Service is confirmed.`,
+    ``,
+    `Confirmation: ${booking.confirmationNumber || ''}`,
+    `When: ${booking.date} at ${booking.time}`,
+    `Pickup: ${booking.pickup}`,
+    `Dropoff: ${booking.dropoff}`,
+    isRoundTrip && returnDate ? `Return: ${returnDate} at ${returnTime}` : '',
+    hasMeetAndGreet ? `Meet & Greet: included` : '',
+    hasDiscount ? `Discount (${promoCode}): -${discount}` : '',
+    `Vehicle: ${booking.vehicle}`,
+    `Passengers: ${booking.passengers || '1'}`,
+    `Estimated duration: ~${estimatedMinutes} min`,
+    `Total: ${total} ${booking.paymentMethod === 'online' ? '(Paid online)' : '(Pay driver upon arrival)'}`,
+    ``,
+    `What to expect:`,
+    `- Your driver will arrive on time at the pickup location.`,
+    `- Look for a clean, professional vehicle.`,
+    `- The driver may contact you when they arrive.`,
+    ``,
+    `Questions or changes? Call (612) 999-5382 or reply to this email.`,
+    ``,
+    `— Total Town Car Service`,
+    `https://totaltowncar.com`
+  ];
+  return lines.filter(Boolean).join('\n');
+}
+
+// Plain-text version for the owner notification.
+function generateOwnerText(booking, total, hasDiscount, discount, promoCode, isRoundTrip, returnDate, returnTime, hasMeetAndGreet) {
+  const lines = [
+    `NEW BOOKING — ${total} ${booking.paymentMethod === 'online' ? '(PAID ONLINE)' : '(COLLECT FROM CUSTOMER)'}`,
+    ``,
+    `Confirmation: ${booking.confirmationNumber || ''}`,
+    `Customer: ${booking.name}`,
+    `Phone: ${booking.phone}`,
+    `Email: ${booking.email}`,
+    ``,
+    `When: ${booking.date} at ${booking.time}`,
+    isRoundTrip && returnDate ? `Return: ${returnDate} at ${returnTime}` : '',
+    `Pickup: ${booking.pickup}`,
+    `Dropoff: ${booking.dropoff}`,
+    ``,
+    `Vehicle: ${booking.vehicle}`,
+    `Passengers: ${booking.passengers || '1'}`,
+    isRoundTrip ? `Round trip: yes` : '',
+    hasMeetAndGreet ? `Meet & Greet: yes` : '',
+    hasDiscount ? `Discount: -${discount} (${promoCode})` : '',
+    booking.flight ? `Flight: ${booking.flight}` : '',
+    booking.notes ? `Notes: ${booking.notes}` : ''
+  ];
+  return lines.filter(Boolean).join('\n');
+}
 
 function generateCustomerEmail(booking, total, baseFare, discount, tip, processingFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, roundTripDiscount, returnDate, returnTime, hasMeetAndGreet, meetAndGreetPrice, calendarLink) {
   const hasTip = parseFloat(tip.replace('$', '')) > 0;
