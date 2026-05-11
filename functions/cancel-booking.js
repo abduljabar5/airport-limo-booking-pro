@@ -22,25 +22,25 @@ function tokensMatch(a, b) {
 
 // ----- Resend / Twilio cancellation helpers -----
 async function cancelResendEmail(apiKey, emailId) {
-  if (!emailId) return 'no_id';
+  if (!emailId) return { status: 'no_id' };
   try {
     const r = await fetch(`https://api.resend.com/emails/${emailId}/cancel`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${apiKey}` }
     });
-    if (r.ok) return 'cancelled';
-    if (r.status === 404) return 'not_found';
+    if (r.ok) return { status: 'cancelled' };
+    if (r.status === 404) return { status: 'not_found', error: `id ${emailId} not found in Resend` };
     const txt = await r.text();
     console.error(`Resend cancel failed for ${emailId}: HTTP ${r.status} ${r.statusText} - ${txt}`);
-    return 'failed';
+    return { status: 'failed', error: `HTTP ${r.status}: ${txt.slice(0, 200)}` };
   } catch (e) {
     console.error('Resend cancel error:', e);
-    return 'error';
+    return { status: 'error', error: e.message };
   }
 }
 
 async function cancelTwilioMessage(accountSid, authToken, messageSid) {
-  if (!messageSid) return 'no_sid';
+  if (!messageSid) return { status: 'no_sid' };
   try {
     const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
     const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages/${messageSid}.json`, {
@@ -48,13 +48,13 @@ async function cancelTwilioMessage(accountSid, authToken, messageSid) {
       headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ Status: 'canceled' })
     });
-    if (r.ok) return 'cancelled';
+    if (r.ok) return { status: 'cancelled' };
     const txt = await r.text();
     console.error('Twilio cancel failed:', messageSid, r.status, txt);
-    return 'failed';
+    return { status: 'failed', error: `HTTP ${r.status}: ${txt.slice(0, 200)}` };
   } catch (e) {
     console.error('Twilio cancel error:', e);
-    return 'error';
+    return { status: 'error', error: e.message };
   }
 }
 
@@ -248,11 +248,11 @@ export default async (req, context) => {
     (rec.scheduledItems || []).map(async (item) => {
       if (item.kind === 'email') {
         const r = await cancelResendEmail(process.env.RESEND_API_KEY, item.id);
-        return { purpose: item.purpose, kind: 'email', result: r };
+        return { purpose: item.purpose, kind: 'email', id: item.id, result: r.status, error: r.error || null };
       }
       if (item.kind === 'sms') {
         const r = await cancelTwilioMessage(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, item.sid);
-        return { purpose: item.purpose, kind: 'sms', result: r };
+        return { purpose: item.purpose, kind: 'sms', sid: item.sid, result: r.status, error: r.error || null };
       }
       return { purpose: item.purpose || 'unknown', result: 'skipped' };
     })

@@ -446,7 +446,13 @@
                 }
 
                 const reminderHtml = (data.results.reminders || [])
-                    .map(r => fmtItem(r.purpose, r.result))
+                    .map(r => {
+                        const base = fmtItem(r.purpose, r.result);
+                        if (r.error) {
+                            return base.replace('</li>', ` <span class="block text-[10px] text-red-300/70 font-mono mt-0.5 break-all">${escapeHtml(r.error)}</span></li>`);
+                        }
+                        return base;
+                    })
                     .join('') || '<li class="text-obsidian-500 italic text-xs">No scheduled reminders to cancel.</li>';
 
                 showResult(`
