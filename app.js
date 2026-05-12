@@ -345,6 +345,10 @@ async function calculateQuote() {
 
             // Update button text
             elements.submitText.textContent = 'Book Now';
+
+            // Persist so any navigation to /book-a-ride.html (exit-intent modal,
+            // hero CTA, sticky button, footer link) prefills the booking form.
+            saveQuoteState();
         } else {
             showToast('Could not calculate route. Please check your addresses.', 'error');
         }
@@ -360,15 +364,42 @@ async function calculateQuote() {
 
         showPriceDisplay();
         elements.submitText.textContent = 'Book Now';
+        saveQuoteState();
     }
 
     setLoadingState(false);
+}
+
+// Persist the current quote state into sessionStorage. book-a-ride.html
+// reads 'ttc_booking' on load and prefills the form (and jumps to step 2)
+// so the customer doesn't lose what they already entered.
+function saveQuoteState() {
+    if (!state.quoteCalculated) return;
+    try {
+        const data = {
+            pickup: elements.pickupInput?.value || '',
+            dropoff: elements.dropoffInput?.value || '',
+            pickupValid: !!state.pickupValid,
+            dropoffValid: !!state.dropoffValid,
+            date: state.date,
+            time: state.time,
+            vehicle: state.vehicle,
+            distance: state.distance,
+            duration: state.duration,
+            price: state.price,
+            startStep: 2
+        };
+        sessionStorage.setItem('ttc_booking', JSON.stringify(data));
+    } catch (e) {
+        // Non-fatal — visitor just won't see prefill
+    }
 }
 
 function recalculatePrice() {
     if (state.distance > 0) {
         state.price = calculatePrice(state.distance, state.vehicle, state.time, elements.pickupInput.value);
         updatePriceDisplay();
+        saveQuoteState();
     }
 }
 
@@ -399,6 +430,9 @@ async function recalculateWithNewAddresses() {
                 elements.priceDisplay.classList.add('price-pulse');
                 setTimeout(() => elements.priceDisplay.classList.remove('price-pulse'), 500);
             }
+
+            // Updated addresses → refresh prefill payload
+            saveQuoteState();
         }
     } catch (error) {
         console.error('Recalculation error:', error);
