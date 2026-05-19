@@ -1072,7 +1072,7 @@
                             <span class="text-emerald-400 font-light">Discount (10%)</span>
                             <span class="text-emerald-400 font-light" id="summary-discount">-$0</span>
                         </div>
-                        <div class="flex justify-between text-sm hidden" id="summary-tip-row">
+                        <div class="flex justify-between text-sm" id="summary-tip-row">
                             <span class="text-obsidian-500 font-light">Tip (20%)</span>
                             <span class="text-white font-light" id="summary-tip">$0</span>
                         </div>
@@ -1081,7 +1081,7 @@
                             <span class="text-white font-light" id="summary-fee">$0</span>
                         </div>
                         <div class="text-xs text-obsidian-500 mt-2 italic" id="summary-tip-note">
-                            Driver tip can be added on the payment step (optional)
+                            Tip is optional and can be adjusted in the payment step
                         </div>
                     </div>
 
@@ -1220,7 +1220,7 @@
                 <span class="text-emerald-400 font-light">Discount (10%)</span>
                 <span class="text-emerald-400 font-light" id="mobile-summary-discount">-$0</span>
             </div>
-            <div class="flex justify-between text-sm hidden" id="mobile-summary-tip-row">
+            <div class="flex justify-between text-sm" id="mobile-summary-tip-row">
                 <span class="text-obsidian-500 font-light">Tip (20%)</span>
                 <span class="text-white font-light" id="mobile-summary-tip">$0</span>
             </div>
@@ -2081,10 +2081,6 @@
             // Update mobile action button
             updateMobileActionButton();
 
-            // Recompute totals on every step transition so the tip line
-            // appears when entering step 3 and disappears when leaving it.
-            calculateTotals();
-
             // Scroll to top of form
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -2291,10 +2287,7 @@
             // Add meet & greet if selected
             const meetgreetTotal = booking.data.meetgreet ? booking.data.meetgreetPrice : 0;
 
-            // Tip is only applied on the final payment step. Earlier steps show
-            // a clean fare so customers aren't anchored to an inflated total
-            // before they've made a tip decision.
-            const tipPercent = (booking.currentStep >= 3) ? (parseInt(booking.data.tip) || 0) : 0;
+            const tipPercent = parseInt(booking.data.tip) || 0;
             booking.data.tipAmount = Math.ceil(discountedFare * (tipPercent / 100));
 
             // Calculate subtotal before processing fee
@@ -2403,14 +2396,8 @@
             }
 
             const tipPercent = parseInt(booking.data.tip) || 0;
-            const tipActive = booking.currentStep >= 3 && booking.data.tipAmount > 0;
             bookingElements.summaryTipRow.querySelector('span:first-child').textContent = `Tip (${tipPercent}%)`;
             bookingElements.summaryTip.textContent = `$${booking.data.tipAmount}`;
-            bookingElements.summaryTipRow.classList.toggle('hidden', !tipActive);
-            // The italic helper note tells the customer they'll get to pick a tip
-            // on the payment step. Hide it once they're there.
-            const summaryTipNote = document.getElementById('summary-tip-note');
-            if (summaryTipNote) summaryTipNote.classList.toggle('hidden', booking.currentStep >= 3);
 
             // Processing fee (only for online payments)
             const summaryFeeRow = document.getElementById('summary-fee-row');
@@ -2492,10 +2479,7 @@
                 }
             }
 
-            if (mobileTipRow) {
-                mobileTipRow.querySelector('span:first-child').textContent = `Tip (${tipPercent}%)`;
-                mobileTipRow.classList.toggle('hidden', !tipActive);
-            }
+            if (mobileTipRow) mobileTipRow.querySelector('span:first-child').textContent = `Tip (${tipPercent}%)`;
             if (mobileTip) mobileTip.textContent = `$${booking.data.tipAmount}`;
 
             // Mobile processing fee
