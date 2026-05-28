@@ -56,6 +56,28 @@
       gtag('config', 'AW-11149654120');
     </script>
 
+    <!-- Google Ads Conversion: Website Booking -->
+    <script>
+      (function() {
+        var value = 65.0;
+        var txnId = '';
+        try {
+          var stashed = sessionStorage.getItem('ttc_last_booking');
+          if (stashed) {
+            var b = JSON.parse(stashed);
+            if (b && b.total) value = parseFloat(b.total) || 65.0;
+            if (b && b.confirmationNumber) txnId = b.confirmationNumber;
+          }
+        } catch (e) {}
+        gtag('event', 'conversion', {
+          'send_to': 'AW-11149654120/t3dfCKio17QcEOjwyMQp',
+          'value': value,
+          'currency': 'USD',
+          'transaction_id': txnId
+        });
+      })();
+    </script>
+
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
