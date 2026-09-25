@@ -6,11 +6,15 @@
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
 
-const OWNER_EMAIL = 'totaltowncarservice@gmail.com';
-const OWNER_PHONE = '+16129995382';
-const FROM_EMAIL = 'bookings@totaltowncar.com';
+const OWNER_EMAIL = process.env.OWNER_EMAIL || 'totaltowncarservice@gmail.com'; // override via env
+const OWNER_PHONE = process.env.OWNER_PHONE || '+16129995382'; // override via env
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'bookings@totaltowncar.com'; // must be on a domain verified in Resend
 const FROM_NAME = 'Total Town Car Service';
-const TWILIO_FROM = '+16129991462';
+const TWILIO_FROM = process.env.TWILIO_FROM_NUMBER || '+16129991462'; // override via env
+// When a Twilio Messaging Service is configured, route sends through it (registered A2P sender pool).
+const twilioSender = () => process.env.TWILIO_MESSAGING_SERVICE_SID
+  ? { MessagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID }
+  : { From: TWILIO_FROM };
 const CALENDAR_ID = 'totaltowncarservice@gmail.com';
 
 // ----- Auth -----
@@ -292,7 +296,7 @@ export default async (req, context) => {
       const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ From: TWILIO_FROM, To: customerPhone, Body: body })
+        body: new URLSearchParams({ ...twilioSender(), To: customerPhone, Body: body })
       });
       return r.ok ? 'sent' : 'failed';
     } catch (e) { console.error('Customer cancel SMS error:', e); return 'error'; }
@@ -306,7 +310,7 @@ export default async (req, context) => {
       const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ From: TWILIO_FROM, To: OWNER_PHONE, Body: body })
+        body: new URLSearchParams({ ...twilioSender(), To: OWNER_PHONE, Body: body })
       });
       return r.ok ? 'sent' : 'failed';
     } catch (e) { console.error('Owner cancel SMS error:', e); return 'error'; }

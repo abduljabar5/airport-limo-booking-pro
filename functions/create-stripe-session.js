@@ -30,6 +30,17 @@ export const handler = async (event) => {
     const upsellParts = [];
     if (booking.roundTrip) upsellParts.push('Round Trip');
     if (booking.meetAndGreet) upsellParts.push('Meet & Greet');
+    if (booking.carSeats > 0) upsellParts.push(`${booking.carSeats} Car Seat${booking.carSeats > 1 ? 's' : ''}`);
+    const stopsList = Array.isArray(booking.stops) ? booking.stops.filter(Boolean) : [];
+    if (stopsList.length) upsellParts.push(`${stopsList.length} Extra Stop${stopsList.length > 1 ? 's' : ''}`);
+    const isHourly = booking.serviceType === 'hourly';
+    // Stripe caps each metadata value at 500 chars; chunk the stop list into stops, stops2, stops3…
+    const stopsMetadata = (list) => {
+      const joined = list.join(' | ');
+      const out = {};
+      for (let i = 0; i * 480 < joined.length; i++) out[i === 0 ? 'stops' : `stops${i + 1}`] = joined.slice(i * 480, (i + 1) * 480);
+      return out;
+    };
     const upsellText = upsellParts.length ? ` (${upsellParts.join(', ')})` : '';
 
     // Create Stripe Checkout Session
@@ -38,8 +49,8 @@ export const handler = async (event) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `${booking.vehicle || 'Sedan'} - Airport Transfer${upsellText}`,
-            description: `${booking.pickup} → ${booking.dropoff} on ${booking.date} at ${booking.time}`,
+            name: `${booking.vehicle || 'Sedan'} - ${isHourly ? `Hourly Service (${booking.hours} hrs)` : 'Car Service'}${upsellText}`,
+            description: `${booking.pickup} → ${booking.dropoff || (isHourly ? 'As directed' : '')} on ${booking.date} at ${booking.time}`,
           },
           unit_amount: booking.amount, // Amount in cents
         },
@@ -69,6 +80,13 @@ export const handler = async (event) => {
         returnTime: booking.returnTime || '',
         meetAndGreet: booking.meetAndGreet ? 'true' : 'false',
         meetAndGreetPrice: String(booking.meetAndGreetPrice ?? 0),
+        carSeats: String(booking.carSeats ?? 0),
+        carSeatsTotal: String(booking.carSeatsTotal ?? 0),
+        serviceType: isHourly ? 'hourly' : 'transfer',
+        hours: String(booking.hours ?? 0),
+        ...stopsMetadata(stopsList),
+        stopsFee: String(booking.stopsFee ?? 0),
+        tipType: booking.tipType || 'percent',
         discount: String(booking.discount ?? 0),
         promoCode: booking.promoCode || '',
         tip: String(booking.tip ?? 0),

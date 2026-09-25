@@ -63,6 +63,14 @@ export default async (req, context) => {
     returnTime: m.returnTime || '',
     meetAndGreet: m.meetAndGreet === 'true',
     meetAndGreetPrice: parseFloat(m.meetAndGreetPrice) || 0,
+    carSeats: parseInt(m.carSeats) || 0,
+    carSeatsTotal: parseFloat(m.carSeatsTotal) || 0,
+    serviceType: m.serviceType || 'transfer',
+    hours: parseInt(m.hours) || 0,
+    // Long stop lists are chunked into stops, stops2, stops3… by create-stripe-session.js
+    stops: (() => { let j = m.stops || ''; for (let i = 2; m[`stops${i}`]; i++) j += m[`stops${i}`]; return j ? j.split(' | ').filter(Boolean) : []; })(),
+    stopsFee: parseFloat(m.stopsFee) || 0,
+    tipType: m.tipType || 'percent',
     discount: parseFloat(m.discount) || 0,
     promoCode: m.promoCode || '',
     tip: parseFloat(m.tip) || 0,
@@ -72,6 +80,7 @@ export default async (req, context) => {
     duration: parseFloat(m.duration) || 0
   };
 
+  if (booking.serviceType === 'hourly' && !booking.dropoff) booking.dropoff = 'As directed';
   if (!booking.email || !booking.phone || !booking.pickup || !booking.dropoff) {
     console.error('Webhook booking missing required fields:', booking);
     return jsonResponse(200, { received: true, error: 'Missing fields' });
