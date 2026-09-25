@@ -8,18 +8,31 @@
 // =============================================================================
 
 const CONFIG = {
-    // Pricing rates (matching your existing structure)
+    // Pricing rates — first 7 miles included in base fare, then per-mile.
+    // `hourly` is the as-directed rate per hour (3-hour minimum).
+    // NOTE: hourly rates are proposed and awaiting the owner's confirmation.
     rates: {
-        sedan: { base: 59.00, min: 65.00, perMile: 3.30 },
-        suv: { base: 69.00, min: 75.00, perMile: 3.60 },
-        van: { base: 199.00, min: 199.00, perMile: 3.50 },
-        taxi: { base: 49.00, min: 55.00, perMile: 3.20 }
+        taxi:  { base: 49.00,  min: 55.00,  perMile: 3.20, hourly: 70  },  // Sedan — Lincoln Continental, 1-3 passengers
+        sedan: { base: 59.00,  min: 65.00,  perMile: 3.30, hourly: 85  },  // Executive Sedan — Mercedes S-Class, 1-3 passengers
+        suv:   { base: 69.00,  min: 75.00,  perMile: 3.60, hourly: 95  },  // SUV — Cadillac Escalade, 1-6 passengers
+        van:   { base: 199.00, min: 199.00, perMile: 3.50, hourly: 140 }   // Sprinter Van — Mercedes Sprinter (online booking currently disabled)
     },
+    // Hourly / as-directed service: flat hourly rate per vehicle, billed in whole hours.
+    hourly: { minimumHours: 3, maximumHours: 12 },
     fees: {
-        airport: 15.00,
-        nightSurcharge: 20.00,
-        meetAndGreet: 20.00,
-        carSeat: 30.00
+        airport: 15.00,        // MSP pickup fee
+        nightSurcharge: 20.00, // 7 PM – 6 AM
+        meetAndGreet: 15.00,   // chauffeur meets you at arrivals with a name sign
+        childSeat: 25.00,      // per installed child safety seat (max 4)
+        stop: 15.00,           // per extra stop en route; mileage is routed through the stops
+        maxStops: 25           // unlimited in practice — 25 is Google Directions' waypoint ceiling per route
+    },
+    // Customer-facing tier names (internal keys are kept stable for saved drafts / admin)
+    vehicleNames: {
+        taxi: 'Sedan',
+        sedan: 'Executive Sedan',
+        suv: 'SUV',
+        van: 'Sprinter Van'
     },
     // Business info
     phone: '+16129995382',
@@ -473,6 +486,14 @@ function calculatePrice(distanceMiles, vehicleType, pickupTime, pickupAddress) {
     return Math.ceil(fare);
 }
 
+// Hourly / as-directed pricing: whole hours at the vehicle's hourly rate.
+function calculateHourlyPrice(vehicleType, hours) {
+    const rates = CONFIG.rates[vehicleType];
+    if (!rates || !rates.hourly) return 0;
+    const h = Math.min(Math.max(parseInt(hours, 10) || 0, CONFIG.hourly.minimumHours), CONFIG.hourly.maximumHours);
+    return Math.ceil(rates.hourly * h);
+}
+
 function isAirportAddress(address) {
     if (!address) return false;
     const lower = address.toLowerCase();
@@ -481,7 +502,7 @@ function isAirportAddress(address) {
            lower.includes('terminal');
 }
 
-async function getDistance(origin, destination) {
+async function getDistance(origin, destination, waypoints = []) {
     return new Promise((resolve) => {
         // Check if Google Maps is available
         if (typeof google === 'undefined' || !google.maps) {
@@ -493,19 +514,24 @@ async function getDistance(origin, destination) {
 
         const service = new google.maps.DirectionsService();
 
+        // Extra stops are routed as stopover waypoints so mileage covers every leg.
+        const stops = (waypoints || []).filter(Boolean).map(location => ({ location, stopover: true }));
+
         service.route({
             origin: origin,
             destination: destination,
+            waypoints: stops,
             travelMode: google.maps.TravelMode.DRIVING
         }, (response, status) => {
             if (status === 'OK' && response.routes[0]) {
-                const leg = response.routes[0].legs[0];
-                const distanceMeters = leg.distance.value;
-                const distanceMiles = distanceMeters * 0.000621371;
-                const durationMinutes = Math.round(leg.duration.value / 60);
+                // Sum every leg so extra stops are billed on the real routed mileage.
+                const legs = response.routes[0].legs;
+                const meters = legs.reduce((sum, leg) => sum + leg.distance.value, 0);
+                const seconds = legs.reduce((sum, leg) => sum + leg.duration.value, 0);
+                const distanceMiles = meters * 0.000621371;
                 resolve({
                     distance: parseFloat(distanceMiles.toFixed(1)),
-                    duration: durationMinutes
+                    duration: Math.round(seconds / 60)
                 });
             } else {
                 const dist = estimateDistance(origin, destination);
@@ -879,6 +905,7 @@ document.addEventListener('DOMContentLoaded', checkForSavedBooking);
 window.TotalTownCar = {
     CONFIG,
     calculatePrice,
+    calculateHourlyPrice,
     isAirportAddress,
     getDistance,
     showToast,

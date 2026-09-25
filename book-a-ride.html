@@ -105,10 +105,10 @@
             "offers": [
                 {
                     "@type": "Offer",
-                    "name": "Taxi",
+                    "name": "Sedan",
                     "priceCurrency": "USD",
                     "price": "49.00",
-                    "description": "Up to 4 passengers, Twin Cities metro starting rate."
+                    "description": "Lincoln Continental. Up to 3 passengers, Twin Cities metro starting rate."
                 },
                 {
                     "@type": "Offer",
@@ -295,6 +295,13 @@
             -webkit-mask-composite: xor;
             mask-composite: exclude;
         }
+
+        .upsell-option.carseats-active {
+            border-color: #D4AF37 !important;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(212, 175, 55, 0.04));
+        }
+        .vehicle-card img { filter: brightness(0.92); transition: transform .5s ease, filter .3s ease; }
+        .vehicle-card input:checked + div img { filter: brightness(1.05); transform: scale(1.04); }
 
         /* Button glow */
         .btn-gold {
@@ -601,6 +608,27 @@
 
                         <!-- Step 1: Trip Details -->
                         <div class="step-content" data-step="1">
+                            <!-- Service Type -->
+                            <div class="mb-5">
+                                <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Service</label>
+                                <div class="grid grid-cols-2 gap-3" id="servicetype-group">
+                                    <label class="vehicle-card relative cursor-pointer">
+                                        <input type="radio" name="servicetype" value="transfer" class="sr-only" checked>
+                                        <div class="relative px-3 py-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                            <div class="text-sm font-medium text-white">Point to Point</div>
+                                            <div class="text-[11px] text-obsidian-500 mt-0.5">Fixed fare by distance</div>
+                                        </div>
+                                    </label>
+                                    <label class="vehicle-card relative cursor-pointer">
+                                        <input type="radio" name="servicetype" value="hourly" class="sr-only">
+                                        <div class="relative px-3 py-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                            <div class="text-sm font-medium text-white">Hourly</div>
+                                            <div class="text-[11px] text-obsidian-500 mt-0.5">As directed · 3 hr minimum</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
                             <!-- Pickup -->
                             <div class="mb-4">
                                 <label for="pickup" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Pickup Location</label>
@@ -623,7 +651,7 @@
 
                             <!-- Dropoff -->
                             <div class="mb-4">
-                                <label for="dropoff" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Destination</label>
+                                <label for="dropoff" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2" id="dropoff-label">Destination</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <div class="w-2 h-2 bg-rose-400 rounded-full shadow-lg shadow-rose-400/50"></div>
@@ -639,6 +667,34 @@
                                     >
                                 </div>
                                 <p id="dropoff-error" class="text-rose-500 text-xs mt-2 hidden">Please select a destination from the dropdown</p>
+                            </div>
+
+                            <!-- Extra stops (point-to-point only) -->
+                            <div class="mb-4" id="stops-section">
+                                <div id="stops-container" class="space-y-3"></div>
+                                <button type="button" id="add-stop-btn" class="mt-2 inline-flex items-center gap-2 text-xs tracking-wide uppercase text-gold-400 hover:text-gold-300 transition-colors">
+                                    <span class="w-5 h-5 rounded-md border border-gold-400/40 flex items-center justify-center text-base leading-none">+</span>
+                                    <span id="add-stop-label">Add a stop · +$15 each</span>
+                                </button>
+                                <p id="stop-error" class="text-rose-500 text-xs mt-2 hidden">Please select each stop from the dropdown</p>
+                            </div>
+
+                            <!-- Hourly duration (hourly only) -->
+                            <div class="mb-4 hidden" id="hourly-section">
+                                <label for="hours" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Duration</label>
+                                <select id="hours" name="hours" class="input-luxury w-full px-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light appearance-none cursor-pointer">
+                                    <option value="3">3 hours (minimum)</option>
+                                    <option value="4">4 hours</option>
+                                    <option value="5">5 hours</option>
+                                    <option value="6">6 hours</option>
+                                    <option value="7">7 hours</option>
+                                    <option value="8">8 hours</option>
+                                    <option value="9">9 hours</option>
+                                    <option value="10">10 hours</option>
+                                    <option value="11">11 hours</option>
+                                    <option value="12">12 hours</option>
+                                </select>
+                                <p class="text-xs text-obsidian-500 mt-2" id="hourly-rate-note">Chauffeur and vehicle stay with you. Sedan $70/hr · Executive Sedan $85/hr · SUV $95/hr.</p>
                             </div>
 
                             <!-- Date & Time -->
@@ -689,32 +745,45 @@
                                 <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-3">Select Vehicle</label>
                                 <div class="grid grid-cols-2 gap-3">
                                     <label class="vehicle-card relative cursor-pointer">
-                                        <input type="radio" name="vehicle" value="sedan" class="sr-only">
-                                        <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                        <input type="radio" name="vehicle" value="taxi" class="sr-only">
+                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
+                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
+                                                <img src="images/fleet/sedan-lincoln.webp" alt="Lincoln Continental" width="1200" height="900" class="w-full h-full object-cover" loading="lazy">
+                                            </div>
                                             <div class="text-sm font-medium text-white">Sedan</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">1-3 guests</div>
+                                            <div class="text-xs text-obsidian-500 mt-1">Lincoln Continental · 1-3 guests</div>
+                                        </div>
+                                    </label>
+                                    <label class="vehicle-card relative cursor-pointer">
+                                        <input type="radio" name="vehicle" value="sedan" class="sr-only">
+                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
+                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
+                                                <img src="images/fleet/sedan-sclass.webp" alt="Mercedes-Benz S-Class" width="1200" height="900" class="w-full h-full object-cover" loading="lazy">
+                                            </div>
+                                            <div class="text-sm font-medium text-white">Executive Sedan</div>
+                                            <div class="text-xs text-obsidian-500 mt-1">Mercedes S-Class · 1-3 guests</div>
                                         </div>
                                     </label>
                                     <label class="vehicle-card relative cursor-pointer">
                                         <input type="radio" name="vehicle" value="suv" class="sr-only" checked>
-                                        <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
+                                            <span class="absolute top-2 right-2 z-10 bg-gold-400 text-obsidian-950 text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide">Popular</span>
+                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
+                                                <img src="images/fleet/suv-escalade.webp" alt="Cadillac Escalade" width="1200" height="900" class="w-full h-full object-cover" loading="lazy">
+                                            </div>
                                             <div class="text-sm font-medium text-white">SUV</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">1-6 guests</div>
-                                        </div>
-                                    </label>
-                                    <label class="vehicle-card relative cursor-pointer">
-                                        <input type="radio" name="vehicle" value="taxi" class="sr-only">
-                                        <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
-                                            <div class="text-sm font-medium text-white">Taxi</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">1-4 guests</div>
+                                            <div class="text-xs text-obsidian-500 mt-1">Cadillac Escalade · 1-6 guests</div>
                                         </div>
                                     </label>
                                     <label class="vehicle-card relative cursor-not-allowed opacity-60" title="Van service is temporarily unavailable">
                                         <input type="radio" name="vehicle" value="van" class="sr-only" disabled>
-                                        <div class="relative p-5 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300">
-                                            <div class="text-sm font-medium text-obsidian-400 line-through">Van</div>
+                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 overflow-hidden">
+                                            <div class="absolute top-2 right-2 z-10 px-2 py-0.5 bg-obsidian-700/80 text-[9px] uppercase tracking-luxe text-obsidian-300 rounded">Unavailable</div>
+                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
+                                                <img src="images/fleet/van-sprinter.webp" alt="Mercedes-Benz Sprinter" width="1200" height="900" class="w-full h-full object-cover grayscale" loading="lazy">
+                                            </div>
+                                            <div class="text-sm font-medium text-obsidian-400 line-through">Sprinter Van</div>
                                             <div class="text-xs text-obsidian-600 mt-1">7-14 guests</div>
-                                            <div class="absolute top-2 right-2 px-2 py-0.5 bg-obsidian-700/80 text-[9px] uppercase tracking-luxe text-obsidian-300 rounded">Unavailable</div>
                                         </div>
                                     </label>
                                 </div>
@@ -793,7 +862,7 @@
                                 <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-3">Enhance Your Ride</label>
                                 <div class="space-y-3">
                                     <!-- Round Trip -->
-                                    <label class="upsell-option flex items-center p-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl cursor-pointer hover:border-white/10 transition-all duration-300">
+                                    <label class="upsell-option flex items-center p-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl cursor-pointer hover:border-white/10 transition-all duration-300" id="roundtrip-option">
                                         <input type="checkbox" name="roundtrip" id="roundtrip" value="roundtrip" class="sr-only peer">
                                         <div class="w-5 h-5 rounded border-2 border-obsidian-500 peer-checked:border-gold-400 peer-checked:bg-gold-400 flex items-center justify-center transition-all flex-shrink-0">
                                             <svg class="w-3 h-3 text-obsidian-950 opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -848,6 +917,25 @@
                                         </div>
                                         <div class="text-gold-400 font-semibold text-sm">+$15</div>
                                     </label>
+
+                                    <!-- Child Car Seats -->
+                                    <div class="upsell-option flex items-center p-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl transition-all duration-300" id="carseats-option">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h4l2 9h8l2-5H9M7 20a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z"/>
+                                                </svg>
+                                                <span class="font-medium text-white text-sm">Child Car Seat</span>
+                                            </div>
+                                            <div class="text-xs text-obsidian-500 mt-0.5">Infant, convertible or booster &middot; installed before pickup &middot; up to 4</div>
+                                        </div>
+                                        <div class="flex items-center gap-3 ml-4">
+                                            <button type="button" id="carseats-minus" aria-label="Remove a car seat" class="w-8 h-8 rounded-lg border border-white/10 text-white hover:border-gold-400/50 transition-colors disabled:opacity-30 disabled:hover:border-white/10 flex items-center justify-center text-lg leading-none" disabled>&minus;</button>
+                                            <span id="carseats-count" class="w-5 text-center text-white font-medium text-sm" aria-live="polite">0</span>
+                                            <button type="button" id="carseats-plus" aria-label="Add a car seat" class="w-8 h-8 rounded-lg border border-white/10 text-white hover:border-gold-400/50 transition-colors disabled:opacity-30 disabled:hover:border-white/10 flex items-center justify-center text-lg leading-none">+</button>
+                                            <div class="text-gold-400 font-semibold text-sm whitespace-nowrap ml-1">+$25 each</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -885,7 +973,7 @@
                             <!-- Tip Selection -->
                             <div class="mb-6">
                                 <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-3">Add a Tip</label>
-                                <div class="grid grid-cols-4 gap-3">
+                                <div class="grid grid-cols-5 gap-2 sm:gap-3">
                                     <label class="cursor-pointer">
                                         <input type="radio" name="tip" value="0" class="sr-only peer">
                                         <div class="py-3 px-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center peer-checked:border-gold-400 peer-checked:bg-gold-400/10 transition-all duration-300 hover:border-white/10">
@@ -910,6 +998,18 @@
                                             <div class="font-medium text-white text-sm">25%</div>
                                         </div>
                                     </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="tip" value="custom" class="sr-only peer">
+                                        <div class="py-3 px-2 sm:px-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center peer-checked:border-gold-400 peer-checked:bg-gold-400/10 transition-all duration-300 hover:border-white/10">
+                                            <div class="font-medium text-white text-sm">Custom</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="mt-3 hidden" id="custom-tip-wrap">
+                                    <div class="relative max-w-xs">
+                                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-obsidian-500 pointer-events-none">$</span>
+                                        <input type="number" id="custom-tip-amount" min="0" max="500" step="1" inputmode="numeric" placeholder="Enter tip amount" class="input-luxury w-full pl-8 pr-4 py-3 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white text-sm placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light">
+                                    </div>
                                 </div>
                             </div>
 
@@ -1068,6 +1168,14 @@
                             <span class="text-obsidian-500 font-light">Meet & Greet</span>
                             <span class="text-white font-light" id="summary-meetgreet">$15</span>
                         </div>
+                        <div class="flex justify-between text-sm hidden" id="summary-stops-row">
+                            <span class="text-obsidian-500 font-light" id="summary-stops-label">Extra Stop</span>
+                            <span class="text-white font-light" id="summary-stops">$15</span>
+                        </div>
+                        <div class="flex justify-between text-sm hidden" id="summary-carseats-row">
+                            <span class="text-obsidian-500 font-light" id="summary-carseats-label">Car Seat</span>
+                            <span class="text-white font-light" id="summary-carseats">$25</span>
+                        </div>
                         <div class="flex justify-between text-sm hidden" id="summary-discount-row">
                             <span class="text-emerald-400 font-light">Discount (10%)</span>
                             <span class="text-emerald-400 font-light" id="summary-discount">-$0</span>
@@ -1216,6 +1324,14 @@
                 <span class="text-obsidian-500 font-light">Meet & Greet</span>
                 <span class="text-white font-light" id="mobile-summary-meetgreet">$15</span>
             </div>
+            <div class="flex justify-between text-sm hidden" id="mobile-summary-stops-row">
+                <span class="text-obsidian-500 font-light" id="mobile-summary-stops-label">Extra Stop</span>
+                <span class="text-white font-light" id="mobile-summary-stops">$15</span>
+            </div>
+            <div class="flex justify-between text-sm hidden" id="mobile-summary-carseats-row">
+                <span class="text-obsidian-500 font-light" id="mobile-summary-carseats-label">Car Seat</span>
+                <span class="text-white font-light" id="mobile-summary-carseats">$25</span>
+            </div>
             <div class="flex justify-between text-sm hidden" id="mobile-summary-discount-row">
                 <span class="text-emerald-400 font-light">Discount (10%)</span>
                 <span class="text-emerald-400 font-light" id="mobile-summary-discount">-$0</span>
@@ -1323,9 +1439,24 @@
                 meetgreetPrice: 15,
                 roundtripDiscount: 0,
                 returnDate: '',
-                returnTime: ''
+                returnTime: '',
+                // Service type: 'transfer' (point to point) or 'hourly' (as directed)
+                serviceType: 'transfer',
+                hours: 3,
+                // Extra stops (point-to-point only): [{ address, valid }]
+                stops: [],
+                maxStops: 25, // unlimited in practice; Google routes up to 25 waypoints
+                stopFee: 15,
+                // Child car seats
+                carSeats: 0,
+                carSeatMax: 4,
+                carSeatPrice: 25,
+                // Custom tip (dollar amount when tip === 'custom')
+                customTip: 0
             }
         };
+
+        const VEHICLE_NAMES = { taxi: 'Sedan', sedan: 'Executive Sedan', suv: 'SUV', van: 'Sprinter Van' };
 
         // DOM Elements
         const bookingElements = {
@@ -1432,11 +1563,32 @@
                     if (paymentRadio) paymentRadio.checked = true;
                 }
 
-                // Restore tip radio
+                // Restore tip radio (+ custom amount)
                 if (data.tip) {
                     const tipRadio = document.querySelector(`input[name="tip"][value="${data.tip}"]`);
                     if (tipRadio) tipRadio.checked = true;
+                    if (data.tip === 'custom') {
+                        const customWrap = document.getElementById('custom-tip-wrap');
+                        const customInput = document.getElementById('custom-tip-amount');
+                        if (customWrap) customWrap.classList.remove('hidden');
+                        if (customInput && data.customTip) customInput.value = data.customTip;
+                    }
                 }
+
+                // Restore service type, hours, stops, car seats
+                if (data.serviceType) {
+                    const stRadio = document.querySelector(`input[name="servicetype"][value="${data.serviceType}"]`);
+                    if (stRadio) stRadio.checked = true;
+                }
+                if (data.hours) {
+                    const hoursEl = document.getElementById('hours');
+                    if (hoursEl) hoursEl.value = String(data.hours);
+                }
+                booking.data.stops = Array.isArray(data.stops) ? data.stops.slice(0, booking.data.maxStops) : [];
+                booking.data.stops.forEach(stop => addStopRow(stop.address || '', !!stop.valid));
+                booking.data.carSeats = Math.min(Math.max(parseInt(data.carSeats) || 0, 0), booking.data.carSeatMax);
+                updateCarSeatsUI();
+                applyServiceType();
 
                 // Restore upsell checkboxes
                 if (data.roundtrip) {
@@ -1722,6 +1874,15 @@
             // Initialize autocomplete
             initBookingAutocomplete();
 
+            // Deep link from the home page: book-a-ride.html?service=hourly
+            try {
+                const wanted = new URLSearchParams(window.location.search).get('service');
+                if (wanted === 'hourly' || wanted === 'transfer') {
+                    const radio = document.querySelector(`input[name="servicetype"][value="${wanted}"]`);
+                    if (radio) { radio.checked = true; booking.data.serviceType = wanted; applyServiceType(); recalculatePrice(); saveFormData(); }
+                }
+            } catch (e) { /* ignore */ }
+
             updateSummary();
         }
 
@@ -1955,10 +2116,54 @@
             document.querySelectorAll('input[name="tip"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     booking.data.tip = e.target.value;
+                    const customWrap = document.getElementById('custom-tip-wrap');
+                    if (customWrap) customWrap.classList.toggle('hidden', e.target.value !== 'custom');
+                    if (e.target.value === 'custom') document.getElementById('custom-tip-amount')?.focus();
                     calculateTotals();
                     saveFormData();
                 });
             });
+
+            document.getElementById('custom-tip-amount')?.addEventListener('input', (e) => {
+                booking.data.customTip = Math.max(0, Math.min(500, Math.round(parseFloat(e.target.value) || 0)));
+                calculateTotals();
+                saveFormData();
+            });
+
+            document.querySelectorAll('input[name="servicetype"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    booking.data.serviceType = e.target.value;
+                    applyServiceType();
+                    updateSummary();
+                    if (booking.data.serviceType === 'hourly') {
+                        recalculatePrice();
+                    } else if (booking.data.pickupValid && booking.data.dropoffValid) {
+                        calculateDistance();
+                    } else {
+                        recalculatePrice();
+                    }
+                    saveFormData();
+                });
+            });
+
+            document.getElementById('hours')?.addEventListener('change', (e) => {
+                booking.data.hours = parseInt(e.target.value) || 3;
+                updateSummary();
+                recalculatePrice();
+                saveFormData();
+            });
+
+            document.getElementById('add-stop-btn')?.addEventListener('click', () => {
+                if (booking.data.stops.length >= booking.data.maxStops) return;
+                booking.data.stops.push({ address: '', valid: false });
+                const row = addStopRow('', false);
+                row?.querySelector('input')?.focus();
+                updateStopsUI();
+                saveFormData();
+            });
+
+            document.getElementById('carseats-minus')?.addEventListener('click', () => setCarSeats(booking.data.carSeats - 1));
+            document.getElementById('carseats-plus')?.addEventListener('click', () => setCarSeats(booking.data.carSeats + 1));
 
             // Upsell checkboxes
             document.getElementById('roundtrip')?.addEventListener('change', (e) => {
@@ -2020,7 +2225,7 @@
             if (!validateCurrentStep()) return;
 
             // If moving from step 1, calculate distance/price if not already done
-            if (booking.currentStep === 1 && booking.data.distance === 0) {
+            if (booking.currentStep === 1 && booking.data.serviceType !== 'hourly' && booking.data.distance === 0) {
                 calculateDistance().then(() => {
                     proceedToNextStep();
                 });
@@ -2134,6 +2339,21 @@
                     errorMessage = 'Please select destination from the dropdown';
                 }
 
+                // Extra stops: every non-empty stop must be picked from the dropdown
+                const stopError = document.getElementById('stop-error');
+                if (stopError) stopError.classList.add('hidden');
+                if (booking.data.serviceType !== 'hourly') {
+                    document.querySelectorAll('#stops-container .stop-input').forEach(input => {
+                        input.classList.remove('input-error');
+                        if (input.value.trim() && input.dataset.valid !== '1') {
+                            input.classList.add('input-error');
+                            if (stopError) stopError.classList.remove('hidden');
+                            valid = false;
+                            errorMessage = 'Please select each stop from the dropdown';
+                        }
+                    });
+                }
+
                 // Validate date and time are not empty
                 if (!dateInput.value) {
                     dateInput.classList.add('input-error');
@@ -2224,7 +2444,7 @@
 
             try {
                 if (typeof TotalTownCar !== 'undefined') {
-                    const result = await TotalTownCar.getDistance(pickup, dropoff);
+                    const result = await TotalTownCar.getDistance(pickup, dropoff, validStops());
                     booking.data.distance = result.distance;
                     booking.data.duration = result.duration;
                 } else {
@@ -2243,6 +2463,17 @@
         }
 
         function recalculatePrice() {
+            if (booking.data.serviceType === 'hourly') {
+                const hours = Math.max(3, parseInt(booking.data.hours) || 3);
+                if (typeof TotalTownCar !== 'undefined' && TotalTownCar.calculateHourlyPrice) {
+                    booking.data.baseFare = TotalTownCar.calculateHourlyPrice(booking.data.vehicle, hours);
+                } else {
+                    const hourlyRates = { taxi: 70, sedan: 85, suv: 95, van: 140 };
+                    booking.data.baseFare = (hourlyRates[booking.data.vehicle] || 70) * hours;
+                }
+                calculateTotals();
+                return;
+            }
             if (typeof TotalTownCar !== 'undefined') {
                 booking.data.baseFare = TotalTownCar.calculatePrice(
                     booking.data.distance,
@@ -2255,7 +2486,7 @@
                 const rates = {
                     sedan: { base: 59, perMile: 3.30 },
                     suv: { base: 69, perMile: 3.60 },
-                    taxi: { base: 49, perMile: 3.20 },
+                    taxi: { base: 49, perMile: 3.20 }, // "Sedan" (Lincoln Continental)
                     van: { base: 199, perMile: 3.50 }
                 };
                 const rate = rates[booking.data.vehicle] || rates.sedan;
@@ -2263,6 +2494,176 @@
             }
 
             calculateTotals();
+        }
+
+        // ----- Child car seats -----
+        function setCarSeats(n) {
+            booking.data.carSeats = Math.min(Math.max(n, 0), booking.data.carSeatMax);
+            updateCarSeatsUI();
+            calculateTotals();
+            saveFormData();
+        }
+
+        function updateCarSeatsUI() {
+            const n = booking.data.carSeats;
+            const countEl = document.getElementById('carseats-count');
+            const minus = document.getElementById('carseats-minus');
+            const plus = document.getElementById('carseats-plus');
+            const option = document.getElementById('carseats-option');
+            if (countEl) countEl.textContent = n;
+            if (minus) minus.disabled = n <= 0;
+            if (plus) plus.disabled = n >= booking.data.carSeatMax;
+            if (option) option.classList.toggle('carseats-active', n > 0);
+        }
+
+        // ----- Service type (point-to-point vs hourly) -----
+        function applyServiceType() {
+            const hourly = booking.data.serviceType === 'hourly';
+            const hourlySection = document.getElementById('hourly-section');
+            const stopsSection = document.getElementById('stops-section');
+            const dropoffInput = document.getElementById('dropoff');
+            const dropoffLabel = document.getElementById('dropoff-label');
+            const roundtripOption = document.getElementById('roundtrip-option');
+            const returnSection = document.getElementById('return-datetime-section');
+            if (hourlySection) hourlySection.classList.toggle('hidden', !hourly);
+            if (stopsSection) stopsSection.classList.toggle('hidden', hourly);
+            if (dropoffInput) {
+                if (hourly) {
+                    dropoffInput.removeAttribute('required');
+                    dropoffInput.placeholder = 'Optional — first destination or "as directed"';
+                } else {
+                    dropoffInput.setAttribute('required', '');
+                    dropoffInput.placeholder = 'Where to?';
+                }
+            }
+            if (dropoffLabel) dropoffLabel.textContent = hourly ? 'Drop-off (optional)' : 'Destination';
+            if (roundtripOption) roundtripOption.classList.toggle('hidden', hourly);
+            if (hourly && booking.data.roundtrip) {
+                booking.data.roundtrip = false;
+                const rt = document.getElementById('roundtrip');
+                if (rt) rt.checked = false;
+                if (returnSection) returnSection.classList.add('hidden');
+                booking.data.returnDate = '';
+                booking.data.returnTime = '';
+            }
+            updateStopsUI();
+        }
+
+        // ----- Extra stops -----
+        function addStopRow(address, valid) {
+            const container = document.getElementById('stops-container');
+            if (!container) return null;
+            const index = container.children.length;
+            const row = document.createElement('div');
+            row.className = 'stop-row relative';
+            row.innerHTML = `
+                <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Stop ${index + 1}</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div class="w-2 h-2 bg-gold-400 rounded-full shadow-lg shadow-gold-400/50"></div>
+                    </div>
+                    <input type="text" class="stop-input input-luxury w-full pl-10 pr-12 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light" placeholder="Address of stop" autocomplete="off">
+                    <button type="button" class="stop-remove absolute inset-y-0 right-0 pr-4 text-obsidian-500 hover:text-rose-400 transition-colors text-xl leading-none" aria-label="Remove stop">&times;</button>
+                </div>`;
+            const input = row.querySelector('input');
+            input.value = address || '';
+            input.dataset.valid = valid ? '1' : '0';
+            input.addEventListener('input', () => {
+                const i = stopIndex(row);
+                if (i > -1) booking.data.stops[i] = { address: input.value, valid: false };
+                input.dataset.valid = '0';
+                input.classList.remove('input-error');
+                saveFormData();
+            });
+            row.querySelector('.stop-remove').addEventListener('click', () => {
+                const i = stopIndex(row);
+                if (i > -1) booking.data.stops.splice(i, 1);
+                row.remove();
+                renumberStops();
+                updateStopsUI();
+                if (booking.data.pickupValid && booking.data.dropoffValid) calculateDistance(); else recalculatePrice();
+                saveFormData();
+            });
+            container.appendChild(row);
+            attachStopAutocomplete(input, row);
+            return row;
+        }
+
+        function stopIndex(row) {
+            return Array.from(row.parentElement?.children || []).indexOf(row);
+        }
+
+        function renumberStops() {
+            document.querySelectorAll('#stops-container .stop-row').forEach((row, i) => {
+                const label = row.querySelector('label');
+                if (label) label.textContent = `Stop ${i + 1}`;
+            });
+        }
+
+        function updateStopsUI() {
+            const btn = document.getElementById('add-stop-btn');
+            const label = document.getElementById('add-stop-label');
+            if (!btn) return;
+            const n = booking.data.stops.length;
+            btn.classList.toggle('hidden', n >= booking.data.maxStops);
+            if (label) label.textContent = n === 0 ? 'Add a stop · +$15 each' : 'Add another stop · +$15 each';
+        }
+
+        function attachStopAutocomplete(input, row) {
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+                setTimeout(() => attachStopAutocomplete(input, row), 500);
+                return;
+            }
+            const ac = new google.maps.places.Autocomplete(input, {
+                bounds: new google.maps.LatLngBounds(new google.maps.LatLng(44.7, -94.0), new google.maps.LatLng(45.2, -93.0)),
+                componentRestrictions: { country: 'us' },
+                strictBounds: false
+            });
+            ac.addListener('place_changed', () => {
+                const place = ac.getPlace();
+                if (place && place.formatted_address) {
+                    const i = stopIndex(row);
+                    if (i > -1) booking.data.stops[i] = { address: input.value, valid: true };
+                    input.dataset.valid = '1';
+                    input.classList.remove('input-error');
+                    if (booking.data.pickupValid && booking.data.dropoffValid) calculateDistance(); else calculateTotals();
+                    saveFormData();
+                }
+            });
+        }
+
+        function validStops() {
+            return booking.data.serviceType === 'hourly' ? [] : booking.data.stops.filter(s => s.valid && s.address).map(s => s.address);
+        }
+
+        function renderStopsRow(rowId, labelId, amountId) {
+            const row = document.getElementById(rowId);
+            const label = document.getElementById(labelId);
+            const amount = document.getElementById(amountId);
+            if (!row || !label || !amount) return;
+            const n = validStops().length;
+            if (n > 0) {
+                row.classList.remove('hidden');
+                label.textContent = n === 1 ? 'Extra Stop' : `Extra Stops × ${n}`;
+                amount.textContent = `$${n * booking.data.stopFee}`;
+            } else {
+                row.classList.add('hidden');
+            }
+        }
+
+        function renderCarSeatsRow(rowId, labelId, amountId) {
+            const row = document.getElementById(rowId);
+            const label = document.getElementById(labelId);
+            const amount = document.getElementById(amountId);
+            if (!row || !label || !amount) return;
+            const n = booking.data.carSeats;
+            if (n > 0) {
+                row.classList.remove('hidden');
+                label.textContent = n === 1 ? 'Car Seat' : `Car Seats × ${n}`;
+                amount.textContent = `$${n * booking.data.carSeatPrice}`;
+            } else {
+                row.classList.add('hidden');
+            }
         }
 
         function calculateTotals() {
@@ -2290,15 +2691,25 @@
 
             // Add meet & greet if selected
             const meetgreetTotal = booking.data.meetgreet ? booking.data.meetgreetPrice : 0;
+            const carSeatsTotal = booking.data.carSeats * booking.data.carSeatPrice;
+            const stopsTotal = validStops().length * booking.data.stopFee;
 
             // Tip is only applied on the final payment step. Earlier steps show
             // a clean fare so customers aren't anchored to an inflated total
             // before they've made a tip decision.
-            const tipPercent = (booking.currentStep >= 3) ? (parseInt(booking.data.tip) || 0) : 0;
-            booking.data.tipAmount = Math.ceil(discountedFare * (tipPercent / 100));
+            if (booking.currentStep >= 3) {
+                if (booking.data.tip === 'custom') {
+                    booking.data.tipAmount = Math.max(0, Math.round(booking.data.customTip || 0));
+                } else {
+                    const tipPercent = parseInt(booking.data.tip) || 0;
+                    booking.data.tipAmount = Math.ceil(discountedFare * (tipPercent / 100));
+                }
+            } else {
+                booking.data.tipAmount = 0;
+            }
 
             // Calculate subtotal before processing fee
-            const subtotal = discountedFare + booking.data.tipAmount + meetgreetTotal;
+            const subtotal = discountedFare + booking.data.tipAmount + meetgreetTotal + carSeatsTotal + stopsTotal;
 
             // Add processing fee for online payments (2.9% + $0.30)
             if (booking.data.payment === 'online') {
@@ -2330,16 +2741,23 @@
                 bookingElements.summaryDatetime.textContent = formattedDateTime;
             }
 
-            const vehicleNames = { sedan: 'Sedan', suv: 'SUV', taxi: 'Taxi', van: 'Van' };
-            const vehicleName = vehicleNames[booking.data.vehicle] || 'Sedan';
+            const vehicleName = VEHICLE_NAMES[booking.data.vehicle] || 'Sedan';
             bookingElements.summaryVehicle.textContent = vehicleName;
 
             // Update passengers
             const summaryPassengers = document.getElementById('summary-passengers');
             if (summaryPassengers) summaryPassengers.textContent = booking.data.passengers || '1';
 
-            const distanceText = booking.data.distance > 0 ? `${booking.data.distance} mi` : '-';
+            const isHourly = booking.data.serviceType === 'hourly';
+            const distanceText = isHourly
+                ? `${booking.data.hours} hrs · as directed`
+                : (booking.data.distance > 0 ? `${booking.data.distance} mi` : '-');
             bookingElements.summaryDistance.textContent = distanceText;
+            const summaryDistanceLabel = bookingElements.summaryDistance.previousElementSibling;
+            if (summaryDistanceLabel) summaryDistanceLabel.textContent = isHourly ? 'Duration' : 'Distance';
+            const summaryDropoffLabel = bookingElements.summaryDropoff.previousElementSibling;
+            if (summaryDropoffLabel) summaryDropoffLabel.textContent = isHourly ? 'Drop-off / As directed' : 'Dropoff';
+            if (isHourly && !booking.data.dropoff) bookingElements.summaryDropoff.textContent = 'As directed';
             bookingElements.summaryBase.textContent = `$${booking.data.baseFare}`;
 
             // Round trip row
@@ -2378,6 +2796,9 @@
                 }
             }
 
+            renderStopsRow('summary-stops-row', 'summary-stops-label', 'summary-stops');
+            renderCarSeatsRow('summary-carseats-row', 'summary-carseats-label', 'summary-carseats');
+
             // Update customer name if available
             const summaryCustomerRow = document.getElementById('summary-customer-row');
             const summaryCustomer = document.getElementById('summary-customer');
@@ -2402,9 +2823,9 @@
                 }
             }
 
-            const tipPercent = parseInt(booking.data.tip) || 0;
+            const tipLabel = booking.data.tip === 'custom' ? 'Tip' : `Tip (${parseInt(booking.data.tip) || 0}%)`;
             const tipActive = booking.currentStep >= 3 && booking.data.tipAmount > 0;
-            bookingElements.summaryTipRow.querySelector('span:first-child').textContent = `Tip (${tipPercent}%)`;
+            bookingElements.summaryTipRow.querySelector('span:first-child').textContent = tipLabel;
             bookingElements.summaryTip.textContent = `$${booking.data.tipAmount}`;
             bookingElements.summaryTipRow.classList.toggle('hidden', !tipActive);
             // The italic helper note tells the customer they'll get to pick a tip
@@ -2441,7 +2862,11 @@
             if (mobileDropoff) mobileDropoff.textContent = booking.data.dropoff || '-';
             if (mobileDatetime) mobileDatetime.textContent = formattedDateTime;
             if (mobileVehicle) mobileVehicle.textContent = vehicleName;
-            if (mobileDistance) mobileDistance.textContent = distanceText;
+            if (mobileDistance) {
+                mobileDistance.textContent = distanceText;
+                if (mobileDistance.previousElementSibling) mobileDistance.previousElementSibling.textContent = isHourly ? 'Duration' : 'Distance';
+            }
+            if (mobileDropoff && isHourly && !booking.data.dropoff) mobileDropoff.textContent = 'As directed';
             if (mobileBase) mobileBase.textContent = `$${booking.data.baseFare}`;
 
             // Mobile round trip row
@@ -2480,6 +2905,9 @@
                 }
             }
 
+            renderStopsRow('mobile-summary-stops-row', 'mobile-summary-stops-label', 'mobile-summary-stops');
+            renderCarSeatsRow('mobile-summary-carseats-row', 'mobile-summary-carseats-label', 'mobile-summary-carseats');
+
             // Mobile discount row
             const mobileDiscountRow = document.getElementById('mobile-summary-discount-row');
             const mobileDiscount = document.getElementById('mobile-summary-discount');
@@ -2493,7 +2921,7 @@
             }
 
             if (mobileTipRow) {
-                mobileTipRow.querySelector('span:first-child').textContent = `Tip (${tipPercent}%)`;
+                mobileTipRow.querySelector('span:first-child').textContent = tipLabel;
                 mobileTipRow.classList.toggle('hidden', !tipActive);
             }
             if (mobileTip) mobileTip.textContent = `$${booking.data.tipAmount}`;
@@ -2588,10 +3016,14 @@
                 email: booking.data.email,
                 phone: booking.data.phone,
                 pickup: booking.data.pickup,
-                dropoff: booking.data.dropoff,
+                dropoff: booking.data.dropoff || (booking.data.serviceType === 'hourly' ? 'As directed' : ''),
+                serviceType: booking.data.serviceType,
+                hours: booking.data.serviceType === 'hourly' ? (parseInt(booking.data.hours) || 3) : 0,
+                stops: validStops(),
+                stopsFee: validStops().length * booking.data.stopFee,
                 date: formattedDate,
                 time: formattedTime,
-                vehicle: ({ sedan: 'Sedan', suv: 'SUV', taxi: 'Taxi', van: 'Van' })[booking.data.vehicle] || booking.data.vehicle,
+                vehicle: VEHICLE_NAMES[booking.data.vehicle] || booking.data.vehicle,
                 passengers: booking.data.passengers,
                 flight: booking.data.flight,
                 notes: booking.data.notes,
@@ -2603,6 +3035,9 @@
                 returnTime: formattedReturnTime,
                 meetAndGreet: booking.data.meetgreet,
                 meetAndGreetPrice: booking.data.meetgreet ? booking.data.meetgreetPrice : 0,
+                carSeats: booking.data.carSeats,
+                carSeatsTotal: booking.data.carSeats * booking.data.carSeatPrice,
+                tipType: booking.data.tip === 'custom' ? 'custom' : 'percent',
                 discount: booking.data.discount,
                 promoCode: booking.data.promoCode,
                 tip: booking.data.tipAmount,
