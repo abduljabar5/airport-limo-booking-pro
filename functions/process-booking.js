@@ -351,7 +351,8 @@ ${hourlyLine}${stopsSmsLine}${roundTripLine}${returnLine}${meetGreetLine}${carSe
 Total: ${formattedTotal}${booking.paymentMethod === 'online' ? ' (Paid)' : ''}
 
 Your driver will arrive on time.
-Questions? (612) 999-5382`;
+Questions? (612) 999-5382
+Reply STOP to opt out`;
 
     const ownerDiscountLine = hasDiscount ? `\n🏷️ DISCOUNT: -${formattedDiscount} (${promoCode})` : '';
     const ownerRoundTripLine = isRoundTrip ? `\n🔄 ROUND TRIP` : '';
@@ -477,7 +478,7 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
         jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: ${booking.time} today`, html1, htmlToText(html1), centralToUTCISO(reminder1h), refId)
           .then(r => ({ purpose: '1h_email', kind: 'email', id: r.id, status: r.status })));
         if (hasMessagingService) {
-          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382`, centralToUTCISO(reminder1h))
+          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382\nReply STOP to opt out`, centralToUTCISO(reminder1h))
             .then(r => ({ purpose: '1h_sms', kind: 'sms', sid: r.sid, status: r.status })));
         }
       }
@@ -486,7 +487,7 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
         jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride with Total Town Car?', htmlReview, htmlToText(htmlReview), centralToUTCISO(rideEnd), refId)
           .then(r => ({ purpose: 'review_email', kind: 'email', id: r.id, status: r.status })));
         if (hasMessagingService) {
-          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.`, centralToUTCISO(rideEnd))
+          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.\nReply STOP to opt out`, centralToUTCISO(rideEnd))
             .then(r => ({ purpose: 'review_sms', kind: 'sms', sid: r.sid, status: r.status })));
         }
       }
@@ -544,7 +545,8 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
           serviceType: booking.serviceType || 'transfer',
           hours: booking.hours || 0,
           stops: stops,
-          carSeats: carSeats
+          carSeats: carSeats,
+          smsConsent: booking.smsConsent === true || booking.smsConsent === 'true'
         },
         scheduledItems: remindersResult.items || [],
         calendarEventId: google.calendarEventId,

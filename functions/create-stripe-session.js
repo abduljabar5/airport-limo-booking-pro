@@ -87,6 +87,7 @@ export const handler = async (event) => {
         ...stopsMetadata(stopsList),
         stopsFee: String(booking.stopsFee ?? 0),
         tipType: booking.tipType || 'percent',
+        smsConsent: booking.smsConsent ? 'true' : 'false',
         discount: String(booking.discount ?? 0),
         promoCode: booking.promoCode || '',
         tip: String(booking.tip ?? 0),

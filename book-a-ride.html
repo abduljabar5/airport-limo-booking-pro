@@ -93,14 +93,14 @@
         "mainEntity": {
             "@type": "Service",
             "@id": "https://totaltowncar.com/book-a-ride.html#service",
-            "name": "Book Town Car / Limo / Taxi - Minneapolis & Twin Cities",
+            "name": "Book Town Car / Limo / Black Car - Minneapolis & Twin Cities",
             "description": "Online booking for chauffeured ground transportation in the Minneapolis-St. Paul metro area: airport transfers, corporate travel, weddings, prom, concerts, wine tours, and Mayo Clinic transfers.",
             "provider": {"@id": "https://totaltowncar.com/#business"},
             "areaServed": {
                 "@type": "AdministrativeArea",
                 "name": "Minneapolis-St. Paul Metropolitan Area"
             },
-            "serviceType": ["Limousine Service", "Taxi Service", "Black Car Service", "Airport Transfer"],
+            "serviceType": ["Limousine Service", "Black Car Service", "Airport Transfer"],
             "audience": {"@type": "Audience", "audienceType": "Travelers, Corporate, Weddings, Events"},
             "offers": [
                 {
@@ -736,54 +736,41 @@
                                     <option value="4">4 Passengers</option>
                                     <option value="5">5 Passengers</option>
                                     <option value="6">6 Passengers</option>
-                                    <option value="7">7+ Passengers</option>
                                 </select>
+                                <p id="passengers-note" class="hidden text-xs text-gold-400 mt-2"></p>
+                                <p class="text-xs text-obsidian-500 mt-2">More than 6 guests? <a href="tel:+16129995382" class="text-gold-400 hover:text-gold-300">Call (612) 999-5382</a> and we will coordinate a second vehicle.</p>
                             </div>
 
                             <!-- Vehicle Selection -->
                             <div>
                                 <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-3">Select Vehicle</label>
-                                <div class="grid grid-cols-2 gap-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <label class="vehicle-card relative cursor-pointer">
-                                        <input type="radio" name="vehicle" value="taxi" class="sr-only">
-                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
-                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
-                                                <img src="images/fleet/sedan-lincoln.webp" alt="Lincoln Continental" width="1200" height="900" class="w-full h-full object-cover" loading="lazy">
-                                            </div>
-                                            <div class="text-sm font-medium text-white">Sedan</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">Lincoln Continental · 1-3 guests</div>
-                                        </div>
-                                    </label>
-                                    <label class="vehicle-card relative cursor-pointer">
-                                        <input type="radio" name="vehicle" value="sedan" class="sr-only">
-                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
-                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
-                                                <img src="images/fleet/sedan-sclass.webp" alt="Mercedes-Benz S-Class" width="1200" height="900" class="w-full h-full object-cover" loading="lazy">
-                                            </div>
-                                            <div class="text-sm font-medium text-white">Executive Sedan</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">Mercedes S-Class · 1-3 guests</div>
-                                        </div>
-                                    </label>
-                                    <label class="vehicle-card relative cursor-pointer">
-                                        <input type="radio" name="vehicle" value="suv" class="sr-only" checked>
-                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
+                                        <input type="radio" name="vehicle" value="suv" class="sr-only" data-max="6" checked>
+                                        <div class="relative p-3 pb-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
                                             <span class="absolute top-2 right-2 z-10 bg-gold-400 text-obsidian-950 text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide">Popular</span>
-                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
-                                                <img src="images/fleet/suv-escalade.webp" alt="Cadillac Escalade" width="1200" height="900" class="w-full h-full object-cover" loading="lazy">
-                                            </div>
-                                            <div class="text-sm font-medium text-white">SUV</div>
-                                            <div class="text-xs text-obsidian-500 mt-1">Cadillac Escalade · 1-6 guests</div>
+                                            <div class="rounded-lg mb-3 overflow-hidden bg-[#0e0f12]"><img src="images/fleet/suv-escalade.webp" alt="Cadillac Escalade" width="1200" height="900" class="block w-full h-44 sm:h-60 object-cover" loading="lazy"></div>
+                                            <div class="text-base font-medium text-white">SUV</div>
+                                            <div class="text-[10px] text-gold-400/80 tracking-wide uppercase mt-0.5">Cadillac Escalade</div>
+                                            <div class="text-xs text-obsidian-500 mt-1">1–6 guests · 6 bags</div>
                                         </div>
                                     </label>
-                                    <label class="vehicle-card relative cursor-not-allowed opacity-60" title="Van service is temporarily unavailable">
-                                        <input type="radio" name="vehicle" value="van" class="sr-only" disabled>
-                                        <div class="relative p-4 pt-3 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 overflow-hidden">
-                                            <div class="absolute top-2 right-2 z-10 px-2 py-0.5 bg-obsidian-700/80 text-[9px] uppercase tracking-luxe text-obsidian-300 rounded">Unavailable</div>
-                                            <div class="aspect-[4/3] -mx-2 mb-2 rounded-lg overflow-hidden bg-[#0e0f12]">
-                                                <img src="images/fleet/van-sprinter.webp" alt="Mercedes-Benz Sprinter" width="1200" height="900" class="w-full h-full object-cover grayscale" loading="lazy">
-                                            </div>
-                                            <div class="text-sm font-medium text-obsidian-400 line-through">Sprinter Van</div>
-                                            <div class="text-xs text-obsidian-600 mt-1">7-14 guests</div>
+                                    <label class="vehicle-card relative cursor-pointer">
+                                        <input type="radio" name="vehicle" value="sedan" class="sr-only" data-max="3">
+                                        <div class="relative p-3 pb-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
+                                            <div class="rounded-lg mb-3 overflow-hidden bg-[#0e0f12]"><img src="images/fleet/sedan-sclass.webp" alt="Mercedes-Benz S-Class" width="1200" height="900" class="block w-full h-44 sm:h-60 object-cover" loading="lazy"></div>
+                                            <div class="text-base font-medium text-white">Executive Sedan</div>
+                                            <div class="text-[10px] text-gold-400/80 tracking-wide uppercase mt-0.5">Mercedes-Benz S-Class</div>
+                                            <div class="text-xs text-obsidian-500 mt-1">1–3 guests · 3 bags</div>
+                                        </div>
+                                    </label>
+                                    <label class="vehicle-card relative cursor-pointer">
+                                        <input type="radio" name="vehicle" value="taxi" class="sr-only" data-max="3">
+                                        <div class="relative p-3 pb-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10 overflow-hidden">
+                                            <div class="rounded-lg mb-3 overflow-hidden bg-[#0e0f12]"><img src="images/fleet/sedan-lincoln.webp" alt="Lincoln Continental" width="1200" height="900" class="block w-full h-44 sm:h-60 object-cover" loading="lazy"></div>
+                                            <div class="text-base font-medium text-white">Sedan</div>
+                                            <div class="text-[10px] text-gold-400/80 tracking-wide uppercase mt-0.5">Lincoln Continental</div>
+                                            <div class="text-xs text-obsidian-500 mt-1">1–3 guests · 3 bags</div>
                                         </div>
                                     </label>
                                 </div>
@@ -1024,6 +1011,15 @@
                                     </div>
                                     <span class="text-sm text-obsidian-400 font-light leading-relaxed">
                                         I agree to the <a href="terms.html" target="_blank" class="text-gold-400 hover:text-gold-300 transition-colors">Terms of Service</a> and <a href="privacy.html" target="_blank" class="text-gold-400 hover:text-gold-300 transition-colors">Privacy Policy</a>. I understand that I can cancel for free up to 24 hours before pickup.
+                                    </span>
+                                </label>
+                                <label class="flex items-start gap-3 cursor-pointer group mt-3">
+                                    <input type="checkbox" id="sms-consent" name="sms-consent" required class="sr-only peer">
+                                    <div class="w-5 h-5 mt-0.5 rounded border-2 border-obsidian-500 peer-checked:border-gold-400 peer-checked:bg-gold-400 flex items-center justify-center transition-all flex-shrink-0">
+                                        <svg class="w-3 h-3 text-obsidian-950 opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                    </div>
+                                    <span class="text-sm text-obsidian-400 font-light leading-relaxed">
+                                        I agree to receive text messages from Total Town Car Service about this booking (confirmation, driver arrival and ride reminders). Message frequency varies by trip. Message and data rates may apply. Reply STOP to opt out, HELP for help.
                                     </span>
                                 </label>
                             </div>
@@ -1456,7 +1452,7 @@
             }
         };
 
-        const VEHICLE_NAMES = { taxi: 'Sedan', sedan: 'Executive Sedan', suv: 'SUV', van: 'Sprinter Van' };
+        const VEHICLE_NAMES = { taxi: 'Sedan', sedan: 'Executive Sedan', suv: 'SUV' };
 
         // DOM Elements
         const bookingElements = {
@@ -1589,6 +1585,7 @@
                 booking.data.carSeats = Math.min(Math.max(parseInt(data.carSeats) || 0, 0), booking.data.carSeatMax);
                 updateCarSeatsUI();
                 applyServiceType();
+                applyCapacity('vehicle');
 
                 // Restore upsell checkboxes
                 if (data.roundtrip) {
@@ -1874,6 +1871,8 @@
             // Initialize autocomplete
             initBookingAutocomplete();
 
+            applyCapacity('vehicle');
+
             // Deep link from the home page: book-a-ride.html?service=hourly
             try {
                 const wanted = new URLSearchParams(window.location.search).get('service');
@@ -2058,12 +2057,14 @@
 
             document.getElementById('passengers')?.addEventListener('change', (e) => {
                 booking.data.passengers = e.target.value;
+                applyCapacity('passengers');
                 saveFormData();
             });
 
             document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     booking.data.vehicle = e.target.value;
+                    applyCapacity('vehicle');
                     updateSummary();
                     recalculatePrice();
                     saveFormData();
@@ -2468,7 +2469,7 @@
                 if (typeof TotalTownCar !== 'undefined' && TotalTownCar.calculateHourlyPrice) {
                     booking.data.baseFare = TotalTownCar.calculateHourlyPrice(booking.data.vehicle, hours);
                 } else {
-                    const hourlyRates = { taxi: 70, sedan: 85, suv: 95, van: 140 };
+                    const hourlyRates = { taxi: 70, sedan: 85, suv: 95 };
                     booking.data.baseFare = (hourlyRates[booking.data.vehicle] || 70) * hours;
                 }
                 calculateTotals();
@@ -2486,14 +2487,42 @@
                 const rates = {
                     sedan: { base: 59, perMile: 3.30 },
                     suv: { base: 69, perMile: 3.60 },
-                    taxi: { base: 49, perMile: 3.20 }, // "Sedan" (Lincoln Continental)
-                    van: { base: 199, perMile: 3.50 }
+                    taxi: { base: 49, perMile: 3.20 } // "Sedan" (Lincoln Continental)
                 };
                 const rate = rates[booking.data.vehicle] || rates.sedan;
                 booking.data.baseFare = Math.ceil(rate.base + (Math.max(0, booking.data.distance - 7) * rate.perMile));
             }
 
             calculateTotals();
+        }
+
+        // ----- Vehicle ↔ passenger capacity -----
+        // Each vehicle radio carries data-max. When the passenger count exceeds a vehicle's
+        // seats that card is greyed out and disabled; if the selected vehicle no longer fits
+        // we switch to the smallest one that does and explain why under the select.
+        function applyCapacity(changed) {
+            const count = parseInt(booking.data.passengers) || 1;
+            const radios = Array.from(document.querySelectorAll('input[name="vehicle"]'));
+            const note = document.getElementById('passengers-note');
+            radios.forEach(r => {
+                const max = parseInt(r.dataset.max) || 99;
+                const tooSmall = count > max;
+                r.disabled = tooSmall;
+                const card = r.closest('.vehicle-card');
+                if (card) {
+                    card.classList.toggle('opacity-40', tooSmall);
+                    card.classList.toggle('pointer-events-none', tooSmall);
+                    card.title = tooSmall ? `${VEHICLE_NAMES[r.value]} seats up to ${max}` : '';
+                }
+            });
+            const current = radios.find(r => r.value === booking.data.vehicle);
+            if (current && current.disabled) {
+                const fit = radios.filter(r => !r.disabled).sort((a, b) => parseInt(a.dataset.max) - parseInt(b.dataset.max))[0];
+                if (fit) { fit.checked = true; booking.data.vehicle = fit.value; updateSummary(); recalculatePrice(); }
+                if (note) { note.textContent = `${count} passengers need the ${VEHICLE_NAMES[fit ? fit.value : 'suv']}. We've switched your vehicle.`; note.classList.remove('hidden'); }
+            } else if (note && changed === 'passengers') {
+                note.classList.add('hidden');
+            }
         }
 
         // ----- Child car seats -----
@@ -2974,6 +3003,11 @@
                 showToast('Please agree to the terms and conditions', 'error');
                 return;
             }
+            const smsConsentBox = document.getElementById('sms-consent');
+            if (smsConsentBox && !smsConsentBox.checked) {
+                showToast('Please agree to receive text messages about this booking', 'error');
+                return;
+            }
 
             // Show loading on both desktop and mobile buttons
             bookingElements.submitBtn.disabled = true;
@@ -3038,6 +3072,7 @@
                 carSeats: booking.data.carSeats,
                 carSeatsTotal: booking.data.carSeats * booking.data.carSeatPrice,
                 tipType: booking.data.tip === 'custom' ? 'custom' : 'percent',
+                smsConsent: !!document.getElementById('sms-consent')?.checked,
                 discount: booking.data.discount,
                 promoCode: booking.data.promoCode,
                 tip: booking.data.tipAmount,
