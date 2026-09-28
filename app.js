@@ -14,8 +14,7 @@ const CONFIG = {
     rates: {
         taxi:  { base: 49.00,  min: 55.00,  perMile: 3.20, hourly: 70  },  // Sedan — Lincoln Continental, 1-3 passengers
         sedan: { base: 59.00,  min: 65.00,  perMile: 3.30, hourly: 85  },  // Executive Sedan — Mercedes S-Class, 1-3 passengers
-        suv:   { base: 69.00,  min: 75.00,  perMile: 3.60, hourly: 95  },  // SUV — Cadillac Escalade, 1-6 passengers
-        van:   { base: 199.00, min: 199.00, perMile: 3.50, hourly: 140 }   // Sprinter Van — Mercedes Sprinter (online booking currently disabled)
+        suv:   { base: 69.00,  min: 75.00,  perMile: 3.60, hourly: 95  }   // SUV — Cadillac Escalade, 1-6 passengers
     },
     // Hourly / as-directed service: flat hourly rate per vehicle, billed in whole hours.
     hourly: { minimumHours: 3, maximumHours: 12 },
@@ -31,8 +30,7 @@ const CONFIG = {
     vehicleNames: {
         taxi: 'Sedan',
         sedan: 'Executive Sedan',
-        suv: 'SUV',
-        van: 'Sprinter Van'
+        suv: 'SUV'
     },
     // Business info
     phone: '+16129995382',
@@ -144,35 +142,7 @@ function initDateTimeDefaults() {
 // =============================================================================
 
 function initMobileMenu() {
-    // Get elements fresh to ensure they exist
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (!mobileMenuBtn || !mobileMenu) return;
-
-    mobileMenuBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        mobileMenu.classList.toggle('hidden');
-
-        // Update aria-expanded
-        const isOpen = !mobileMenu.classList.contains('hidden');
-        mobileMenuBtn.setAttribute('aria-expanded', isOpen);
-    });
-
-    // Close menu when clicking a link
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-        });
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!mobileMenu.contains(e.target) &&
-            !mobileMenuBtn.contains(e.target)) {
-            mobileMenu.classList.add('hidden');
-        }
-    });
+    // Handled by nav.js (shared across all pages): mobile menu, accordion, mega-menu, body pin.
 }
 
 // =============================================================================

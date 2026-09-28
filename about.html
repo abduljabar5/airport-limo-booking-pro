@@ -31,9 +31,9 @@
       });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Total Town Car Service | Minneapolis Limo, Black Car, and Airport Taxi</title>
-    <meta name="description" content="Learn about Total Town Car Service, Minneapolis's trusted provider of luxury limo, black car, and MSP airport taxi services. Our commitment to excellence and reliability.">
-    <meta name="keywords" content="about us, minneapolis limo service, black car service, msp airport taxi, airport limo, luxury transportation, professional chauffeurs, total town car service">
+    <title>About Total Town Car Service | Minneapolis Limo, Black Car, and Airport Car Service</title>
+    <meta name="description" content="Learn about Total Town Car Service, Minneapolis's trusted provider of luxury limo, black car, and MSP airport car services. Our commitment to excellence and reliability.">
+    <meta name="keywords" content="about us, minneapolis limo service, black car service, msp airport car service, airport limo, luxury transportation, professional chauffeurs, total town car service">
     <meta name="author" content="Total Town Car Service">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://totaltowncar.com/about.html">
@@ -42,14 +42,14 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Total Town Car Service">
     <meta property="og:url" content="https://totaltowncar.com/about.html">
-    <meta property="og:title" content="About Total Town Car Service | Minneapolis Limo & MSP Airport Taxi">
-    <meta property="og:description" content="Learn about Total Town Car Service, Minneapolis's trusted provider of luxury limo, black car, and MSP airport taxi services.">
+    <meta property="og:title" content="About Total Town Car Service | Minneapolis Limo & MSP Airport Car Service">
+    <meta property="og:description" content="Learn about Total Town Car Service, Minneapolis's trusted provider of luxury limo, black car, and MSP airport car services.">
     <meta property="og:image" content="https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="About Total Town Car Service | Minneapolis Limo & MSP Airport Taxi">
-    <meta name="twitter:description" content="Learn about Total Town Car Service, Minneapolis's trusted provider of luxury limo, black car, and MSP airport taxi services.">
+    <meta name="twitter:title" content="About Total Town Car Service | Minneapolis Limo & MSP Airport Car Service">
+    <meta name="twitter:description" content="Learn about Total Town Car Service, Minneapolis's trusted provider of luxury limo, black car, and MSP airport car services.">
     <meta name="twitter:image" content="https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg">
 
     <!-- Structured data: AboutPage + Organization + Breadcrumb -->
@@ -62,7 +62,7 @@
                 "@id": "https://totaltowncar.com/about.html#webpage",
                 "url": "https://totaltowncar.com/about.html",
                 "name": "About Total Town Car Service",
-                "description": "Total Town Car Service is Minneapolis's trusted provider of luxury limo, black car, and MSP airport taxi services. Learn about our mission, fleet, and commitment to professional, reliable transportation.",
+                "description": "Total Town Car Service is Minneapolis's trusted provider of luxury limo, black car, and MSP airport car services. Learn about our mission, fleet, and commitment to professional, reliable transportation.",
                 "isPartOf": {"@id": "https://totaltowncar.com/#business"},
                 "primaryImageOfPage": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
                 "breadcrumb": {
@@ -82,7 +82,7 @@
                 "url": "https://totaltowncar.com",
                 "logo": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
                 "image": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
-                "description": "Over 10,000 rides served. Premium black car, limousine, and taxi service serving the Minneapolis-St. Paul metro area, with specialty in MSP airport transfers and Mayo Clinic / Rochester long-distance trips. 24/7 availability with professional, fully licensed chauffeurs. 5.0-star rated on Google.",
+                "description": "Over 10,000 rides served. Premium black car, limousine, and chauffeur service serving the Minneapolis-St. Paul metro area, with specialty in MSP airport transfers and Mayo Clinic / Rochester long-distance trips. 24/7 availability with professional, fully licensed chauffeurs. 5.0-star rated on Google.",
                 "slogan": "Premium Transportation in the Twin Cities",
                 "telephone": "+1-612-999-5382",
                 "email": "totaltowncarservice@gmail.com",
@@ -207,87 +207,136 @@
     <!-- Header -->
     <header class="fixed top-0 w-full z-50 transition-all duration-500" id="header">
         <div class="absolute inset-0 bg-gradient-to-b from-obsidian-950/90 to-obsidian-950/0 pointer-events-none"></div>
-        <nav class="container mx-auto px-6 lg:px-8 relative">
+        <nav class="container mx-auto px-6 lg:px-8 relative" aria-label="Main">
             <div class="flex items-center justify-between h-20 lg:h-24">
-                <a href="index.html" class="flex items-center gap-4 group">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 lg:gap-4 group shrink-0">
                     <div class="relative">
                         <div class="absolute inset-0 bg-gold-400/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service" class="relative w-12 h-12 lg:w-14 lg:h-14 rounded-xl object-cover ring-1 ring-white/10">
+                        <img src="public/lovable-uploads/ttcs.jpeg" alt="Total Town Car Service" class="relative w-11 h-11 lg:w-14 lg:h-14 rounded-xl object-cover ring-1 ring-white/10" width="512" height="512">
                     </div>
-                    <div class="hidden sm:block">
-                        <span class="block text-lg lg:text-xl font-display font-semibold text-white tracking-wide">Total Town Car</span>
+                    <div>
+                        <span class="block text-base sm:text-lg lg:text-xl font-display font-semibold text-white tracking-wide whitespace-nowrap">Total Town Car</span>
                         <span class="block text-[10px] text-gold-400 tracking-luxe uppercase">Minneapolis</span>
                     </div>
                 </a>
 
-                <div class="hidden lg:flex items-center gap-10">
-                    <a href="index.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Home</a>
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center gap-6 xl:gap-8 flex-nowrap whitespace-nowrap shrink-0">
+                    <a href="index.html" class="elegant-link text-[15px] font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Home</a>
 
-                    <!-- Services Dropdown -->
+                    <!-- Services mega-menu -->
                     <div class="relative">
-                        <button id="services-dropdown-btn" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300 flex items-center gap-1">
+                        <button id="services-dropdown-btn" class="elegant-link text-[15px] font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300 flex items-center gap-1" aria-haspopup="true" aria-expanded="false" aria-controls="services-dropdown">
                             Services
                             <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div id="services-dropdown" class="nav-dropdown absolute top-full left-0 mt-2 w-56 bg-obsidian-900 border border-white/10 rounded-xl shadow-xl overflow-hidden">
-                            <a href="airport-service.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Airport Transfers</a>
-                            <a href="wedding-transportation.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Wedding Transportation</a>
-                            <a href="corporate-transportation.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Corporate Travel</a>
-                            <a href="prom-homecoming.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Prom & Homecoming</a>
-                            <a href="concert-events.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Concerts & Events</a>
-                            <a href="wine-brewery-tours.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Wine & Brewery Tours</a>
-                            <a href="rochester-mayo-clinic.html" class="block px-4 py-3 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors">Rochester & Mayo Clinic</a>
+                        <div id="services-dropdown" class="nav-dropdown absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[48rem] bg-obsidian-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden">
+                            <div class="grid grid-cols-4 gap-1 p-2">
+                                <div>
+                                    <div class="px-3 pt-3 pb-1 text-[10px] tracking-luxe uppercase text-gold-400">Airport</div>
+                                    <a href="airport-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Airport Transfers</a>
+                                    <a href="msp-airport-black-car-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">MSP Airport Black Car</a>
+                                    <a href="airport-pickup.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Airport Pickup</a>
+                                    <a href="flight-crew-charter-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Flight Crew Charter</a>
+                                </div>
+                                <div>
+                                    <div class="px-3 pt-3 pb-1 text-[10px] tracking-luxe uppercase text-gold-400">Around the Cities</div>
+                                    <a href="minneapolis-car-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Minneapolis Black Car</a>
+                                    <a href="downtown-minneapolis.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Downtown Minneapolis</a>
+                                    <a href="point-to-point-transportation.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Point to Point</a>
+                                    <a href="hourly-car-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Hourly Car Service</a>
+                                    <a href="private-chauffeur-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Private Chauffeur</a>
+                                    <a href="chauffeur-service-minneapolis.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Chauffeur Service</a>
+                                </div>
+                                <div>
+                                    <div class="px-3 pt-3 pb-1 text-[10px] tracking-luxe uppercase text-gold-400">Business & Occasions</div>
+                                    <a href="corporate-transportation.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Corporate Travel</a>
+                                    <a href="limousine-service-minneapolis.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Limo Service</a>
+                                    <a href="group-transportation.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Group Transportation</a>
+                                    <a href="wedding-transportation.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Weddings</a>
+                                    <a href="prom-homecoming.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Prom & Homecoming</a>
+                                    <a href="concert-events.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Concerts & Events</a>
+                                    <a href="wine-brewery-tours.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Wine & Brewery Tours</a>
+                                </div>
+                                <div>
+                                    <div class="px-3 pt-3 pb-1 text-[10px] tracking-luxe uppercase text-gold-400">Destinations</div>
+                                    <a href="rochester-mayo-clinic.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Rochester & Mayo Clinic</a>
+                                    <a href="mall-of-america-car-service.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">Mall of America</a>
+                                    <a href="service-areas.html" class="block px-3 py-2 text-sm text-obsidian-300 hover:bg-gold-400/10 hover:text-white transition-colors rounded-lg">All Service Areas</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <a href="service-areas.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Areas</a>
-                    <a href="about.html" class="elegant-link text-sm font-light text-white tracking-wide">About</a>
-                    <a href="faq.html" class="elegant-link text-sm font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">FAQ</a>
+                    <a href="service-areas.html" class="elegant-link text-[15px] font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Service Area</a>
+                    <a href="about.html" class="elegant-link text-[15px] font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">About</a>
+                    <a href="faq.html" class="elegant-link text-[15px] font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">FAQ</a>
+                    <a href="contact.html" class="elegant-link text-[15px] font-light text-obsidian-300 hover:text-white tracking-wide transition-colors duration-300">Contact</a>
                 </div>
 
-                <div class="flex items-center gap-6">
-                    <a href="tel:+16129995382" class="hidden sm:flex items-center gap-2 text-sm text-obsidian-400 hover:text-gold-400 transition-colors duration-300">
+                <!-- CTA -->
+                <div class="flex items-center gap-4 lg:gap-6 shrink-0">
+                    <a href="tel:+16129995382" class="hidden xl:flex items-center gap-2 text-sm text-obsidian-400 hover:text-gold-400 transition-colors duration-300">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                         <span class="font-light">(612) 999-5382</span>
                     </a>
-                    <a href="book-a-ride.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-obsidian-950 font-medium text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/10 hover:shadow-gold-500/25">
+                    <a href="book-a-ride.html" class="btn-premium hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-obsidian-950 font-medium text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/10 hover:shadow-gold-500/25">
                         <span>Reserve</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-gold-400/30 transition-colors" aria-label="Menu">
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-gold-400/30 transition-colors" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                 </div>
             </div>
         </nav>
 
-        <div id="mobile-menu" class="lg:hidden hidden absolute top-full left-0 w-full bg-obsidian-950/98 backdrop-blur-2xl border-b border-gold-400/10">
-            <div class="container mx-auto px-6 py-8 space-y-1">
+        <!-- Mobile Menu (solid background; scrolls within itself; body is pinned while open) -->
+        <div id="mobile-menu" class="lg:hidden hidden absolute top-full left-0 w-full bg-obsidian-950 border-b border-gold-400/10 max-h-[calc(100dvh-5rem)] overflow-y-auto">
+            <div class="container mx-auto px-6 py-6 space-y-1">
                 <a href="index.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">Home</a>
 
                 <!-- Mobile Services Accordion -->
                 <div class="border-b border-white/5">
-                    <button id="mobile-services-btn" class="flex items-center justify-between w-full py-3 text-obsidian-300 hover:text-white font-light tracking-wide transition-colors">
+                    <button id="mobile-services-btn" class="flex items-center justify-between w-full py-3 text-obsidian-300 hover:text-white font-light tracking-wide transition-colors" aria-expanded="false" aria-controls="mobile-services-menu">
                         <span>Services</span>
                         <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div id="mobile-services-menu" class="hidden pl-4 pb-3 space-y-2">
+                    <div id="mobile-services-menu" class="hidden pl-4 pb-3 space-y-1">
                         <a href="airport-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Airport Transfers</a>
-                        <a href="wedding-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Wedding Transportation</a>
+                        <a href="msp-airport-black-car-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">MSP Airport Black Car</a>
+                        <a href="airport-pickup.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Airport Pickup</a>
+                        <a href="flight-crew-charter-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Flight Crew Charter</a>
+                        <a href="minneapolis-car-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Minneapolis Black Car</a>
+                        <a href="downtown-minneapolis.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Downtown Minneapolis</a>
+                        <a href="point-to-point-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Point to Point</a>
+                        <a href="hourly-car-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Hourly Car Service</a>
+                        <a href="private-chauffeur-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Private Chauffeur</a>
+                        <a href="chauffeur-service-minneapolis.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Chauffeur Service</a>
                         <a href="corporate-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Corporate Travel</a>
+                        <a href="limousine-service-minneapolis.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Limo Service</a>
+                        <a href="group-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Group Transportation</a>
+                        <a href="wedding-transportation.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Weddings</a>
                         <a href="prom-homecoming.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Prom & Homecoming</a>
                         <a href="concert-events.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Concerts & Events</a>
                         <a href="wine-brewery-tours.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Wine & Brewery Tours</a>
                         <a href="rochester-mayo-clinic.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Rochester & Mayo Clinic</a>
+                        <a href="mall-of-america-car-service.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">Mall of America</a>
+                        <a href="service-areas.html" class="block py-2 text-sm text-obsidian-400 hover:text-white transition-colors">All Service Areas</a>
                     </div>
                 </div>
 
-                <a href="service-areas.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">Service Areas</a>
-                <a href="about.html" class="block py-3 text-white font-light tracking-wide border-b border-white/5">About</a>
-                <a href="faq.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide transition-colors">FAQ</a>
-                <div class="pt-6">
-                    <a href="tel:+16129995382" class="flex items-center gap-3 text-gold-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <a href="service-areas.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">Service Area</a>
+                <a href="about.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">About</a>
+                <a href="faq.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">FAQ</a>
+                <a href="contact.html" class="block py-3 text-obsidian-300 hover:text-white font-light tracking-wide border-b border-white/5 transition-colors">Contact</a>
+                <div class="pt-5 flex flex-col gap-4">
+                    <a href="book-a-ride.html" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 text-obsidian-950 font-semibold py-3.5 rounded-xl">Book a Ride</a>
+                    <a href="tel:+16129995382" class="flex items-center justify-center gap-3 text-gold-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                         <span class="font-medium">(612) 999-5382</span>
                     </a>
                 </div>
@@ -295,16 +344,17 @@
         </div>
     </header>
 
+
     <!-- Hero Section -->
-    <section class="relative min-h-[60vh] flex items-center justify-center pt-24 overflow-hidden">
+    <section class="relative pt-40 lg:pt-56 pb-24 lg:pb-32 overflow-hidden page-hero">
         <div class="absolute inset-0 bg-gradient-to-br from-obsidian-950 via-obsidian-900 to-obsidian-950"></div>
-        <img src="images/site/about.webp" alt="Chauffeur holding open the rear door of a black Lincoln Continental with the Stone Arch Bridge and Minneapolis skyline at blue hour" width="1600" height="893" class="absolute inset-0 w-full h-full object-cover object-center opacity-50" fetchpriority="high">
-        <div class="absolute inset-0 bg-gradient-to-b from-obsidian-950/70 via-obsidian-950/55 to-obsidian-950"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-obsidian-950/60 via-transparent to-obsidian-950/60"></div>
+        <img src="images/site/about.webp" alt="Chauffeur holding open the rear door of a black Lincoln Continental parked at the curb by the Stone Arch Bridge in Minneapolis at blue hour" width="1600" height="893" class="absolute inset-0 w-full h-full object-cover object-[center_60%]" fetchpriority="high">
+        <div class="absolute inset-0 bg-gradient-to-b from-obsidian-950/85 via-obsidian-950/70 to-obsidian-950"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-obsidian-950/80 via-transparent to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-gold-900/5 to-transparent"></div>
         <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-gold-400/[0.03] rounded-full blur-[120px]"></div>
 
-        <div class="container mx-auto px-6 lg:px-8 relative z-10 py-16">
+        <div class="container mx-auto px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-4xl mx-auto">
                 <div class="inline-flex items-center gap-3 mb-6">
                     <div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div>
@@ -315,7 +365,7 @@
                     About <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500">Total Town Car</span>
                 </h1>
                 <p class="text-xl text-obsidian-400 font-light leading-relaxed max-w-2xl mx-auto">
-                    Your trusted partner for premium Limo, Black Car, and Airport Taxi service in Minneapolis.
+                    Your trusted partner for premium Limo, Black Car, and Airport Car service in Minneapolis.
                 </p>
             </div>
         </div>
@@ -333,7 +383,7 @@
                         <h2 class="text-3xl md:text-4xl font-display font-semibold text-white">Our Story</h2>
                     </div>
                     <div class="space-y-4 text-obsidian-300 font-light leading-relaxed">
-                        <p>Founded on the principles of reliability, luxury, and unparalleled customer service, Total Town Car Service has grown from a passionate idea into Minneapolis's most trusted transportation provider. We saw a need for a dependable, high-end limo service that catered to the discerning needs of residents, business travelers, and visitors. Whether you need a sophisticated black car for a corporate event or a timely airport taxi to MSP, our mission has always been to exceed expectations.</p>
+                        <p>Founded on the principles of reliability, luxury, and unparalleled customer service, Total Town Car Service has grown from a passionate idea into Minneapolis's most trusted transportation provider. We saw a need for a dependable, high-end limo service that catered to the discerning needs of residents, business travelers, and visitors. Whether you need a sophisticated black car for a corporate event or a timely airport ride to MSP, our mission has always been to exceed expectations.</p>
                         <p>Our journey began with a single vehicle and a simple promise: to provide a seamless and luxurious travel experience. Today, we boast a diverse fleet of premium vehicles and a team of professional chauffeurs dedicated to upholding our founding values. We are proud to be a leading provider of airport limo services, connecting the Twin Cities with the world, one comfortable ride at a time.</p>
                     </div>
                 </section>
@@ -345,7 +395,7 @@
                         <h2 class="text-3xl md:text-4xl font-display font-semibold text-white">Our Mission</h2>
                     </div>
                     <div class="space-y-4 text-obsidian-300 font-light leading-relaxed">
-                        <p>Our mission is to provide an exceptional transportation service that is safe, reliable, and luxurious. We aim to be more than just a taxi service; we are your personal chauffeurs, committed to making your journey as smooth and stress-free as possible. From the moment you book your black car service to your final destination, we handle every detail with precision and care.</p>
+                        <p>Our mission is to provide an exceptional transportation service that is safe, reliable, and luxurious. We aim to be more than just a ride; we are your personal chauffeurs, committed to making your journey as smooth and stress-free as possible. From the moment you book your black car service to your final destination, we handle every detail with precision and care.</p>
                         <p>We are dedicated to setting a new standard for ground transportation in the Twin Cities. This means investing in the latest technology for seamless booking and communication, maintaining our vehicles to the highest safety standards, and continuously training our team to anticipate and meet your needs.</p>
                     </div>
                 </section>
@@ -367,13 +417,8 @@
                             <p class="text-sm text-obsidian-400 font-light">Ideal for small groups, families needing extra luggage space, or those who prefer a more commanding presence.</p>
                         </div>
                         <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6 hover:border-gold-400/20 transition-all duration-300">
-                            <h3 class="text-lg font-display font-semibold text-white mb-2">Stretch Limousines</h3>
-                            <p class="text-sm text-obsidian-400 font-light">For weddings, proms, and special occasions, our stretch limos provide the ultimate statement of style.</p>
-                        </div>
-                        <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6 opacity-60 relative">
-                            <span class="absolute top-3 right-3 text-[9px] tracking-luxe uppercase bg-obsidian-700 text-obsidian-200 px-2 py-0.5 rounded">Temporarily Unavailable</span>
-                            <h3 class="text-lg font-display font-semibold text-obsidian-300 mb-2">Executive Vans</h3>
-                            <p class="text-sm text-obsidian-500 font-light">For larger groups (7+), please call <a href="tel:6129995382" class="text-gold-400 hover:text-gold-300">(612) 999-5382</a> to discuss arrangements.</p>
+                            <h3 class="text-lg font-display font-semibold text-white mb-2">Groups of 7 or More</h3>
+                            <p class="text-sm text-obsidian-400 font-light">We send two or three vehicles together with one point of contact. Call <a href="tel:+16129995382" class="text-gold-400 hover:text-gold-300">(612) 999-5382</a> and dispatch will build the plan.</p>
                         </div>
                     </div>
                 </section>
@@ -390,7 +435,7 @@
                                 <svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                             </div>
                             <h3 class="text-lg font-display font-semibold text-white mb-2">Luxury Fleet</h3>
-                            <p class="text-sm text-obsidian-400 font-light">Our diverse fleet includes premium sedans, spacious SUVs, and elegant stretch limousines. Every vehicle is meticulously maintained.</p>
+                            <p class="text-sm text-obsidian-400 font-light">Our fleet is the Cadillac Escalade, the Mercedes-Benz S-Class and the Lincoln Continental. Every vehicle is meticulously maintained.</p>
                         </div>
                         <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-6">
                             <div class="w-12 h-12 rounded-xl bg-gold-400/[0.06] border border-gold-400/10 flex items-center justify-center mb-4">
@@ -512,36 +557,10 @@
             if (window.scrollY > 50) { header.classList.add('header-scrolled'); }
             else { header.classList.remove('header-scrolled'); }
         });
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuBtn?.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
 
-        // Mobile Services Accordion
-        document.getElementById('mobile-services-btn')?.addEventListener('click', function() {
-            const menu = document.getElementById('mobile-services-menu');
-            const icon = this.querySelector('svg');
-            menu?.classList.toggle('hidden');
-            icon?.classList.toggle('rotate-180');
-        });
 
-        // Desktop Services Dropdown (click-based)
-        document.getElementById('services-dropdown-btn')?.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const dropdown = document.getElementById('services-dropdown');
-            const icon = this.querySelector('svg');
-            dropdown?.classList.toggle('show');
-            icon?.classList.toggle('rotate-180');
-        });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('services-dropdown');
-            const btn = document.getElementById('services-dropdown-btn');
-            if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.remove('show');
-                btn.querySelector('svg')?.classList.remove('rotate-180');
-            }
-        });
     </script>
+    <script src="nav.js" defer></script>
 </body>
 </html>
