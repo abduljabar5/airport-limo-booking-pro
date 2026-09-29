@@ -14,7 +14,8 @@ const CONFIG = {
     rates: {
         taxi:  { base: 49.00,  min: 55.00,  perMile: 3.20, hourly: 70  },  // Sedan — Lincoln Continental, 1-3 passengers
         sedan: { base: 59.00,  min: 65.00,  perMile: 3.30, hourly: 85  },  // Executive Sedan — Mercedes S-Class, 1-3 passengers
-        suv:   { base: 69.00,  min: 75.00,  perMile: 3.60, hourly: 95  }   // SUV — Cadillac Escalade, 1-6 passengers
+        suv:   { base: 69.00,  min: 75.00,  perMile: 3.60, hourly: 95  },  // SUV — Cadillac Escalade, 1-6 passengers
+        van:   { base: 199.00, min: 199.00, perMile: 3.50, hourly: 140 }   // Sprinter Van — Mercedes Sprinter (online booking currently disabled)
     },
     // Hourly / as-directed service: flat hourly rate per vehicle, billed in whole hours.
     hourly: { minimumHours: 3, maximumHours: 12 },
@@ -30,7 +31,8 @@ const CONFIG = {
     vehicleNames: {
         taxi: 'Sedan',
         sedan: 'Executive Sedan',
-        suv: 'SUV'
+        suv: 'SUV',
+        van: 'Sprinter Van'
     },
     // Business info
     phone: '+16129995382',

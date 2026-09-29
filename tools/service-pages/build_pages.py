@@ -147,22 +147,24 @@ FLEET = [
     ('SUV', 'Cadillac Escalade', 'Up to 6 passengers · 6 bags', 'From $69', 'images/fleet/suv-escalade.webp'),
     ('Executive Sedan', 'Mercedes-Benz S-Class', 'Up to 3 passengers · 3 bags', 'From $59', 'images/fleet/sedan-sclass.webp'),
     ('Sedan', 'Lincoln Continental', 'Up to 3 passengers · 3 bags', 'From $49', 'images/fleet/sedan-lincoln.webp'),
+    ('Sprinter Van', 'Mercedes-Benz Sprinter', 'Up to 14 passengers · 10+ bags', 'Temporarily unavailable', 'images/fleet/van-sprinter.webp'),
 ]
 def section_fleet(p):
     cards = ''
     for name, model, cap, price, img in FLEET:
         w, h = dims(img, (1200, 900))
+        off = price == 'Temporarily unavailable'
         cards += f'''
-                <a href="index.html#fleet" class="group {CARD} overflow-hidden hover:border-gold-400/20 transition-all duration-500">
+                <a href="index.html#fleet" class="group {CARD} overflow-hidden hover:border-gold-400/20 transition-all duration-500{' opacity-60' if off else ''}">
                     <div class="aspect-[4/3] relative overflow-hidden bg-[#0e0f12]">
-                        <img src="{img}" alt="{esc(model)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" width="{w}" height="{h}" loading="lazy">
+                        <img src="{img}" alt="{esc(model)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700{' grayscale' if off else ''}" width="{w}" height="{h}" loading="lazy">
                         <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-obsidian-950/80 to-transparent pointer-events-none"></div>
                     </div>
                     <div class="p-5 border-t border-white/[0.04]">
                         <h3 class="text-lg font-display font-semibold text-white">{esc(name)}</h3>
                         <p class="text-xs text-obsidian-500 mb-2">{esc(model)}</p>
                         <p class="text-sm text-obsidian-400 font-light">{esc(cap)}</p>
-                        <p class="text-gold-400 font-semibold mt-3">{esc(price)}</p>
+                        <p class="{'text-obsidian-500' if off else 'text-gold-400'} font-semibold mt-3">{esc(price)}</p>
                     </div>
                 </a>'''
     return f'''
@@ -174,7 +176,7 @@ def section_fleet(p):
                 <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-5">{p.get('fleet_h2', 'Sized to the Trip')}</h2>
                 <p class="text-obsidian-400 font-light">{p.get('fleet_lede', 'Tell us your passenger and luggage count and we will recommend the right one. Every vehicle is late-model, non-smoking, detailed before each pickup, and fully licensed and insured for commercial passenger transport.')}</p>
             </div>
-            <div class="grid sm:grid-cols-3 gap-5 lg:gap-6">{cards}
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">{cards}
             </div>
         </div>
     </section>

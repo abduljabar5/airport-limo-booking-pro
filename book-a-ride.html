@@ -773,6 +773,16 @@
                                             <div class="text-xs text-obsidian-500 mt-1">1–3 guests · 3 bags</div>
                                         </div>
                                     </label>
+                                    <label class="vehicle-card relative cursor-not-allowed opacity-60" title="Sprinter van service is temporarily unavailable">
+                                        <input type="radio" name="vehicle" value="van" class="sr-only" data-max="14" data-unavailable="true" disabled>
+                                        <div class="relative p-3 pb-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 overflow-hidden">
+                                            <span class="absolute top-2 right-2 z-10 px-2 py-0.5 bg-obsidian-700/90 text-[9px] uppercase tracking-luxe text-obsidian-300 rounded">Unavailable</span>
+                                            <div class="rounded-lg mb-3 overflow-hidden bg-[#0e0f12]"><img src="images/fleet/van-sprinter.webp" alt="Mercedes-Benz Sprinter" width="1200" height="900" class="block w-full h-44 sm:h-60 object-cover grayscale" loading="lazy"></div>
+                                            <div class="text-base font-medium text-obsidian-400 line-through">Sprinter Van</div>
+                                            <div class="text-[10px] text-obsidian-500 tracking-wide uppercase mt-0.5">Mercedes-Benz Sprinter</div>
+                                            <div class="text-xs text-obsidian-600 mt-1">7–14 guests · temporarily unavailable</div>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
 
@@ -1452,7 +1462,7 @@
             }
         };
 
-        const VEHICLE_NAMES = { taxi: 'Sedan', sedan: 'Executive Sedan', suv: 'SUV' };
+        const VEHICLE_NAMES = { taxi: 'Sedan', sedan: 'Executive Sedan', suv: 'SUV', van: 'Sprinter Van' };
 
         // DOM Elements
         const bookingElements = {
@@ -2507,6 +2517,7 @@
             radios.forEach(r => {
                 const max = parseInt(r.dataset.max) || 99;
                 const tooSmall = count > max;
+                if (r.dataset.unavailable === 'true') { r.disabled = true; return; }
                 r.disabled = tooSmall;
                 const card = r.closest('.vehicle-card');
                 if (card) {
@@ -2517,7 +2528,7 @@
             });
             const current = radios.find(r => r.value === booking.data.vehicle);
             if (current && current.disabled) {
-                const fit = radios.filter(r => !r.disabled).sort((a, b) => parseInt(a.dataset.max) - parseInt(b.dataset.max))[0];
+                const fit = radios.filter(r => !r.disabled && r.dataset.unavailable !== 'true').sort((a, b) => parseInt(a.dataset.max) - parseInt(b.dataset.max))[0];
                 if (fit) { fit.checked = true; booking.data.vehicle = fit.value; updateSummary(); recalculatePrice(); }
                 if (note) { note.textContent = `${count} passengers need the ${VEHICLE_NAMES[fit ? fit.value : 'suv']}. We've switched your vehicle.`; note.classList.remove('hidden'); }
             } else if (note && changed === 'passengers') {
