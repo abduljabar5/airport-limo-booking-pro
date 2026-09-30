@@ -12,6 +12,7 @@ os.chdir(ROOT)
 SITE = 'https://totaltowncar.com'
 PHONE = '(612) 999-5382'; TEL = 'tel:+16129995382'; EMAIL = 'totaltowncarservice@gmail.com'
 HERO_BG = 'images/site/hero-bg.webp'
+LINK = '    <link rel="stylesheet" href="css/quote-widget.css">'
 QUOTE_CARD = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'quote_widget.html')).read()
 MAPS = '<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>'
 MOBILE_BAR = '''
@@ -53,6 +54,7 @@ EXTRA_CSS = '''        details > summary { list-style: none; cursor: pointer; }
         .page-hero { min-height: 60vh; }
     </style>'''
 head = head.replace('</style>', EXTRA_CSS, 1)
+if 'css/quote-widget.css' not in head: head = head.replace('<link rel="stylesheet" href="css/tailwind.css">', '<link rel="stylesheet" href="css/tailwind.css">\n' + LINK.rstrip('\n'), 1)
 
 def eyebrow(text, center=False):
     return f'''<div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">{esc(text)}</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>'''
