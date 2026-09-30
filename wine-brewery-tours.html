@@ -106,6 +106,9 @@
         .elegant-link:hover::after { width: 100%; }
         .nav-dropdown { display: none; }
         .nav-dropdown.show { display: block; }
+            details > summary::-webkit-details-marker { display: none; }
+        details[open] .faq-icon { transform: rotate(45deg); }
+        .faq-icon { transition: transform .3s ease; }
     </style>
 
     <!-- Schema Markup -->
@@ -139,6 +142,72 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-TV2HRJQP');</script>
+    <!-- inject:faq-ld -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do you offer wine tours to Stillwater and the St. Croix Valley?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Stillwater and the St. Croix Valley are the most popular tour, about 35 minutes from Minneapolis, with stops like Saint Croix Vineyards, 7 Vines Vineyard in Dellwood, Lift Bridge Brewing and Maple Island Brewing. The chauffeur drives the whole day so everyone tastes. Tours are booked hourly with a 3-hour minimum, quoted at booking."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is a wine or brewery tour priced?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tours are hourly or as-directed service with a 3-hour minimum, quoted at booking based on the vehicle, date and number of hours. The quote covers the chauffeur, the vehicle, fuel and all the driving between stops. Tasting fees, food and gratuity are separate. A typical Stillwater tour runs 4 to 6 hours."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we build our own tour itinerary?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Send a list of wineries, breweries, distilleries or restaurants and dispatch maps the route and timing, or ask for a suggested plan. Popular combinations include Stillwater wineries plus dinner on Main Street, the Northeast Minneapolis brewery district, or Alexis Bailly Vineyard and Cannon River Winery to the south. You can change the plan mid-day."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many stops can we make on a tour?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most groups fit 3 to 4 stops into a 4 to 5 hour tour, allowing about 45 minutes to an hour per tasting plus drive time. Stops are unlimited on an hourly booking, so the pace is yours. Book 6 hours for a full day with lunch, or the 3-hour minimum for a tight two-stop outing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What group size can you take on a tour?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Cadillac Escalade takes up to 6 guests and is the usual tour vehicle; the Mercedes-Benz S-Class or Lincoln Continental suits a couple or trio. Groups of 7 to 12 ride in two Escalades on one itinerary. A 14-passenger Sprinter exists but is temporarily unavailable for online booking, so ask dispatch about larger parties."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the chauffeur act as our designated driver?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The chauffeur does not drink, stays with the vehicle at each stop and is ready when you are, so nobody in the group has to skip tastings or drive home. Passengers may bring sealed purchases home in the cargo area. Open containers are not permitted in the vehicle under Minnesota law."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is included in a tour booking?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A late-model black vehicle detailed before pickup, a professional chauffeur for the full block, bottled water, phone chargers, door-to-door pickup at your homes or hotel, all driving between stops and the return. Extra stops are included on hourly bookings. Tasting fees and reservations at each winery are arranged by you, or by dispatch on request."
+      }
+    }
+  ]
+}
+    </script>
+    <!-- /inject:faq-ld -->
 </head>
 <body class="bg-obsidian-950 text-obsidian-100 font-sans antialiased">
     <!-- Google Tag Manager (noscript) -->
@@ -314,6 +383,180 @@
             </div>
         </div>
     </section>
+
+    <!-- inject:quote -->
+    <section class="py-16 lg:py-20 bg-obsidian-950 border-t border-white/[0.04]" id="quote">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                <div class="lg:col-span-6">
+                    <div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">Instant Quote</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>
+                    <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-5">Plan the tasting day</h2>
+                    <p class="text-obsidian-400 font-light leading-relaxed mb-6">Hourly service keeps the car with you between wineries. Get a point-to-point quote here or book hourly.</p>
+                    <ul class="space-y-3 text-sm text-obsidian-300 font-light">
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Chauffeur assigned before pickup, with a text when they are staged</li>
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Flight tracked, 30 minutes of free wait time at MSP (60 international)</li>
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Free cancellation up to 24 hours before pickup</li>
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Pay online or pay your chauffeur. The number you see is the number you pay</li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-6 relative">
+                    <div class="absolute -inset-1 bg-gradient-to-br from-gold-400/10 via-transparent to-gold-500/5 rounded-3xl blur-2xl"></div>
+                        <div class="relative bg-obsidian-900/60 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-8 shadow-2xl shadow-black/20">
+                            <!-- Form Header -->
+                            <div class="text-center mb-8">
+                                <h2 class="text-2xl font-display font-semibold text-white mb-2">Instant Quote</h2>
+                                <p class="text-sm text-obsidian-500 font-light">Book in 60 seconds • No obligations</p>
+                            </div>
+
+                            <form id="quote-form" class="space-y-5">
+                                <!-- Pickup -->
+                                <div>
+                                    <label for="pickup" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Pickup Location</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <div class="w-2 h-2 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50"></div>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            id="pickup"
+                                            name="pickup"
+                                            placeholder="Address or airport"
+                                            autocomplete="off"
+                                            required
+                                            class="input-luxury w-full pl-10 pr-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Dropoff -->
+                                <div>
+                                    <label for="dropoff" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Destination</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <div class="w-2 h-2 bg-rose-400 rounded-full shadow-lg shadow-rose-400/50"></div>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            id="dropoff"
+                                            name="dropoff"
+                                            placeholder="Where to?"
+                                            autocomplete="off"
+                                            required
+                                            class="input-luxury w-full pl-10 pr-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Date & Time -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="date" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Date</label>
+                                        <input
+                                            type="date"
+                                            id="date"
+                                            name="date"
+                                            required
+                                            class="input-luxury w-full px-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label for="time" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Time</label>
+                                        <input
+                                            type="time"
+                                            id="time"
+                                            name="time"
+                                            required
+                                            class="input-luxury w-full px-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Vehicle Selection -->
+                                <div>
+                                    <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-3">Select Vehicle</label>
+                                    <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                                        <label class="vehicle-card relative cursor-pointer">
+                                            <input type="radio" name="vehicle" value="suv" class="sr-only" checked>
+                                            <div class="relative px-2 py-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                                <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-gold-400 text-obsidian-950 text-[10px] font-semibold px-2 py-0.5 rounded-full">Popular</span>
+                                                <div class="text-sm font-medium text-white">SUV</div>
+                                                <div class="text-[11px] text-obsidian-500 mt-1">Escalade · 1-6</div>
+                                            </div>
+                                        </label>
+                                        <label class="vehicle-card relative cursor-pointer">
+                                            <input type="radio" name="vehicle" value="sedan" class="sr-only">
+                                            <div class="relative px-2 py-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                                <div class="text-sm font-medium text-white">Executive</div>
+                                                <div class="text-[11px] text-obsidian-500 mt-1">S-Class · 1-3</div>
+                                            </div>
+                                        </label>
+                                        <label class="vehicle-card relative cursor-pointer">
+                                            <input type="radio" name="vehicle" value="taxi" class="sr-only">
+                                            <div class="relative px-2 py-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                                <div class="text-sm font-medium text-white">Sedan</div>
+                                                <div class="text-[11px] text-obsidian-500 mt-1">Lincoln · 1-3</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Price Display -->
+                                <div id="price-display" class="hidden">
+                                    <div class="bg-gradient-to-r from-gold-400/[0.08] to-gold-500/[0.04] border border-gold-400/20 rounded-xl p-5">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="text-xs text-obsidian-400 uppercase tracking-wide">Your Fare</div>
+                                                <div class="text-3xl font-display font-semibold text-white mt-1">$<span id="price-value">0</span></div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-obsidian-400 uppercase tracking-wide">Distance</div>
+                                                <div class="text-lg font-medium text-gold-400 mt-1"><span id="distance-value">0</span> mi</div>
+                                            </div>
+                                        </div>
+                                        <div class="h-px bg-gradient-to-r from-transparent via-gold-400/20 to-transparent my-4"></div>
+                                        <p class="text-xs text-obsidian-500 text-center">All-inclusive. No surge pricing.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button
+                                    type="submit"
+                                    id="submit-btn"
+                                    class="btn-premium w-full bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold py-4 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(212,175,55,0.3),0_4px_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_30px_rgba(212,175,55,0.4),0_4px_20px_rgba(212,175,55,0.3)] flex items-center justify-center gap-2"
+                                >
+                                    <span id="submit-text">Get My Price</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                    </svg>
+                                </button>
+
+                                <!-- Trust line -->
+                                <div class="flex items-center justify-center gap-2 text-xs text-obsidian-600">
+                                    <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Free cancellation up to 24 hours before</span>
+                                </div>
+                                <p class="text-center text-xs text-obsidian-500">
+                                    Need a chauffeur for a few hours? <a href="book-a-ride.html?service=hourly" class="text-gold-400 hover:text-gold-300 transition-colors">Book hourly service →</a>
+                                </p>
+                            </form>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /inject:quote -->
+
+
+
+
+
+
+
+
+
 
     <!-- Why Choose Us -->
     <section class="py-20 bg-obsidian-900/50">
@@ -677,6 +920,85 @@
     </section>
 
     <!-- Footer -->
+
+
+
+
+
+
+
+
+    <!-- inject:faq -->
+    <section class="py-20 lg:py-24 bg-obsidian-950 border-t border-white/[0.04]" id="faq">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">Questions, Answered</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white">Frequently Asked Questions</h2>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Do you offer wine tours to Stillwater and the St. Croix Valley?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Stillwater and the St. Croix Valley are the most popular tour, about 35 minutes from Minneapolis, with stops like Saint Croix Vineyards, 7 Vines Vineyard in Dellwood, Lift Bridge Brewing and Maple Island Brewing. The chauffeur drives the whole day so everyone tastes. Tours are booked hourly with a 3-hour minimum, quoted at booking.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How is a wine or brewery tour priced?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Tours are hourly or as-directed service with a 3-hour minimum, quoted at booking based on the vehicle, date and number of hours. The quote covers the chauffeur, the vehicle, fuel and all the driving between stops. Tasting fees, food and gratuity are separate. A typical Stillwater tour runs 4 to 6 hours.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Can we build our own tour itinerary?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Send a list of wineries, breweries, distilleries or restaurants and dispatch maps the route and timing, or ask for a suggested plan. Popular combinations include Stillwater wineries plus dinner on Main Street, the Northeast Minneapolis brewery district, or Alexis Bailly Vineyard and Cannon River Winery to the south. You can change the plan mid-day.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How many stops can we make on a tour?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Most groups fit 3 to 4 stops into a 4 to 5 hour tour, allowing about 45 minutes to an hour per tasting plus drive time. Stops are unlimited on an hourly booking, so the pace is yours. Book 6 hours for a full day with lunch, or the 3-hour minimum for a tight two-stop outing.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What group size can you take on a tour?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">The Cadillac Escalade takes up to 6 guests and is the usual tour vehicle; the Mercedes-Benz S-Class or Lincoln Continental suits a couple or trio. Groups of 7 to 12 ride in two Escalades on one itinerary. A 14-passenger Sprinter exists but is temporarily unavailable for online booking, so ask dispatch about larger parties.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Does the chauffeur act as our designated driver?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. The chauffeur does not drink, stays with the vehicle at each stop and is ready when you are, so nobody in the group has to skip tastings or drive home. Passengers may bring sealed purchases home in the cargo area. Open containers are not permitted in the vehicle under Minnesota law.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What is included in a tour booking?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">A late-model black vehicle detailed before pickup, a professional chauffeur for the full block, bottled water, phone chargers, door-to-door pickup at your homes or hotel, all driving between stops and the return. Extra stops are included on hourly bookings. Tasting fees and reservations at each winery are arranged by you, or by dispatch on request.</p></div>
+                </details>
+            </div>
+        </div>
+    </section>
+    <!-- /inject:faq -->
+
+    <!-- inject:mobilebar -->
+    <div class="fixed bottom-0 left-0 right-0 lg:hidden z-40 bg-obsidian-950/95 backdrop-blur-lg border-t border-white/10 p-3" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));">
+        <div class="flex gap-3 max-w-lg mx-auto">
+            <a href="book-a-ride.html" class="flex-1 bg-gradient-to-r from-gold-400 to-gold-500 text-obsidian-950 font-semibold py-3 rounded-xl text-center shadow-lg shadow-gold-500/20">Book Now</a>
+            <a href="tel:+16129995382" class="flex items-center justify-center gap-2 bg-obsidian-800 text-white font-medium py-3 px-5 rounded-xl border border-white/10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span>Call</span></a>
+        </div>
+    </div>
+    <div class="h-20 lg:hidden" aria-hidden="true"></div>
+    <!-- /inject:mobilebar -->
     <footer class="bg-obsidian-950 border-t border-white/[0.04] py-16">
         <div class="container mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -726,6 +1048,8 @@
 
 
     </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>
+    <script src="app.js"></script>
     <script src="nav.js" defer></script>
 </body>
 </html>

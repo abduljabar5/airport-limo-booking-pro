@@ -500,7 +500,84 @@
                 display: none !important;
             }
         }
+            details > summary::-webkit-details-marker { display: none; }
+        details[open] .faq-icon { transform: rotate(45deg); }
+        .faq-icon { transition: transform .3s ease; }
     </style>
+    <!-- inject:faq-ld -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What happens after I book a ride online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You receive a confirmation by text and email within minutes showing your pickup time, addresses, vehicle and flat fare. The evening before, or a few hours before a same-day ride, you get a reminder. When your chauffeur is on the way, a text shares their name and vehicle, and another arrives when they are at your door."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When am I charged for a car service booking?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you choose to pay online, your card is charged through Stripe when you confirm the booking, for the flat fare shown on the form. If you choose to pay the driver, nothing is charged in advance and you settle by card or cash at the end of the ride. Either way the price does not change unless you change the trip."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I change or cancel my ride after booking?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Changes and cancellations are free up to 24 hours before pickup. Call (612) 999-5382 or reply to your confirmation message with the new time, address or vehicle, and dispatch updates the reservation and sends a fresh confirmation. Inside 24 hours, call as early as possible; a fee may apply because a chauffeur has already been assigned."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will I get a text message from my driver?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, if you opt in to SMS on the booking form. You will receive a booking confirmation, a reminder before pickup, a message with your chauffeur's name and vehicle when they depart, and an arrival text. Standard message rates apply, and you can reply STOP at any time to end texts without affecting your ride."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if my flight lands late or early?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Enter your flight number on the booking form and your pickup time follows the flight automatically. Your chauffeur tracks the arrival in real time and is at MSP when you land, whether the flight is early or delayed. Complimentary wait time runs 30 minutes after domestic arrivals and 60 minutes after international arrivals, so normal deplaning and baggage time costs nothing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the fare calculated on the booking form?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fares are flat rates based on the distance between your pickup and drop-off addresses and the vehicle you choose. The Lincoln Continental starts at $49, the Mercedes-Benz S-Class at $59 and the Cadillac Escalade at $69. Add-ons show as line items: meet and greet $15, child seats $25 each, extra stops $15 each, a $15 MSP pickup fee and a $20 surcharge between 7 PM and 6 AM."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the price shown on the booking form the final price?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The fare you see before you confirm is the fare you pay, including any add-ons you selected. There is no surge pricing, no running meter and no charge for traffic or weather delays. The total changes only if you change the trip, for example by adding a stop, switching vehicles or waiting beyond the complimentary window."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I book a ride for someone else?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Enter the passenger's name and mobile number on the form so the chauffeur can reach them, and add your own contact details as the booker. You can pay online with your card while the passenger receives the pickup texts. Many clients book this way for parents, visiting colleagues, patients traveling to Mayo Clinic and teens heading to prom."
+      }
+    }
+  ]
+}
+    </script>
+    <!-- /inject:faq-ld -->
 </head>
 <body class="bg-obsidian-950 text-white font-sans antialiased min-h-screen">
     <!-- Google Tag Manager (noscript) -->
@@ -532,11 +609,11 @@
     </header>
 
     <main class="pt-16">
-        <div class="min-h-[calc(100vh-64px)] flex flex-col lg:flex-row">
+        <div class="min-h-[calc(100vh-64px)] flex flex-col lg:flex-row max-w-[1600px] mx-auto">
 
             <!-- Left Side: Form -->
-            <div class="flex-1 lg:max-w-2xl">
-                <div class="form-container p-6 sm:p-8 lg:p-12">
+            <div class="flex-1 lg:basis-[58%] lg:max-w-4xl">
+                <div class="form-container p-6 sm:p-8 lg:p-12 xl:px-16">
 
                     <!-- Progress Steps -->
                     <div class="flex items-center justify-center gap-2 mb-8">
@@ -1092,11 +1169,80 @@
                         </div>
                     </div>
                 </div>
+
+    <!-- inject:faq -->
+    <section class="px-6 sm:px-8 lg:px-12 xl:px-16 pb-16" id="faq">
+        <div>
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">Questions, Answered</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white">Frequently Asked Questions</h2>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What happens after I book a ride online?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">You receive a confirmation by text and email within minutes showing your pickup time, addresses, vehicle and flat fare. The evening before, or a few hours before a same-day ride, you get a reminder. When your chauffeur is on the way, a text shares their name and vehicle, and another arrives when they are at your door.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">When am I charged for a car service booking?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">If you choose to pay online, your card is charged through Stripe when you confirm the booking, for the flat fare shown on the form. If you choose to pay the driver, nothing is charged in advance and you settle by card or cash at the end of the ride. Either way the price does not change unless you change the trip.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Can I change or cancel my ride after booking?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Changes and cancellations are free up to 24 hours before pickup. Call (612) 999-5382 or reply to your confirmation message with the new time, address or vehicle, and dispatch updates the reservation and sends a fresh confirmation. Inside 24 hours, call as early as possible; a fee may apply because a chauffeur has already been assigned.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Will I get a text message from my driver?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes, if you opt in to SMS on the booking form. You will receive a booking confirmation, a reminder before pickup, a message with your chauffeur&#x27;s name and vehicle when they depart, and an arrival text. Standard message rates apply, and you can reply STOP at any time to end texts without affecting your ride.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What if my flight lands late or early?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Enter your flight number on the booking form and your pickup time follows the flight automatically. Your chauffeur tracks the arrival in real time and is at MSP when you land, whether the flight is early or delayed. Complimentary wait time runs 30 minutes after domestic arrivals and 60 minutes after international arrivals, so normal deplaning and baggage time costs nothing.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How is the fare calculated on the booking form?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Fares are flat rates based on the distance between your pickup and drop-off addresses and the vehicle you choose. The Lincoln Continental starts at $49, the Mercedes-Benz S-Class at $59 and the Cadillac Escalade at $69. Add-ons show as line items: meet and greet $15, child seats $25 each, extra stops $15 each, a $15 MSP pickup fee and a $20 surcharge between 7 PM and 6 AM.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Is the price shown on the booking form the final price?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. The fare you see before you confirm is the fare you pay, including any add-ons you selected. There is no surge pricing, no running meter and no charge for traffic or weather delays. The total changes only if you change the trip, for example by adding a stop, switching vehicles or waiting beyond the complimentary window.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Can I book a ride for someone else?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Enter the passenger&#x27;s name and mobile number on the form so the chauffeur can reach them, and add your own contact details as the booker. You can pay online with your card while the passenger receives the pickup texts. Many clients book this way for parents, visiting colleagues, patients traveling to Mayo Clinic and teens heading to prom.</p></div>
+                </details>
+            </div>
+        </div>
+    </section>
+    <!-- /inject:faq -->
             </div>
 
             <!-- Right Side: Price Summary (Sticky) - Desktop only -->
-            <div class="desktop-sidebar lg:flex-1 lg:max-w-md bg-obsidian-900/30 border-t lg:border-t-0 lg:border-l border-white/[0.04]">
-                <div class="lg:sticky lg:top-16 p-6 sm:p-8 lg:p-12">
+            <div class="desktop-sidebar lg:flex-1 lg:basis-[42%] bg-obsidian-900/30 border-t lg:border-t-0 lg:border-l border-white/[0.04]">
+                <div class="lg:sticky lg:top-16 p-6 sm:p-8 lg:p-12 max-w-xl">
                     <h3 class="text-xl font-display font-semibold text-white mb-6">Booking Summary</h3>
 
                     <!-- Trip Summary -->
@@ -1232,6 +1378,31 @@
                             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white">MK</div>
                             <div>
                                 <div class="text-xs font-medium text-white">Michael K.</div>
+                                <div class="text-xs text-obsidian-500">Verified Customer</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What's included -->
+                    <div class="mt-6 pt-6 border-t border-white/[0.06]">
+                        <h4 class="text-[10px] tracking-luxe uppercase text-gold-400 mb-3">Every ride includes</h4>
+                        <ul class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-obsidian-300 font-light">
+                            <li class="flex items-start gap-2"><span class="w-1 h-1 mt-1.5 bg-gold-400 rounded-full shrink-0"></span>Licensed, background-checked chauffeur</li>
+                            <li class="flex items-start gap-2"><span class="w-1 h-1 mt-1.5 bg-gold-400 rounded-full shrink-0"></span>Real-time flight tracking</li>
+                            <li class="flex items-start gap-2"><span class="w-1 h-1 mt-1.5 bg-gold-400 rounded-full shrink-0"></span>30 min free wait (60 international)</li>
+                            <li class="flex items-start gap-2"><span class="w-1 h-1 mt-1.5 bg-gold-400 rounded-full shrink-0"></span>Bottled water and chargers</li>
+                            <li class="flex items-start gap-2"><span class="w-1 h-1 mt-1.5 bg-gold-400 rounded-full shrink-0"></span>Confirmation by email and text</li>
+                            <li class="flex items-start gap-2"><span class="w-1 h-1 mt-1.5 bg-gold-400 rounded-full shrink-0"></span>Free cancellation up to 24 h before</li>
+                        </ul>
+                    </div>
+
+                    <!-- Second review -->
+                    <div class="mt-6 bg-obsidian-800/30 border border-white/[0.06] rounded-xl p-4">
+                        <p class="text-sm text-obsidian-300 font-light italic mb-3">"Booked at 11 pm for a 5 am flight. Driver texted when he was outside, helped with three bags, and we made it with time to spare."</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xs font-bold text-white">AR</div>
+                            <div>
+                                <div class="text-xs font-medium text-white">Amanda R.</div>
                                 <div class="text-xs text-obsidian-500">Verified Customer</div>
                             </div>
                         </div>
@@ -2248,6 +2419,7 @@
         function proceedToNextStep() {
             if (booking.currentStep < booking.totalSteps) {
                 booking.currentStep++;
+                if (window.TotalTownCar?.trackEvent) TotalTownCar.trackEvent('booking_step', { step: booking.currentStep, vehicle: booking.data.vehicle, serviceType: booking.data.serviceType });
                 updateStepUI();
                 saveFormData();
             }
@@ -3092,6 +3264,8 @@
                 distance: booking.data.distance,
                 duration: booking.data.duration
             };
+
+            if (window.TotalTownCar?.trackEvent) TotalTownCar.trackEvent('booking_submit', { payment: booking.data.payment, vehicle: booking.data.vehicle, serviceType: booking.data.serviceType, total: booking.data.total });
 
             try {
                 if (booking.data.payment === 'online') {

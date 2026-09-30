@@ -327,6 +327,7 @@ async function calculateQuote() {
 
             // Show price display with animation
             showPriceDisplay();
+            trackEvent('quote_generated', { vehicle: state.vehicle, price: state.price, distance: state.distance, page: location.pathname });
 
             // Update button text
             elements.submitText.textContent = 'Book Now';
@@ -589,6 +590,7 @@ function redirectToBooking() {
         startStep: 2 // Skip to step 2 since quote is already calculated
     };
     sessionStorage.setItem('ttc_booking', JSON.stringify(bookingData));
+    trackEvent('quote_to_booking', { vehicle: state.vehicle, price: state.price, page: location.pathname });
 
     // Redirect to booking page (clean URL)
     window.location.href = CONFIG.bookingPage;
@@ -759,6 +761,11 @@ function initRevealAnimations() {
 // UTILITIES
 // =============================================================================
 
+// Push a named event to GTM's dataLayer (no-op when GTM is absent).
+function trackEvent(name, data) {
+    try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: name }, data || {})); } catch (e) { /* ignore */ }
+}
+
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -881,6 +888,7 @@ window.TotalTownCar = {
     isAirportAddress,
     getDistance,
     showToast,
+    trackEvent,
     formatCurrency,
     formatDate,
     formatTime

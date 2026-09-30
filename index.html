@@ -412,6 +412,9 @@
             from { opacity: 0; transform: translateX(-50%) translateY(1rem); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
+            details > summary::-webkit-details-marker { display: none; }
+        details[open] .faq-icon { transform: rotate(45deg); }
+        .faq-icon { transition: transform .3s ease; }
     </style>
 
     <!-- Structured Data for SEO -->
@@ -611,6 +614,96 @@
         ]
     }
     </script>
+    <!-- inject:faq-ld -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does a car service cost in Minneapolis with Total Town Car?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Total Town Car Service fares start at $49 in a Lincoln Continental sedan, $59 in a Mercedes-Benz S-Class executive sedan and $69 in a Cadillac Escalade SUV. Every fare is a flat rate quoted before you confirm, so there is no surge pricing. MSP Airport pickups add a $15 airport fee, and rides between 7 PM and 6 AM carry a $20 night surcharge."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I book a ride with Total Town Car Service?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Book online at totaltowncar.com in about two minutes: enter pickup and drop-off addresses, choose a date and time, pick a vehicle and confirm. The flat fare is shown before you pay. Online bookings need at least 2 hours notice. For sooner pickups, call (612) 999-5382 and dispatch, which is staffed 24/7, will arrange the ride by phone."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I cancel a car service booking for free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Cancel up to 24 hours before your scheduled pickup and there is no charge. Cancellations inside 24 hours may be billed because a chauffeur and vehicle have already been reserved for you. To cancel or change a ride, call (612) 999-5382 or reply to your confirmation text or email, any time of day or night."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Total Town Car track my flight if it is delayed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Every airport pickup is matched to your flight number and tracked in real time, so your chauffeur adjusts to early arrivals and delays automatically. Complimentary wait time is 30 minutes after a domestic arrival and 60 minutes after an international arrival at MSP, which covers customs, baggage claim and the walk to the curb."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the meet and greet option at MSP Airport?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Meet and greet costs $15 and means your chauffeur waits inside the terminal at baggage claim holding a sign with your name, then helps with bags and walks you to the car. It is popular with first-time visitors, older travelers, children flying alone and executives. Without it, your chauffeur meets you curbside at a pre-arranged door."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I add a child car seat or extra stops to my ride?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Child car seats are $25 each, up to four per vehicle, and you can choose infant, convertible or booster when booking. Extra stops along the route are $15 each, useful for picking up a second passenger or a quick errand. Add both on the booking form or ask dispatch at (612) 999-5382."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Total Town Car offer hourly car service?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Hourly or as-directed service has a 3-hour minimum and is quoted at booking based on the vehicle and date. It suits weddings, corporate roadshows, dinners with several stops and tours around the Twin Cities. The chauffeur stays with you for the entire block, so you never wait on a new car between stops."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a discount for booking a round trip, and how do I pay?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Booking your outbound and return rides together saves 10% on the total fare. This applies to airport round trips, Rochester and Mayo Clinic visits, event nights and any other pair of rides. You can pay online by card through Stripe when you book, or pay the chauffeur at the end of the ride."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which vehicles does Total Town Car Service have and how many people fit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Three vehicles are bookable online: a Cadillac Escalade SUV for up to 6 passengers and 6 bags, a Mercedes-Benz S-Class for up to 3 passengers and 3 bags, and a Lincoln Continental sedan for up to 3 passengers and 3 bags. A 14-passenger Sprinter exists but is temporarily unavailable for online booking, so larger groups travel in two or three cars dispatched together."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which areas does Total Town Car serve and how early should I book?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Total Town Car serves Minneapolis, Saint Paul, every Twin Cities suburb and MSP Airport, plus long-distance trips to Rochester and Mayo Clinic, Duluth, St. Cloud and Mankato. Online bookings need at least 2 hours notice; call (612) 999-5382 for sooner. For holiday travel, early-morning flights or large events, booking a few days ahead secures your preferred vehicle."
+      }
+    }
+  ]
+}
+    </script>
+    <!-- /inject:faq-ld -->
 </head>
 <body class="bg-obsidian-950 text-obsidian-100 font-sans antialiased">
     <!-- Google Tag Manager (noscript) -->
@@ -1452,6 +1545,92 @@
         </section>
 
         <!-- CTA Section -->
+
+
+
+
+    <!-- inject:faq -->
+    <section class="py-20 lg:py-24 bg-obsidian-950 border-t border-white/[0.04]" id="faq">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">Questions, Answered</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white">Frequently Asked Questions</h2>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How much does a car service cost in Minneapolis with Total Town Car?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Total Town Car Service fares start at $49 in a Lincoln Continental sedan, $59 in a Mercedes-Benz S-Class executive sedan and $69 in a Cadillac Escalade SUV. Every fare is a flat rate quoted before you confirm, so there is no surge pricing. MSP Airport pickups add a $15 airport fee, and rides between 7 PM and 6 AM carry a $20 night surcharge.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How do I book a ride with Total Town Car Service?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Book online at totaltowncar.com in about two minutes: enter pickup and drop-off addresses, choose a date and time, pick a vehicle and confirm. The flat fare is shown before you pay. Online bookings need at least 2 hours notice. For sooner pickups, call (612) 999-5382 and dispatch, which is staffed 24/7, will arrange the ride by phone.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Can I cancel a car service booking for free?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Cancel up to 24 hours before your scheduled pickup and there is no charge. Cancellations inside 24 hours may be billed because a chauffeur and vehicle have already been reserved for you. To cancel or change a ride, call (612) 999-5382 or reply to your confirmation text or email, any time of day or night.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Does Total Town Car track my flight if it is delayed?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Every airport pickup is matched to your flight number and tracked in real time, so your chauffeur adjusts to early arrivals and delays automatically. Complimentary wait time is 30 minutes after a domestic arrival and 60 minutes after an international arrival at MSP, which covers customs, baggage claim and the walk to the curb.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What is the meet and greet option at MSP Airport?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Meet and greet costs $15 and means your chauffeur waits inside the terminal at baggage claim holding a sign with your name, then helps with bags and walks you to the car. It is popular with first-time visitors, older travelers, children flying alone and executives. Without it, your chauffeur meets you curbside at a pre-arranged door.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Can I add a child car seat or extra stops to my ride?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Child car seats are $25 each, up to four per vehicle, and you can choose infant, convertible or booster when booking. Extra stops along the route are $15 each, useful for picking up a second passenger or a quick errand. Add both on the booking form or ask dispatch at (612) 999-5382.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Does Total Town Car offer hourly car service?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Hourly or as-directed service has a 3-hour minimum and is quoted at booking based on the vehicle and date. It suits weddings, corporate roadshows, dinners with several stops and tours around the Twin Cities. The chauffeur stays with you for the entire block, so you never wait on a new car between stops.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Is there a discount for booking a round trip, and how do I pay?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Booking your outbound and return rides together saves 10% on the total fare. This applies to airport round trips, Rochester and Mayo Clinic visits, event nights and any other pair of rides. You can pay online by card through Stripe when you book, or pay the chauffeur at the end of the ride.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Which vehicles does Total Town Car Service have and how many people fit?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Three vehicles are bookable online: a Cadillac Escalade SUV for up to 6 passengers and 6 bags, a Mercedes-Benz S-Class for up to 3 passengers and 3 bags, and a Lincoln Continental sedan for up to 3 passengers and 3 bags. A 14-passenger Sprinter exists but is temporarily unavailable for online booking, so larger groups travel in two or three cars dispatched together.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Which areas does Total Town Car serve and how early should I book?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Total Town Car serves Minneapolis, Saint Paul, every Twin Cities suburb and MSP Airport, plus long-distance trips to Rochester and Mayo Clinic, Duluth, St. Cloud and Mankato. Online bookings need at least 2 hours notice; call (612) 999-5382 for sooner. For holiday travel, early-morning flights or large events, booking a few days ahead secures your preferred vehicle.</p></div>
+                </details>
+            </div>
+        </div>
+    </section>
+    <!-- /inject:faq -->
         <section class="py-24 lg:py-32 relative overflow-hidden">
             <!-- Background -->
             <div class="absolute inset-0 bg-gradient-to-br from-gold-600/20 via-gold-500/10 to-obsidian-950"></div>

@@ -64,6 +64,13 @@
     document.addEventListener('click', (e) => { if (dd && ddBtn && !ddBtn.contains(e.target) && !dd.contains(e.target)) closeDd(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeDd(); setMenu(false); } });
 
+    // Conversion signals for GTM (map these events to Google Ads conversions in Tag Manager)
+    window.dataLayer = window.dataLayer || [];
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="tel:"]');
+        if (a) window.dataLayer.push({ event: 'phone_click', phone: a.getAttribute('href').replace('tel:', ''), page: location.pathname });
+    });
+
     // Header scroll state
     if (header) {
         const onScroll = () => header.classList.toggle('header-scrolled', window.scrollY > 50);

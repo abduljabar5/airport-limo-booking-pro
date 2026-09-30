@@ -12,6 +12,17 @@ os.chdir(ROOT)
 SITE = 'https://totaltowncar.com'
 PHONE = '(612) 999-5382'; TEL = 'tel:+16129995382'; EMAIL = 'totaltowncarservice@gmail.com'
 HERO_BG = 'images/site/hero-bg.webp'
+QUOTE_CARD = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'quote_widget.html')).read()
+MAPS = '<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>'
+MOBILE_BAR = '''
+    <div class="fixed bottom-0 left-0 right-0 lg:hidden z-40 bg-obsidian-950/95 backdrop-blur-lg border-t border-white/10 p-3" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));">
+        <div class="flex gap-3 max-w-lg mx-auto">
+            <a href="book-a-ride.html" class="flex-1 bg-gradient-to-r from-gold-400 to-gold-500 text-obsidian-950 font-semibold py-3 rounded-xl text-center shadow-lg shadow-gold-500/20">Book Now</a>
+            <a href="tel:+16129995382" class="flex items-center justify-center gap-2 bg-obsidian-800 text-white font-medium py-3 px-5 rounded-xl border border-white/10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span>Call</span></a>
+        </div>
+    </div>
+    <div class="h-20 lg:hidden" aria-hidden="true"></div>
+'''
 GOLD = 'text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500'
 BTN = 'inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-gold-500/20'
 GHOST = 'inline-flex items-center justify-center gap-2 border border-gold-400/30 text-gold-400 hover:bg-gold-400/10 font-medium px-8 py-4 rounded-full transition-all duration-300'
@@ -58,14 +69,24 @@ def hero(p):
             <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-gold-400/[0.03] rounded-full blur-[120px]"></div>
         </div>
         <div class="container mx-auto px-6 lg:px-8 relative z-10">
-            <div class="max-w-3xl">
-                {eyebrow(p['eyebrow'])}
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold leading-[1.12] text-white mb-6">{gold(p['h1'])}</h1>
-                <p class="text-lg lg:text-xl text-obsidian-300 font-light leading-relaxed mb-9 max-w-2xl">{p['lede']}</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="book-a-ride.html{p.get('book_qs','')}" class="{BTN}"><span>{esc(p.get('cta1','Book Now'))}</span>{ARROW}</a>
-                    <a href="{TEL}" class="{GHOST}">{PHONE_SVG}<span>Call Dispatch 24/7</span></a>
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                <div class="lg:col-span-7">
+                    {eyebrow(p['eyebrow'])}
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold leading-[1.12] text-white mb-6">{gold(p['h1'])}</h1>
+                    <p class="text-lg lg:text-xl text-obsidian-300 font-light leading-relaxed mb-9 max-w-2xl">{p['lede']}</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="book-a-ride.html{p.get('book_qs','')}" class="{BTN}"><span>{esc(p.get('cta1','Book Now'))}</span>{ARROW}</a>
+                        <a href="{TEL}" class="{GHOST}">{PHONE_SVG}<span>Call Dispatch 24/7</span></a>
+                    </div>
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 mt-8 text-xs text-obsidian-400 font-light">
+                        <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-gold-400 rounded-full"></span>5.0 on Google</span>
+                        <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-gold-400 rounded-full"></span>10,000+ rides since 1991</span>
+                        <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-gold-400 rounded-full"></span>Free cancellation up to 24 h</span>
+                    </div>
                 </div>
+                <div class="lg:col-span-5 relative" id="quote">
+                    <div class="absolute -inset-1 bg-gradient-to-br from-gold-400/10 via-transparent to-gold-500/5 rounded-3xl blur-2xl"></div>
+{QUOTE_CARD}                </div>
             </div>
         </div>
     </section>
@@ -321,15 +342,26 @@ def build(p):
         main = hero(p) + section_contact(p) + section_faq(p) + section_related(p) + section_cta(p)
     else:
         main = hero(p) + section_intro(p) + section_bullets(p) + section_steps(p) + section_fleet(p) + section_faq(p) + section_related(p) + section_cta(p)
-    out = h + header_html + '<main id="main-content">' + main + '    </main>\n\n' + footer_html
+    foot = footer_html.replace('    <script src="nav.js" defer></script>', f'    {MAPS}\n    <script src="app.js"></script>\n    <script src="nav.js" defer></script>', 1)
+    out = h + header_html + '<main id="main-content">' + main + '    </main>\n' + MOBILE_BAR + '\n' + foot
     open(p['file'], 'w').write(out)
     return p['file']
+
+def load_extra():
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'faq_extra.py')
+    if not os.path.exists(f): return {}
+    sp = importlib.util.spec_from_file_location('faq_extra', f); m = importlib.util.module_from_spec(sp); sp.loader.exec_module(m); return m.EXTRA
 
 def load_all():
     pages = []
     for f in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'specs_*.py'))):
         spec = importlib.util.spec_from_file_location('specs', f); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
         pages += m.PAGES
+    extra = load_extra()
+    for p in pages:
+        add = extra.get(p['file'], [])
+        have = {q for q, _ in p.get('faq', [])}
+        p['faq'] = list(p.get('faq', [])) + [(q, a) for q, a in add if q not in have]
     return pages
 
 if __name__ == '__main__':

@@ -46,131 +46,485 @@
 
     <!-- Structured Data: WebPage + Service + 32 destination Offers + airport FAQ -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "WebPage",
-                "@id": "https://totaltowncar.com/airport-service.html#webpage",
-                "url": "https://totaltowncar.com/airport-service.html",
-                "name": "MSP Airport Limo & Black Car Service",
-                "description": "Luxury limo, black car, sedan, and SUV service to and from Minneapolis-St. Paul International Airport (MSP). 24/7 availability, real-time flight tracking, complimentary wait time, flat-rate pricing.",
-                "isPartOf": {"@id": "https://totaltowncar.com/#business"},
-                "primaryImageOfPage": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
-                "about": {"@type": "Airport", "name": "Minneapolis-St. Paul International Airport", "iataCode": "MSP", "sameAs": "https://en.wikipedia.org/wiki/Minneapolis%E2%80%93Saint_Paul_International_Airport"}
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebPage",
+            "@id": "https://totaltowncar.com/airport-service.html#webpage",
+            "url": "https://totaltowncar.com/airport-service.html",
+            "name": "MSP Airport Limo & Black Car Service",
+            "description": "Luxury limo, black car, sedan, and SUV service to and from Minneapolis-St. Paul International Airport (MSP). 24/7 availability, real-time flight tracking, complimentary wait time, flat-rate pricing.",
+            "isPartOf": {
+                "@id": "https://totaltowncar.com/#business"
             },
-            {
-                "@type": "Service",
-                "@id": "https://totaltowncar.com/airport-service.html#service",
-                "name": "MSP Airport Limo & Black Car Service",
-                "alternateName": ["MSP Airport Transportation", "Minneapolis Airport Car Service", "MSP Airport Black Car"],
-                "serviceType": ["Airport Transfer", "Limousine Service", "Black Car Service"],
-                "description": "Chauffeured ground transportation to and from Minneapolis-St. Paul International Airport (MSP). Service to/from Terminal 1 (Lindbergh) and Terminal 2 (Humphrey). Real-time flight tracking, 30-min domestic / 60-min international complimentary wait, all-inclusive flat-rate pricing with no surge fees.",
-                "provider": {"@id": "https://totaltowncar.com/#business"},
-                "areaServed": [
-                    {"@type": "Airport", "name": "Minneapolis-St. Paul International Airport", "iataCode": "MSP"},
-                    {"@type": "City", "name": "Minneapolis", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Saint Paul", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Bloomington", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Edina", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Eden Prairie", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Minnetonka", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Wayzata", "containedInPlace": {"@type": "State", "name": "Minnesota"}},
-                    {"@type": "City", "name": "Plymouth", "containedInPlace": {"@type": "State", "name": "Minnesota"}}
-                ],
-                "audience": {"@type": "Audience", "audienceType": "Air travelers, business travelers, families, tourists"},
-                "hoursAvailable": {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59"},
-                "hasOfferCatalog": {
-                    "@type": "OfferCatalog",
-                    "name": "MSP Airport Flat-Rate Pricing",
-                    "itemListElement": [
-                        {"@type": "Offer", "name": "MSP → Downtown Minneapolis (Sedan)", "priceCurrency": "USD", "price": "45", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Downtown Minneapolis"}},
-                        {"@type": "Offer", "name": "MSP → Downtown Minneapolis (SUV)", "priceCurrency": "USD", "price": "65", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Downtown Minneapolis"}}, 
-                        {"@type": "Offer", "name": "MSP → Downtown St. Paul (Sedan)", "priceCurrency": "USD", "price": "55", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Downtown Saint Paul"}},
-                        {"@type": "Offer", "name": "MSP → Downtown St. Paul (SUV)", "priceCurrency": "USD", "price": "75", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Downtown Saint Paul"}}, 
-                        {"@type": "Offer", "name": "MSP → Bloomington / Mall of America (Sedan)", "priceCurrency": "USD", "price": "35", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Mall of America"}},
-                        {"@type": "Offer", "name": "MSP → Bloomington / Mall of America (SUV)", "priceCurrency": "USD", "price": "50", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Mall of America"}}, 
-                        {"@type": "Offer", "name": "MSP → Edina (Sedan)", "priceCurrency": "USD", "price": "55", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Edina"}},
-                        {"@type": "Offer", "name": "MSP → Edina (SUV)", "priceCurrency": "USD", "price": "75", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Edina"}}, 
-                        {"@type": "Offer", "name": "MSP → Minnetonka (Sedan)", "priceCurrency": "USD", "price": "65", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Minnetonka"}},
-                        {"@type": "Offer", "name": "MSP → Minnetonka (SUV)", "priceCurrency": "USD", "price": "85", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Minnetonka"}}, 
-                        {"@type": "Offer", "name": "MSP → Wayzata (Sedan)", "priceCurrency": "USD", "price": "75", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Wayzata"}},
-                        {"@type": "Offer", "name": "MSP → Wayzata (SUV)", "priceCurrency": "USD", "price": "95", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Wayzata"}}, 
-                        {"@type": "Offer", "name": "MSP → Eden Prairie (Sedan)", "priceCurrency": "USD", "price": "65", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Eden Prairie"}},
-                        {"@type": "Offer", "name": "MSP → Eden Prairie (SUV)", "priceCurrency": "USD", "price": "85", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Eden Prairie"}}, 
-                        {"@type": "Offer", "name": "MSP → Plymouth (Sedan)", "priceCurrency": "USD", "price": "75", "itemOffered": {"@type": "Service", "name": "Sedan", "areaServed": "Plymouth"}},
-                        {"@type": "Offer", "name": "MSP → Plymouth (SUV)", "priceCurrency": "USD", "price": "95", "itemOffered": {"@type": "Service", "name": "SUV", "areaServed": "Plymouth"}}
-                    ]
+            "primaryImageOfPage": "https://totaltowncar.com/public/lovable-uploads/ttcs.jpeg",
+            "about": {
+                "@type": "Airport",
+                "name": "Minneapolis-St. Paul International Airport",
+                "iataCode": "MSP",
+                "sameAs": "https://en.wikipedia.org/wiki/Minneapolis%E2%80%93Saint_Paul_International_Airport"
+            }
+        },
+        {
+            "@type": "Service",
+            "@id": "https://totaltowncar.com/airport-service.html#service",
+            "name": "MSP Airport Limo & Black Car Service",
+            "alternateName": [
+                "MSP Airport Transportation",
+                "Minneapolis Airport Car Service",
+                "MSP Airport Black Car"
+            ],
+            "serviceType": [
+                "Airport Transfer",
+                "Limousine Service",
+                "Black Car Service"
+            ],
+            "description": "Chauffeured ground transportation to and from Minneapolis-St. Paul International Airport (MSP). Service to/from Terminal 1 (Lindbergh) and Terminal 2 (Humphrey). Real-time flight tracking, 30-min domestic / 60-min international complimentary wait, all-inclusive flat-rate pricing with no surge fees.",
+            "provider": {
+                "@id": "https://totaltowncar.com/#business"
+            },
+            "areaServed": [
+                {
+                    "@type": "Airport",
+                    "name": "Minneapolis-St. Paul International Airport",
+                    "iataCode": "MSP"
                 },
-                "offers": {
-                    "@type": "AggregateOffer",
-                    "priceCurrency": "USD",
-                    "lowPrice": "35",
-                    "highPrice": "155",
-                    "offerCount": "24",
-                    "description": "Flat-rate MSP airport transfers from $35 (Mall of America sedan) to $95 (Plymouth and Wayzata SUV). All prices include taxes, fees, and gratuity."
+                {
+                    "@type": "City",
+                    "name": "Minneapolis",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
                 },
-                "potentialAction": {
-                    "@type": "ReserveAction",
-                    "name": "Book Airport Ride",
-                    "target": {
-                        "@type": "EntryPoint",
-                        "urlTemplate": "https://totaltowncar.com/book-a-ride.html",
-                        "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
-                    },
-                    "result": {"@type": "Reservation", "name": "MSP Airport Transfer Reservation"}
+                {
+                    "@type": "City",
+                    "name": "Saint Paul",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
+                },
+                {
+                    "@type": "City",
+                    "name": "Bloomington",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
+                },
+                {
+                    "@type": "City",
+                    "name": "Edina",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
+                },
+                {
+                    "@type": "City",
+                    "name": "Eden Prairie",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
+                },
+                {
+                    "@type": "City",
+                    "name": "Minnetonka",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
+                },
+                {
+                    "@type": "City",
+                    "name": "Wayzata",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
+                },
+                {
+                    "@type": "City",
+                    "name": "Plymouth",
+                    "containedInPlace": {
+                        "@type": "State",
+                        "name": "Minnesota"
+                    }
                 }
+            ],
+            "audience": {
+                "@type": "Audience",
+                "audienceType": "Air travelers, business travelers, families, tourists"
             },
-            {
-                "@type": "FAQPage",
-                "@id": "https://totaltowncar.com/airport-service.html#faq",
-                "mainEntity": [
+            "hoursAvailable": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
+                ],
+                "opens": "00:00",
+                "closes": "23:59"
+            },
+            "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "MSP Airport Flat-Rate Pricing",
+                "itemListElement": [
                     {
-                        "@type": "Question",
-                        "name": "How much does a ride from MSP airport to downtown Minneapolis cost?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Flat-rate fares from MSP to downtown Minneapolis: sedan $45, SUV $65. All prices include taxes, fees, and gratuity. There is no surge pricing."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Downtown Minneapolis (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "45",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Downtown Minneapolis"
+                        }
                     },
                     {
-                        "@type": "Question",
-                        "name": "How much is a ride from MSP airport to Mall of America?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Mall of America is just 3 miles from MSP — about a 10-minute drive. Flat-rate fares: sedan $35, SUV $50."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Downtown Minneapolis (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "65",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Downtown Minneapolis"
+                        }
                     },
                     {
-                        "@type": "Question",
-                        "name": "How long is the drive from MSP airport to downtown Minneapolis?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Approximately 12 miles, 18-25 minutes in normal traffic via Highway 62 and I-35W. Allow extra time during rush hour (7-9 AM and 4-6 PM)."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Downtown St. Paul (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "55",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Downtown Saint Paul"
+                        }
                     },
                     {
-                        "@type": "Question",
-                        "name": "Where do I meet my driver at MSP airport?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Terminal 1 (Lindbergh): meet at the designated Ground Transportation area on the lower level. Terminal 2 (Humphrey): meet outside Door 1 on the ground level. Your driver will hold a sign with your name and contact you with specific instructions."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Downtown St. Paul (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "75",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Downtown Saint Paul"
+                        }
                     },
                     {
-                        "@type": "Question",
-                        "name": "What is the wait time policy for MSP pickups?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Complimentary wait time after gate arrival: 30 minutes for domestic flights, 60 minutes for international flights. We monitor your flight in real time and adjust pickup automatically for delays."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Bloomington / Mall of America (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "35",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Mall of America"
+                        }
                     },
                     {
-                        "@type": "Question",
-                        "name": "Do you charge surge pricing for late-night MSP pickups?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "No. Our flat-rate MSP pricing applies 24/7. Standard booking flow may add a $20 night surcharge between 7 PM and 6 AM, but flat-rate destination pricing is fixed regardless of time of day. We are available every flight, every hour."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Bloomington / Mall of America (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "50",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Mall of America"
+                        }
                     },
                     {
-                        "@type": "Question",
-                        "name": "Are tips and fees included in the MSP airport price?",
-                        "acceptedAnswer": {"@type": "Answer", "text": "Yes. Our flat-rate MSP airport prices include all taxes, fees, and gratuity. There is no airport pickup fee added to flat-rate quotes — the price you see is the price you pay."}
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Edina (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "55",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Edina"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Edina (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "75",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Edina"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Minnetonka (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "65",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Minnetonka"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Minnetonka (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "85",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Minnetonka"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Wayzata (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "75",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Wayzata"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Wayzata (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "95",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Wayzata"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Eden Prairie (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "65",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Eden Prairie"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Eden Prairie (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "85",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Eden Prairie"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Plymouth (Sedan)",
+                        "priceCurrency": "USD",
+                        "price": "75",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Sedan",
+                            "areaServed": "Plymouth"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "name": "MSP \u2192 Plymouth (SUV)",
+                        "priceCurrency": "USD",
+                        "price": "95",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "SUV",
+                            "areaServed": "Plymouth"
+                        }
                     }
                 ]
             },
-            {
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://totaltowncar.com/"},
-                    {"@type": "ListItem", "position": 2, "name": "MSP Airport Service", "item": "https://totaltowncar.com/airport-service.html"}
-                ]
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "USD",
+                "lowPrice": "35",
+                "highPrice": "155",
+                "offerCount": "24",
+                "description": "Flat-rate MSP airport transfers from $35 (Mall of America sedan) to $95 (Plymouth and Wayzata SUV). All prices include taxes, fees, and gratuity."
+            },
+            "potentialAction": {
+                "@type": "ReserveAction",
+                "name": "Book Airport Ride",
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": "https://totaltowncar.com/book-a-ride.html",
+                    "actionPlatform": [
+                        "http://schema.org/DesktopWebPlatform",
+                        "http://schema.org/MobileWebPlatform"
+                    ]
+                },
+                "result": {
+                    "@type": "Reservation",
+                    "name": "MSP Airport Transfer Reservation"
+                }
             }
-        ]
-    }
+        },
+        {
+            "@type": "FAQPage",
+            "@id": "https://totaltowncar.com/airport-service.html#faq",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "How much does a ride from MSP airport to downtown Minneapolis cost?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Flat-rate fares from MSP to downtown Minneapolis: sedan $45, SUV $65. All prices include taxes, fees, and gratuity. There is no surge pricing."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How much is a ride from MSP airport to Mall of America?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Mall of America is just 3 miles from MSP \u2014 about a 10-minute drive. Flat-rate fares: sedan $35, SUV $50."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How long is the drive from MSP airport to downtown Minneapolis?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Approximately 12 miles, 18-25 minutes in normal traffic via Highway 62 and I-35W. Allow extra time during rush hour (7-9 AM and 4-6 PM)."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Where do I meet my driver at MSP airport?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Terminal 1 (Lindbergh): meet at the designated Ground Transportation area on the lower level. Terminal 2 (Humphrey): meet outside Door 1 on the ground level. Your driver will hold a sign with your name and contact you with specific instructions."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is the wait time policy for MSP pickups?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Complimentary wait time after gate arrival: 30 minutes for domestic flights, 60 minutes for international flights. We monitor your flight in real time and adjust pickup automatically for delays."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Do you charge surge pricing for late-night MSP pickups?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. Our flat-rate MSP pricing applies 24/7. Standard booking flow may add a $20 night surcharge between 7 PM and 6 AM, but flat-rate destination pricing is fixed regardless of time of day. We are available every flight, every hour."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Are tips and fees included in the MSP airport price?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Our flat-rate MSP airport prices include all taxes, fees, and gratuity. There is no airport pickup fee added to flat-rate quotes \u2014 the price you see is the price you pay."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is the difference between Terminal 1 and Terminal 2 at MSP?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Terminal 1 Lindbergh is the larger terminal and serves Delta, American, United, Alaska and most international flights. Terminal 2 Humphrey serves Sun Country, Southwest, Frontier, JetBlue and Icelandair. The terminals are about 2 miles apart and not walkable, so give us your airline or flight number and your chauffeur goes to the correct terminal."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Where do I meet my chauffeur at MSP Airport?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "At Terminal 1, your chauffeur meets you curbside at a pre-arranged door on the arrivals level after you collect your bags. At Terminal 2, pickups are curbside outside baggage claim. Your chauffeur texts the exact door and a vehicle description. With the $15 meet and greet, they wait at baggage claim holding a name sign instead."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How long will my chauffeur wait at the airport?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Complimentary wait time is 30 minutes after a domestic flight lands and 60 minutes after an international flight lands, measured from the actual arrival time rather than the scheduled one. That covers deplaning, customs and baggage claim for nearly every traveler. If a bag is lost or you are held up longer, call (612) 999-5382 and the chauffeur will stay."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Do you track flights for airport pickups?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. When you enter your flight number, dispatch monitors it in real time from departure to landing. Your chauffeur is scheduled off the actual arrival time, so an early landing or a two-hour delay does not leave you waiting or paying for idle time. Tracking is automatic on every MSP pickup and costs nothing extra."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How much is a car service from MSP to downtown Minneapolis?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "MSP to downtown Minneapolis starts at $49 in a Lincoln Continental sedan, $59 in a Mercedes-Benz S-Class and $69 in a Cadillac Escalade SUV, with a $15 airport pickup fee added. Mall of America and Bloomington hotels are a short ride at similar rates, and suburbs like Edina, Eden Prairie, Maple Grove and Woodbury are quoted flat by distance before you confirm."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I book an early morning ride to the airport?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Dispatch runs 24/7 and 4 AM and 5 AM pickups are routine. Rides between 7 PM and 6 AM carry a $20 night surcharge, shown before you confirm. Your chauffeur arrives a few minutes early and texts on arrival, so you can sleep until the last reasonable minute. Book the night before at the latest, or at least 2 hours ahead online."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How much luggage fits in each vehicle?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The Cadillac Escalade holds up to 6 bags with 6 passengers, and the Mercedes-Benz S-Class and Lincoln Continental each hold 3 bags with 3 passengers. Standard checked suitcases and carry-ons are counted. For skis, golf clubs, large strollers or more than 3 bags with 2 or 3 passengers, choose the Escalade so everything rides in the vehicle with you."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How early should my pickup be for a departing flight from MSP?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Plan to arrive at MSP 2 hours before a domestic departure and 3 hours before an international one, then add drive time. From downtown Minneapolis or Saint Paul allow about 25 minutes, from Maple Grove or Woodbury about 35 minutes, and more in winter or rush hour. Enter your flight time when booking and dispatch will suggest a pickup time."
+                    }
+                }
+            ]
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://totaltowncar.com/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "MSP Airport Service",
+                    "item": "https://totaltowncar.com/airport-service.html"
+                }
+            ]
+        }
+    ]
+}
     </script>
 
     <!-- Google tag (gtag.js) -->
@@ -257,6 +611,9 @@
         .elegant-link:hover::after { width: 100%; }
         .nav-dropdown { display: none; }
         .nav-dropdown.show { display: block; }
+            details > summary::-webkit-details-marker { display: none; }
+        details[open] .faq-icon { transform: rotate(45deg); }
+        .faq-icon { transition: transform .3s ease; }
     </style>
 </head>
 <body class="bg-obsidian-950 text-obsidian-100 font-sans antialiased">
@@ -444,6 +801,180 @@
             </div>
         </div>
     </section>
+
+    <!-- inject:quote -->
+    <section class="py-16 lg:py-20 bg-obsidian-950 border-t border-white/[0.04]" id="quote">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                <div class="lg:col-span-6">
+                    <div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">Instant Quote</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>
+                    <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-5">MSP airport fare in seconds</h2>
+                    <p class="text-obsidian-400 font-light leading-relaxed mb-6">Enter the terminal and your address. The fare covers the airport fee, tolls and the chauffeur, quoted before you book.</p>
+                    <ul class="space-y-3 text-sm text-obsidian-300 font-light">
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Chauffeur assigned before pickup, with a text when they are staged</li>
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Flight tracked, 30 minutes of free wait time at MSP (60 international)</li>
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Free cancellation up to 24 hours before pickup</li>
+                        <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>Pay online or pay your chauffeur. The number you see is the number you pay</li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-6 relative">
+                    <div class="absolute -inset-1 bg-gradient-to-br from-gold-400/10 via-transparent to-gold-500/5 rounded-3xl blur-2xl"></div>
+                        <div class="relative bg-obsidian-900/60 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-8 shadow-2xl shadow-black/20">
+                            <!-- Form Header -->
+                            <div class="text-center mb-8">
+                                <h2 class="text-2xl font-display font-semibold text-white mb-2">Instant Quote</h2>
+                                <p class="text-sm text-obsidian-500 font-light">Book in 60 seconds • No obligations</p>
+                            </div>
+
+                            <form id="quote-form" class="space-y-5">
+                                <!-- Pickup -->
+                                <div>
+                                    <label for="pickup" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Pickup Location</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <div class="w-2 h-2 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50"></div>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            id="pickup"
+                                            name="pickup"
+                                            placeholder="Address or airport"
+                                            autocomplete="off"
+                                            required
+                                            class="input-luxury w-full pl-10 pr-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Dropoff -->
+                                <div>
+                                    <label for="dropoff" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Destination</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <div class="w-2 h-2 bg-rose-400 rounded-full shadow-lg shadow-rose-400/50"></div>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            id="dropoff"
+                                            name="dropoff"
+                                            placeholder="Where to?"
+                                            autocomplete="off"
+                                            required
+                                            class="input-luxury w-full pl-10 pr-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Date & Time -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="date" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Date</label>
+                                        <input
+                                            type="date"
+                                            id="date"
+                                            name="date"
+                                            required
+                                            class="input-luxury w-full px-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label for="time" class="block text-xs text-obsidian-400 tracking-wide uppercase mb-2">Time</label>
+                                        <input
+                                            type="time"
+                                            id="time"
+                                            name="time"
+                                            required
+                                            class="input-luxury w-full px-4 py-4 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white focus:outline-none focus:border-gold-400/30 transition-all duration-300 font-light"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Vehicle Selection -->
+                                <div>
+                                    <label class="block text-xs text-obsidian-400 tracking-wide uppercase mb-3">Select Vehicle</label>
+                                    <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                                        <label class="vehicle-card relative cursor-pointer">
+                                            <input type="radio" name="vehicle" value="suv" class="sr-only" checked>
+                                            <div class="relative px-2 py-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                                <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-gold-400 text-obsidian-950 text-[10px] font-semibold px-2 py-0.5 rounded-full">Popular</span>
+                                                <div class="text-sm font-medium text-white">SUV</div>
+                                                <div class="text-[11px] text-obsidian-500 mt-1">Escalade · 1-6</div>
+                                            </div>
+                                        </label>
+                                        <label class="vehicle-card relative cursor-pointer">
+                                            <input type="radio" name="vehicle" value="sedan" class="sr-only">
+                                            <div class="relative px-2 py-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                                <div class="text-sm font-medium text-white">Executive</div>
+                                                <div class="text-[11px] text-obsidian-500 mt-1">S-Class · 1-3</div>
+                                            </div>
+                                        </label>
+                                        <label class="vehicle-card relative cursor-pointer">
+                                            <input type="radio" name="vehicle" value="taxi" class="sr-only">
+                                            <div class="relative px-2 py-4 bg-obsidian-800/30 border border-white/[0.06] rounded-xl text-center transition-all duration-300 hover:border-white/10">
+                                                <div class="text-sm font-medium text-white">Sedan</div>
+                                                <div class="text-[11px] text-obsidian-500 mt-1">Lincoln · 1-3</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Price Display -->
+                                <div id="price-display" class="hidden">
+                                    <div class="bg-gradient-to-r from-gold-400/[0.08] to-gold-500/[0.04] border border-gold-400/20 rounded-xl p-5">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="text-xs text-obsidian-400 uppercase tracking-wide">Your Fare</div>
+                                                <div class="text-3xl font-display font-semibold text-white mt-1">$<span id="price-value">0</span></div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-obsidian-400 uppercase tracking-wide">Distance</div>
+                                                <div class="text-lg font-medium text-gold-400 mt-1"><span id="distance-value">0</span> mi</div>
+                                            </div>
+                                        </div>
+                                        <div class="h-px bg-gradient-to-r from-transparent via-gold-400/20 to-transparent my-4"></div>
+                                        <p class="text-xs text-obsidian-500 text-center">All-inclusive. No surge pricing.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button
+                                    type="submit"
+                                    id="submit-btn"
+                                    class="btn-premium w-full bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold py-4 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(212,175,55,0.3),0_4px_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_30px_rgba(212,175,55,0.4),0_4px_20px_rgba(212,175,55,0.3)] flex items-center justify-center gap-2"
+                                >
+                                    <span id="submit-text">Get My Price</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                    </svg>
+                                </button>
+
+                                <!-- Trust line -->
+                                <div class="flex items-center justify-center gap-2 text-xs text-obsidian-600">
+                                    <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Free cancellation up to 24 hours before</span>
+                                </div>
+                                <p class="text-center text-xs text-obsidian-500">
+                                    Need a chauffeur for a few hours? <a href="book-a-ride.html?service=hourly" class="text-gold-400 hover:text-gold-300 transition-colors">Book hourly service →</a>
+                                </p>
+                            </form>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /inject:quote -->
+
+
+
+
+
+
+
+
+
 
     <!-- Quick Facts (numeric, AEO-friendly) -->
     <section class="py-12 bg-obsidian-950 border-b border-white/[0.04]">
@@ -799,6 +1330,127 @@
     </section>
 
     <!-- CTA Section -->
+
+
+
+
+    <!-- inject:faq -->
+    <section class="py-20 lg:py-24 bg-obsidian-950 border-t border-white/[0.04]" id="faq">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <div class="inline-flex items-center gap-3 mb-6"><div class="h-px w-8 bg-gradient-to-r from-transparent to-gold-400/50"></div><span class="text-xs text-gold-400 tracking-luxe uppercase">Questions, Answered</span><div class="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50"></div></div>
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white">Frequently Asked Questions</h2>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How much does a ride from MSP airport to downtown Minneapolis cost?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Flat-rate fares from MSP to downtown Minneapolis: sedan $45, SUV $65. All prices include taxes, fees, and gratuity. There is no surge pricing.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How much is a ride from MSP airport to Mall of America?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Mall of America is just 3 miles from MSP — about a 10-minute drive. Flat-rate fares: sedan $35, SUV $50.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How long is the drive from MSP airport to downtown Minneapolis?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Approximately 12 miles, 18-25 minutes in normal traffic via Highway 62 and I-35W. Allow extra time during rush hour (7-9 AM and 4-6 PM).</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Where do I meet my driver at MSP airport?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Terminal 1 (Lindbergh): meet at the designated Ground Transportation area on the lower level. Terminal 2 (Humphrey): meet outside Door 1 on the ground level. Your driver will hold a sign with your name and contact you with specific instructions.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What is the wait time policy for MSP pickups?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Complimentary wait time after gate arrival: 30 minutes for domestic flights, 60 minutes for international flights. We monitor your flight in real time and adjust pickup automatically for delays.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Do you charge surge pricing for late-night MSP pickups?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">No. Our flat-rate MSP pricing applies 24/7. Standard booking flow may add a $20 night surcharge between 7 PM and 6 AM, but flat-rate destination pricing is fixed regardless of time of day. We are available every flight, every hour.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Are tips and fees included in the MSP airport price?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Our flat-rate MSP airport prices include all taxes, fees, and gratuity. There is no airport pickup fee added to flat-rate quotes — the price you see is the price you pay.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">What is the difference between Terminal 1 and Terminal 2 at MSP?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Terminal 1 Lindbergh is the larger terminal and serves Delta, American, United, Alaska and most international flights. Terminal 2 Humphrey serves Sun Country, Southwest, Frontier, JetBlue and Icelandair. The terminals are about 2 miles apart and not walkable, so give us your airline or flight number and your chauffeur goes to the correct terminal.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Where do I meet my chauffeur at MSP Airport?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">At Terminal 1, your chauffeur meets you curbside at a pre-arranged door on the arrivals level after you collect your bags. At Terminal 2, pickups are curbside outside baggage claim. Your chauffeur texts the exact door and a vehicle description. With the $15 meet and greet, they wait at baggage claim holding a name sign instead.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How long will my chauffeur wait at the airport?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Complimentary wait time is 30 minutes after a domestic flight lands and 60 minutes after an international flight lands, measured from the actual arrival time rather than the scheduled one. That covers deplaning, customs and baggage claim for nearly every traveler. If a bag is lost or you are held up longer, call (612) 999-5382 and the chauffeur will stay.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Do you track flights for airport pickups?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. When you enter your flight number, dispatch monitors it in real time from departure to landing. Your chauffeur is scheduled off the actual arrival time, so an early landing or a two-hour delay does not leave you waiting or paying for idle time. Tracking is automatic on every MSP pickup and costs nothing extra.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How much is a car service from MSP to downtown Minneapolis?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">MSP to downtown Minneapolis starts at $49 in a Lincoln Continental sedan, $59 in a Mercedes-Benz S-Class and $69 in a Cadillac Escalade SUV, with a $15 airport pickup fee added. Mall of America and Bloomington hotels are a short ride at similar rates, and suburbs like Edina, Eden Prairie, Maple Grove and Woodbury are quoted flat by distance before you confirm.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">Can I book an early morning ride to the airport?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Yes. Dispatch runs 24/7 and 4 AM and 5 AM pickups are routine. Rides between 7 PM and 6 AM carry a $20 night surcharge, shown before you confirm. Your chauffeur arrives a few minutes early and texts on arrival, so you can sleep until the last reasonable minute. Book the night before at the latest, or at least 2 hours ahead online.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How much luggage fits in each vehicle?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">The Cadillac Escalade holds up to 6 bags with 6 passengers, and the Mercedes-Benz S-Class and Lincoln Continental each hold 3 bags with 3 passengers. Standard checked suitcases and carry-ons are counted. For skis, golf clubs, large strollers or more than 3 bags with 2 or 3 passengers, choose the Escalade so everything rides in the vehicle with you.</p></div>
+                </details>
+                <details class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl">
+                    <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                        <span class="text-white font-medium">How early should my pickup be for a departing flight from MSP?</span>
+                        <span class="faq-icon text-gold-400 text-xl leading-none shrink-0">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 -mt-1"><p class="text-obsidian-400 font-light text-sm leading-relaxed">Plan to arrive at MSP 2 hours before a domestic departure and 3 hours before an international one, then add drive time. From downtown Minneapolis or Saint Paul allow about 25 minutes, from Maple Grove or Woodbury about 35 minutes, and more in winter or rush hour. Enter your flight time when booking and dispatch will suggest a pickup time.</p></div>
+                </details>
+            </div>
+        </div>
+    </section>
+    <!-- /inject:faq -->
     <section class="py-24 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-gold-600/20 via-gold-500/10 to-obsidian-950"></div>
         <div class="absolute inset-0 bg-obsidian-950/80"></div>
@@ -839,6 +1491,20 @@
     </section>
 
     <!-- Footer -->
+
+
+
+
+
+    <!-- inject:mobilebar -->
+    <div class="fixed bottom-0 left-0 right-0 lg:hidden z-40 bg-obsidian-950/95 backdrop-blur-lg border-t border-white/10 p-3" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));">
+        <div class="flex gap-3 max-w-lg mx-auto">
+            <a href="book-a-ride.html" class="flex-1 bg-gradient-to-r from-gold-400 to-gold-500 text-obsidian-950 font-semibold py-3 rounded-xl text-center shadow-lg shadow-gold-500/20">Book Now</a>
+            <a href="tel:+16129995382" class="flex items-center justify-center gap-2 bg-obsidian-800 text-white font-medium py-3 px-5 rounded-xl border border-white/10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span>Call</span></a>
+        </div>
+    </div>
+    <div class="h-20 lg:hidden" aria-hidden="true"></div>
+    <!-- /inject:mobilebar -->
     <footer class="bg-obsidian-950 border-t border-white/[0.04] py-16">
         <div class="container mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12 mb-12">
@@ -928,6 +1594,8 @@
 
 
     </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>
+    <script src="app.js"></script>
     <script src="nav.js" defer></script>
 </body>
 </html>
