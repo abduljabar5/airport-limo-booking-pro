@@ -771,7 +771,7 @@
                                     <option value="11">11 hours</option>
                                     <option value="12">12 hours</option>
                                 </select>
-                                <p class="text-xs text-obsidian-500 mt-2" id="hourly-rate-note">Chauffeur and vehicle stay with you. Sedan $70/hr · Executive Sedan $85/hr · SUV $95/hr.</p>
+                                <p class="text-xs text-obsidian-500 mt-2" id="hourly-rate-note">Chauffeur and vehicle stay with you. Sedan $75/hr · Executive Sedan $90/hr · SUV $110/hr. 3-hour minimum.</p>
                             </div>
 
                             <!-- Date & Time -->
@@ -2651,8 +2651,8 @@
                 if (typeof TotalTownCar !== 'undefined' && TotalTownCar.calculateHourlyPrice) {
                     booking.data.baseFare = TotalTownCar.calculateHourlyPrice(booking.data.vehicle, hours);
                 } else {
-                    const hourlyRates = { taxi: 70, sedan: 85, suv: 95 };
-                    booking.data.baseFare = (hourlyRates[booking.data.vehicle] || 70) * hours;
+                    const hourlyRates = { taxi: 75, sedan: 90, suv: 110, van: 198 };
+                    booking.data.baseFare = (hourlyRates[booking.data.vehicle] || 75) * hours;
                 }
                 calculateTotals();
                 return;

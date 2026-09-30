@@ -167,6 +167,7 @@ def inject(page):
     # scripts for the quote widget
     if cfg and 'src="app.js"' not in s:
         s = s.replace('    <script src="nav.js" defer></script>', f'    {MAPS}\n    <script src="app.js"></script>\n    <script src="nav.js" defer></script>', 1)
+    s = re.sub(r'\n{3,}', '\n\n', s)   # keep reruns from accumulating blank lines
     if s != orig: open(page, 'w').write(s)
     return page
 
