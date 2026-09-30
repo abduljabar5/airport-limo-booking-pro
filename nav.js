@@ -78,6 +78,25 @@
         onScroll();
     }
 
+    // Dynamic headline for ad landing pages: ?h1=Airport%20Car%20Service%20Edina
+    // Plain text only (tags stripped), 80 chars max; the last two words keep the gold highlight.
+    try {
+        const h1param = new URLSearchParams(location.search).get('h1');
+        const h1 = document.querySelector('main h1, h1');
+        if (h1param && h1) {
+            const text = h1param.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+            if (text.length >= 4) {
+                const words = text.split(' ');
+                const tail = words.length > 3 ? words.splice(-2).join(' ') : '';
+                h1.textContent = '';
+                h1.append(words.join(' ') + (tail ? ' ' : ''));
+                if (tail) { const sp = document.createElement('span'); sp.className = 'text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500'; sp.textContent = tail; h1.append(sp); }
+                document.title = text + ' | Total Town Car Service';
+                window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'dynamic_headline', h1: text });
+            }
+        }
+    } catch (e) { /* ignore */ }
+
     // Active link
     const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
     let inDropdown = false;

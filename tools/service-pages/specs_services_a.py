@@ -269,7 +269,7 @@ dict(
     file=R['hourly'][0],
     title='Hourly Car Service in the Twin Cities | Total Town Car Service',
     title_short='Hourly Car Service',
-    meta='Hourly car service in Minneapolis and Saint Paul. A chauffeur and car for a block of time, three-hour minimum, unlimited stops, as directed. Quoted at booking.',
+    meta='Hourly car service in Minneapolis and Saint Paul. A chauffeur and car for a block of time, three-hour minimum, unlimited stops, as directed. Sedan $75, Executive Sedan $90, SUV $110 per hour.',
     keywords='hourly car service Minneapolis, as directed car service, hourly chauffeur Twin Cities, car and driver by the hour, multi-stop car service Minneapolis',
     service_type='Hourly car service',
     eyebrow='As Directed · Multi-Stop · 3-Hour Minimum',
@@ -283,7 +283,7 @@ dict(
     intro_h2='One booking, as many stops as the day needs',
     intro=[
         'Hourly service, sometimes called as-directed service, means the vehicle and chauffeur are yours for a set number of hours rather than for a single '
-        'trip. You decide where to go and when, and you can change your mind along the way. There is a three-hour minimum, and the rate is quoted at booking '
+        'trip. You decide where to go and when, and you can change your mind along the way. There is a three-hour minimum, and the rate is $75, $90 or $110 per hour depending on the vehicle '
         'based on the vehicle you choose. Within that block, stops are unlimited and waiting is simply part of the service. Your chauffeur stays nearby, keeps '
         'the car ready, and brings it around when you text.',
         'It suits days that do not fit neatly into point A and point B. A morning of showings with a realtor across Edina and Wayzata. A visiting executive '
@@ -314,7 +314,7 @@ dict(
     ],
     faq=[
         ('What is the minimum for hourly service?', 'Three hours. That is enough for a couple of meetings and lunch, a shopping afternoon, or a dinner with a stop before and after. Beyond the minimum you can book any number of whole hours, and extending on the day is usually possible.'),
-        ('How much does hourly car service cost?', 'The hourly rate depends on the vehicle you choose and is quoted at booking, before you confirm. There are no per-stop charges, no waiting charges, and no mileage adjustments within the Twin Cities service area.'),
+        ('How much does hourly car service cost?', 'Hourly service is $75 per hour in the Lincoln Continental sedan, $90 in the Mercedes-Benz S-Class and $110 in the Cadillac Escalade, with a three-hour minimum, shown before you confirm. There are no per-stop charges, no waiting charges, and no mileage adjustments within the Twin Cities service area.'),
         ('Can the chauffeur wait while I am inside?', 'Yes, and that is the point. Your chauffeur stays with the car nearby, keeps it comfortable, and returns to the door when you text. You never wait for a car to be dispatched between stops.'),
         ('How far can we go on an hourly booking?', 'Hourly service is designed for trips within roughly 25 miles of Minneapolis and Saint Paul, which covers the entire metro. For longer destinations such as Rochester, Duluth, or Saint Cloud, dispatch will quote a flat fare instead.'),
         ('Which vehicles are available by the hour?', 'All three. The Cadillac Escalade for up to six passengers, the Mercedes-Benz S-Class for three, and the Lincoln Continental for three. Choose based on your party size and how much you expect to carry.'),
@@ -332,7 +332,7 @@ dict(
     file=R['chauffeur'][0],
     title='Private Chauffeur Service in Minneapolis | Total Town Car Service',
     title_short='Private Chauffeur Service',
-    meta='A private chauffeur and vehicle for the full day in Minneapolis and Saint Paul. As-directed driving for executives, families and tours, quoted at booking.',
+    meta='A private chauffeur and vehicle for the full day in Minneapolis and Saint Paul. As-directed driving for executives, families and tours, from $75 per hour.',
     keywords='private chauffeur Minneapolis, personal driver Twin Cities, chauffeur for the day, executive chauffeur Minneapolis, private driver service Saint Paul',
     service_type='Private chauffeur service',
     eyebrow='Full Day · As Directed · One Professional',
@@ -353,7 +353,7 @@ dict(
         'for calls in between. Families flying in for a graduation or a reunion use it to see the city without a rental counter, a parking ramp, or an '
         'unfamiliar highway. Visitors use it for a proper tour: the Chain of Lakes, the Stone Arch Bridge, Summit Avenue, the Cathedral, and dinner somewhere '
         'you would not find on your own. Wedding weekends, medical days, and campus visits all fit the same pattern.',
-        'The service is booked as-directed with a three-hour minimum, and most full days run six to ten hours. The rate is quoted at booking based on the '
+        'The service is booked as-directed with a three-hour minimum, and most full days run six to ten hours. The rate is $75, $90 or $110 per hour depending on the '
         'vehicle you select, and it covers all stops and waiting within the Twin Cities. Longer excursions, including a day in Stillwater or a run to Rochester, '
         'can be arranged with dispatch. Regular clients often request the same chauffeur, and we do our best to make that happen.'
     ],
@@ -365,14 +365,14 @@ dict(
         ('Discretion', 'Conversations stay in the car. Executives and public figures rely on us for that, and it is simply how our chauffeurs are trained.'),
         ('A quiet workspace', 'The back seat of an S-Class or Escalade is a good place to take a call or prepare for the next meeting. Chargers and water are on board.'),
         ('Room for everyone', 'The Escalade carries six passengers with six bags, ideal for a visiting family. The S-Class and Continental carry three in more intimate comfort.'),
-        ('One clear rate', 'Quoted at booking for the vehicle and hours you choose, covering every stop and every minute of waiting inside the Twin Cities. No meter, no surprises.'),
+        ('One clear rate', '$75 per hour for the Sedan, $90 for the Executive Sedan and $110 for the SUV, times the hours you choose, covering every stop and every minute of waiting inside the Twin Cities. No meter, no surprises.'),
     ],
     faq=[
         ('How is a private chauffeur different from hourly car service?', 'They use the same as-directed structure and the same three-hour minimum. Private chauffeur service is simply the full-day version, where a single professional plans around your whole schedule rather than a short block. Both are quoted at booking.'),
         ('Can I request the same chauffeur each time?', 'Yes. Regular clients often ask for a particular chauffeur, and dispatch will schedule them whenever availability allows. Tell us your preference when you book and we will note it on your account.'),
         ('Is this a good option for a family visiting Minneapolis?', 'It is one of the best. A chauffeur handles the driving, the parking, and the navigation while you focus on the visit. The Escalade seats six with luggage, and child car seats are available for $25 each, up to four.'),
         ('Will the chauffeur suggest places to see?', 'Happily, if you ask. Our chauffeurs know the lakes, the riverfront, Summit Avenue, the Cathedral, the sculpture garden, and the neighborhoods where locals actually eat. Give them a sense of what you enjoy and they will fill the gaps.'),
-        ('How much does a private chauffeur cost for a day?', 'The rate depends on the vehicle and the number of hours and is quoted at booking, before you confirm. It includes all stops and waiting within the Twin Cities. Full days typically run six to ten hours, with a three-hour minimum.'),
+        ('How much does a private chauffeur cost for a day?', 'The rate is $75 per hour in the Sedan, $90 in the Executive Sedan and $110 in the SUV, times the number of hours, with a three-hour minimum. It includes all stops and waiting within the Twin Cities. Full days typically run six to ten hours, with a three-hour minimum.'),
         ('Can the day include a trip outside the Twin Cities?', 'Yes. Stillwater, Rochester and Mayo Clinic, Saint Cloud, and Duluth are all regular destinations. Tell dispatch the plan and we will quote it as an hourly day or a flat fare, whichever suits the itinerary.'),
     ],
     related=[R['hourly'], R['corp'], R['chmpls'], R['wine']],

@@ -502,13 +502,35 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
     }
   };
 
+  // If this customer left a quote lead with a scheduled follow-up text, cancel it: they booked.
+  const leadTask = async () => {
+    try {
+      const store = getStore('leads');
+      const lead = await store.get(customerPhone, { type: 'json' });
+      if (!lead) return 'none';
+      let cancelled = 'n/a';
+      if (lead.followUp && lead.followUp.sid && lead.followUp.status === 'scheduled' && process.env.TWILIO_ACCOUNT_SID) {
+        const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+        const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages/${lead.followUp.sid}.json`, {
+          method: 'POST', headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ Status: 'canceled' })
+        });
+        cancelled = r.ok ? 'cancelled' : 'cancel_failed';
+      }
+      await store.setJSON(customerPhone, { ...lead, converted: true, convertedAt: new Date().toISOString(), confirmationNumber: booking.confirmationNumber || '', followUp: { ...(lead.followUp || {}), cancelled } });
+      return cancelled;
+    } catch (e) { return 'skipped'; }
+  };
+
   // Run all top-level tasks in parallel
-  const [email, sms, google, remindersResult] = await Promise.all([
+  const [email, sms, google, remindersResult, leadResult] = await Promise.all([
     emailTask(),
     smsTask(),
     googleTask(),
-    remindersTask()
+    remindersTask(),
+    leadTask()
   ]);
+  if (leadResult && leadResult !== 'none') console.log('Quote lead follow-up:', leadResult);
   const calendar = google.calendar;
   const sheet = google.sheet;
   const reminders = remindersResult.summary;

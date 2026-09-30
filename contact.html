@@ -79,49 +79,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            50: '#fefdf8',
-                            100: '#fef9e7',
-                            200: '#fdf0c4',
-                            300: '#fce38a',
-                            400: '#D4AF37',
-                            500: '#C4A030',
-                            600: '#B8960A',
-                            700: '#8B7209',
-                            800: '#6B5807',
-                            900: '#4A3D05',
-                        },
-                        obsidian: {
-                            50: '#f7f7f8',
-                            100: '#eeeef0',
-                            200: '#d9d9dd',
-                            300: '#b8b8bf',
-                            400: '#91919c',
-                            500: '#737380',
-                            600: '#5d5d68',
-                            700: '#4c4c55',
-                            800: '#28282d',
-                            900: '#18181b',
-                            950: '#0a0a0b',
-                        }
-                    },
-                    fontFamily: {
-                        'display': ['Cormorant Garamond', 'serif'],
-                        'sans': ['Outfit', 'system-ui', 'sans-serif'],
-                    },
-                    letterSpacing: {
-                        'luxe': '0.2em',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="css/tailwind.css">
     <link rel="icon" type="image/jpeg" href="public/lovable-uploads/ttcs.jpeg">
     <style>
         html { scroll-behavior: smooth; }
@@ -424,7 +382,6 @@
             </div>
         </div>
     </header>
-
 
 <main id="main-content">
     <!-- Hero Section -->
@@ -851,8 +808,6 @@
             if (window.scrollY > 50) { header.classList.add('header-scrolled'); }
             else { header.classList.remove('header-scrolled'); }
         });
-
-
 
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>

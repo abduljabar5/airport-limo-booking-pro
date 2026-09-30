@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "netlify dev"
+    "dev": "netlify dev",
+    "css": "tailwindcss -c tailwind.config.js -i src/tailwind.css -o css/tailwind.css --minify"
   },
   "dependencies": {
     "@netlify/blobs": "^8.2.0",
