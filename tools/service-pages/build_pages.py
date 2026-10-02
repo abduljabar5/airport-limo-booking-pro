@@ -178,7 +178,7 @@ def section_fleet(p):
         w, h = dims(img, (1200, 900))
         off = price == 'Temporarily unavailable'
         cards += f'''
-                <a href="index.html#fleet" class="group {CARD} overflow-hidden hover:border-gold-400/20 transition-all duration-500{' opacity-60' if off else ''}">
+                <a href="fleet.html" class="group {CARD} overflow-hidden hover:border-gold-400/20 transition-all duration-500{' opacity-60' if off else ''}">
                     <div class="aspect-[4/3] relative overflow-hidden bg-[#0e0f12]">
                         <img src="{img}" alt="{esc(model)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700{' grayscale' if off else ''}" width="{w}" height="{h}" loading="lazy">
                         <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-obsidian-950/80 to-transparent pointer-events-none"></div>
@@ -310,6 +310,90 @@ def section_contact(p):
     </section>
 '''
 
+VEHICLES = [
+    dict(name='SUV', model='Cadillac Escalade', img='images/fleet/suv-escalade.webp', key='suv', badge='Most popular',
+         pax='Up to 6 passengers', bags='6 full-size bags', price='From $69', hourly='$110 per hour',
+         blurb='The vehicle most airport parties choose. Three rows of leather, real luggage room behind the third row, and the ground clearance for a January morning. Families, groups of friends and executives with checked bags all fit without anyone riding with a suitcase on their lap.',
+         best=['Airport runs with luggage', 'Families and groups of four to six', 'Winter weather', 'Weddings and nights out']),
+    dict(name='Executive Sedan', model='Mercedes-Benz S-Class', img='images/fleet/sedan-sclass.webp', key='sedan', badge='',
+         pax='Up to 3 passengers', bags='3 bags', price='From $59', hourly='$90 per hour',
+         blurb='The quiet car. The S-Class is what you book when the ride itself matters: a board member, a client you are courting, an anniversary dinner. Rear-seat space to work or rest, a cabin that stays silent on the highway, and the kind of arrival that gets noticed at the curb.',
+         best=['Executive and corporate travel', 'Couples', 'Theater and dinner evenings', 'Hourly as-directed days']),
+    dict(name='Sedan', model='Lincoln Continental', img='images/fleet/sedan-lincoln.webp', key='taxi', badge='Best value',
+         pax='Up to 3 passengers', bags='3 bags', price='From $49', hourly='$75 per hour',
+         blurb='Our most-booked sedan and the lowest fare on the fleet. Full-size comfort, a trunk that takes three suitcases, and the same licensed chauffeur standard as every other car. For one to three travelers to MSP or across town, this is the sensible choice.',
+         best=['Solo and two-person airport trips', 'Daily commutes and point to point', 'Rochester and Mayo Clinic runs', 'Budget-conscious bookings']),
+    dict(name='Sprinter Van', model='Mercedes-Benz Sprinter', img='images/fleet/van-sprinter.webp', key='van', badge='Temporarily unavailable',
+         pax='Up to 14 passengers', bags='10+ bags', price='Not bookable online', hourly='Call for availability',
+         blurb='Our group vehicle, currently off the online booking form. Until it returns, parties larger than six are served with two or three vehicles dispatched together under one confirmation. Call dispatch and we will build the plan.',
+         best=['Groups of 7 to 14 (call)', 'Team and crew transport', 'Wedding guest shuttles', 'Airport runs with many bags'], off=True),
+]
+def section_fleet_detail(p):
+    out = ''
+    for i, v in enumerate(VEHICLES):
+        w, h = dims(v['img'], (1200, 900)); off = v.get('off')
+        bests = ''.join(f'<li class="flex items-start gap-2"><span class="w-1.5 h-1.5 mt-2 bg-gold-400 rounded-full shrink-0"></span>{esc(b)}</li>' for b in v['best'])
+        badge = f'<span class="inline-block text-[10px] tracking-luxe uppercase {"bg-obsidian-700 text-obsidian-200" if off else "bg-gold-400 text-obsidian-950"} px-3 py-1 rounded-full font-medium mb-4">{esc(v["badge"])}</span>' if v['badge'] else ''
+        cta = (f'<a href="tel:{TEL[4:]}" class="{GHOST}">{PHONE_SVG}<span>Call for groups</span></a>' if off else
+               f'<a href="book-a-ride.html" class="{BTN}"><span>Reserve the {esc(v["name"])}</span>{ARROW}</a>')
+        img_col = f'''<div class="lg:col-span-7 {'lg:order-2' if i % 2 else ''}">
+                    <div class="{CARD} overflow-hidden p-2 bg-obsidian-900/40{' opacity-70' if off else ''}">
+                        <div class="aspect-[4/3] bg-[#0e0f12] rounded-xl overflow-hidden"><img src="{v['img']}" alt="{esc(v['model'])}" class="w-full h-full object-cover{' grayscale' if off else ''}" width="{w}" height="{h}" loading="{'eager' if i == 0 else 'lazy'}"></div>
+                    </div>
+                </div>'''
+        text_col = f'''<div class="lg:col-span-5 {'lg:order-1' if i % 2 else ''}" id="{v['key']}">
+                    {badge}
+                    <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-1">{esc(v['name'])}</h2>
+                    <p class="text-sm text-gold-400 tracking-wide uppercase mb-5">{esc(v['model'])}</p>
+                    <p class="text-obsidian-400 font-light leading-relaxed mb-6">{v['blurb']}</p>
+                    <dl class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="{CARD} p-4"><dt class="text-[10px] tracking-luxe uppercase text-obsidian-500 mb-1">Passengers</dt><dd class="text-white font-medium">{esc(v['pax'])}</dd></div>
+                        <div class="{CARD} p-4"><dt class="text-[10px] tracking-luxe uppercase text-obsidian-500 mb-1">Luggage</dt><dd class="text-white font-medium">{esc(v['bags'])}</dd></div>
+                        <div class="{CARD} p-4"><dt class="text-[10px] tracking-luxe uppercase text-obsidian-500 mb-1">Point to point</dt><dd class="{'text-obsidian-500' if off else 'text-gold-400'} font-semibold">{esc(v['price'])}</dd></div>
+                        <div class="{CARD} p-4"><dt class="text-[10px] tracking-luxe uppercase text-obsidian-500 mb-1">Hourly</dt><dd class="{'text-obsidian-500' if off else 'text-gold-400'} font-semibold">{esc(v['hourly'])}</dd></div>
+                    </dl>
+                    <h3 class="text-[10px] tracking-luxe uppercase text-gold-400 mb-3">Best for</h3>
+                    <ul class="space-y-2 text-sm text-obsidian-300 font-light mb-8">{bests}</ul>
+                    {cta}
+                </div>'''
+        out += f'''
+    <section class="py-16 lg:py-20 {'bg-obsidian-950' if i % 2 == 0 else 'bg-gradient-to-b from-obsidian-950 via-obsidian-900/50 to-obsidian-950'} border-t border-white/[0.04]">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+                {img_col}
+                {text_col}
+            </div>
+        </div>
+    </section>
+'''
+    rows = ''.join(f'''
+                        <tr class="{'opacity-50' if v.get('off') else ''}">
+                            <td class="px-5 py-4 text-white font-medium whitespace-nowrap">{esc(v['name'])}<span class="block text-xs text-obsidian-500 font-light">{esc(v['model'])}</span></td>
+                            <td class="px-5 py-4 text-obsidian-300">{esc(v['pax'].replace('Up to ', ''))}</td>
+                            <td class="px-5 py-4 text-obsidian-300">{esc(v['bags'])}</td>
+                            <td class="px-5 py-4 text-gold-400 font-semibold whitespace-nowrap">{esc(v['price'])}</td>
+                            <td class="px-5 py-4 text-gold-400 font-semibold whitespace-nowrap">{esc(v['hourly'])}</td>
+                        </tr>''' for v in VEHICLES)
+    table = f'''
+    <section class="py-16 lg:py-20 bg-obsidian-950 border-t border-white/[0.04]">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                {eyebrow('At a Glance')}
+                <h2 class="text-3xl lg:text-4xl font-display font-semibold text-white mb-4">Compare the fleet</h2>
+                <p class="text-obsidian-400 font-light">Point-to-point fares cover the first 7 miles; the exact fare for your addresses is shown on the booking form before you confirm. Hourly service has a 3-hour minimum.</p>
+            </div>
+            <div class="{CARD} overflow-x-auto max-w-4xl mx-auto">
+                <table class="w-full text-sm">
+                    <thead><tr class="border-b border-white/[0.06] text-[10px] tracking-luxe uppercase text-obsidian-500"><th class="px-5 py-4 text-left">Vehicle</th><th class="px-5 py-4 text-left">Passengers</th><th class="px-5 py-4 text-left">Luggage</th><th class="px-5 py-4 text-left">Point to point</th><th class="px-5 py-4 text-left">Hourly</th></tr></thead>
+                    <tbody class="divide-y divide-white/[0.04]">{rows}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+'''
+    return out + table
+
 def ld(p):
     area = [{"@type": "City", "name": p['city'], "containedInPlace": {"@type": "State", "name": "Minnesota"}}] if p.get('city') else \
            [{"@type": "City", "name": "Minneapolis"}, {"@type": "City", "name": "Saint Paul"}, {"@type": "State", "name": "Minnesota"}]
@@ -342,6 +426,8 @@ def build(p):
     h = h.replace('</head>', f'    <link rel="canonical" href="{SITE}/{p["file"]}">\n' + ld(p) + '</head>')
     if p.get('contact'):
         main = hero(p) + section_contact(p) + section_faq(p) + section_related(p) + section_cta(p)
+    elif p.get('fleet'):
+        main = hero(p) + section_fleet_detail(p) + section_faq(p) + section_related(p) + section_cta(p)
     else:
         main = hero(p) + section_intro(p) + section_bullets(p) + section_steps(p) + section_fleet(p) + section_faq(p) + section_related(p) + section_cta(p)
     foot = footer_html.replace('    <script src="nav.js" defer></script>', f'    {MAPS}\n    <script src="app.js"></script>\n    <script src="nav.js" defer></script>', 1)
