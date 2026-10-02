@@ -1968,8 +1968,9 @@
                 const live = document.getElementById('social-proof-live');
                 const txt = document.getElementById('social-proof-live-text');
                 if (!live || !txt) return;
-                if (today >= 3) { txt.innerHTML = `<strong class="text-white">${today} rides</strong> booked today`; live.hidden = false; }
-                else if (week >= 5) { txt.innerHTML = `<strong class="text-white">${week} rides</strong> booked this week`; live.hidden = false; }
+                const word = n => n === 1 ? 'ride' : 'rides';
+                if (today >= 1) { txt.innerHTML = `<strong class="text-white">${today} ${word(today)}</strong> booked today`; live.hidden = false; }
+                else if (week >= 1) { txt.innerHTML = `<strong class="text-white">${week} ${word(week)}</strong> booked this week`; live.hidden = false; }
             } catch (e) { /* static preview or offline: keep the long-run line */ }
         }
 
