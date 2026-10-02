@@ -14,6 +14,7 @@ PHONE = '(612) 999-5382'; TEL = 'tel:+16129995382'; EMAIL = 'totaltowncarservice
 HERO_BG = 'images/site/hero-bg.webp'
 LINK = '    <link rel="stylesheet" href="css/quote-widget.css">'
 QUOTE_CARD = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'quote_widget.html')).read()
+BANNER = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'continue_banner.html')).read()
 MAPS = '<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>'
 MOBILE_BAR = '''
     <div class="fixed bottom-0 left-0 right-0 lg:hidden z-40 bg-obsidian-950/95 backdrop-blur-lg border-t border-white/10 p-3" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));">
@@ -431,7 +432,7 @@ def build(p):
     else:
         main = hero(p) + section_intro(p) + section_bullets(p) + section_steps(p) + section_fleet(p) + section_faq(p) + section_related(p) + section_cta(p)
     foot = footer_html.replace('    <script src="nav.js" defer></script>', f'    {MAPS}\n    <script src="app.js"></script>\n    <script src="nav.js" defer></script>', 1)
-    out = h + header_html + '<main id="main-content">' + main + '    </main>\n' + MOBILE_BAR + '\n' + foot
+    out = h + header_html + BANNER + '<main id="main-content">' + main + '    </main>\n' + MOBILE_BAR + '\n' + foot
     open(p['file'], 'w').write(out)
     return p['file']
 

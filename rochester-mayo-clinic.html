@@ -334,6 +334,36 @@
             </div>
         </div>
     </header>
+    <!-- inject:banner -->
+    <!-- Continue Booking Banner (shown when there's saved booking data) -->
+    <div id="continue-booking-banner" class="hidden fixed top-20 lg:top-24 left-0 right-0 z-40 bg-gradient-to-r from-gold-500/95 to-gold-600/95 backdrop-blur-sm border-b border-gold-400/30 shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-obsidian-950/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-obsidian-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-obsidian-950 font-medium text-sm">You have an unfinished booking</p>
+                        <p class="text-obsidian-950/70 text-xs hidden sm:block" id="saved-booking-info"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="book-a-ride.html?continue=true" class="bg-obsidian-950 hover:bg-obsidian-900 text-gold-400 font-medium text-sm px-4 py-2 rounded-lg transition-colors">
+                        Continue
+                    </a>
+                    <button id="dismiss-continue-banner" class="text-obsidian-950/60 hover:text-obsidian-950 p-2 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /inject:banner -->
 
     <!-- Hero Section -->
     <section class="relative pt-40 lg:pt-56 pb-24 lg:pb-32 overflow-hidden page-hero">

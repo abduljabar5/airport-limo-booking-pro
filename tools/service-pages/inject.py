@@ -11,6 +11,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')); os.
 HERE = os.path.dirname(os.path.abspath(__file__))
 MAPS = '<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUQixm0feS4HuZ7IcytuaCdEmtSYje8PM&libraries=places"></script>'
 QUOTE_CARD = open(os.path.join(HERE, 'quote_widget.html')).read()
+BANNER = '\n    <!-- inject:banner -->\n' + open(os.path.join(HERE, 'continue_banner.html')).read() + '    <!-- /inject:banner -->\n'
 CARD = 'bg-obsidian-900/30 border border-white/[0.04] rounded-2xl'
 def esc(s): return html.escape(s, quote=True)
 
@@ -110,7 +111,11 @@ PAGES = {
 
 def inject(page):
     s = open(page).read(); orig = s
-    for t in ('quote', 'faq', 'faq-ld', 'mobilebar'): s = strip(s, t)
+    for t in ('quote', 'faq', 'faq-ld', 'mobilebar', 'banner'): s = strip(s, t)
+    # continue-booking banner right after the header (index.html has its own; booking page has a restore banner)
+    if page not in ('index.html', 'book-a-ride.html') and 'continue-booking-banner' not in s and '</header>' in s:
+        he = s.index('</header>') + len('</header>')
+        s = s[:he] + BANNER + s[he:]
     cfg = PAGES.get(page, None)
     bank = load_bank()
     # quote widget after hero
@@ -167,6 +172,8 @@ def inject(page):
     # scripts for the quote widget
     if cfg and 'css/quote-widget.css' not in s:
         s = s.replace('<link rel="stylesheet" href="css/tailwind.css">', '<link rel="stylesheet" href="css/tailwind.css">\n    <link rel="stylesheet" href="css/quote-widget.css">', 1)
+    if 'continue-booking-banner' in s and 'src="app.js"' not in s and not cfg:
+        s = s.replace('    <script src="nav.js" defer></script>', '    <script src="app.js"></script>\n    <script src="nav.js" defer></script>', 1)
     if cfg and 'src="app.js"' not in s:
         s = s.replace('    <script src="nav.js" defer></script>', f'    {MAPS}\n    <script src="app.js"></script>\n    <script src="nav.js" defer></script>', 1)
     s = re.sub(r'\n{3,}', '\n\n', s)   # keep reruns from accumulating blank lines
