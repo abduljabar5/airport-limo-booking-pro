@@ -539,14 +539,6 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
   // function can look it up later by confirmation number and clean up
   // scheduled reminders / calendar event.
   let stored = 'skipped';
-  // Daily booking counter (read by functions/booking-stats.js for the real social-proof line)
-  try {
-    const c = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-    const key = `day:${c.getFullYear()}-${String(c.getMonth() + 1).padStart(2, '0')}-${String(c.getDate()).padStart(2, '0')}`;
-    const stats = getStore('stats');
-    const cur = await stats.get(key, { type: 'json' }).catch(() => null);
-    await stats.setJSON(key, { count: ((cur && cur.count) || 0) + 1, updatedAt: new Date().toISOString() });
-  } catch (e) { /* stats are best-effort */ }
   if (booking.confirmationNumber) {
     try {
       const store = getStore('bookings');
