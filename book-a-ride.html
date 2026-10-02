@@ -637,7 +637,7 @@
                         </div>
                     </div>
 
-                    <form id="booking-form" class="space-y-6">
+                    <form id="booking-form" class="space-y-6" novalidate>
 
                         <!-- Step 1: Trip Details -->
                         <div class="step-content" data-step="1">
@@ -2159,8 +2159,11 @@
                         updateStepUI();
                     }
 
-                    // Clear after loading (one-time use)
+                    // Clear after loading (one-time use). A fresh quote replaces any old draft,
+                    // so don't offer to restore the old one on top of it.
                     sessionStorage.removeItem('ttc_booking');
+                    document.getElementById('restore-banner')?.classList.add('hidden');
+                    saveFormData();
                 } catch (e) {
                     console.error('Error parsing booking data:', e);
                 }
@@ -2398,6 +2401,7 @@
         }
 
         function proceedToNextStep() {
+            document.getElementById('restore-banner')?.classList.add('hidden');
             if (booking.currentStep === 2) saveQuoteLead();
             if (booking.currentStep < booking.totalSteps) {
                 booking.currentStep++;
@@ -2907,7 +2911,7 @@
 
             // Add processing fee for online payments (2.9% + $0.30)
             if (booking.data.payment === 'online') {
-                booking.data.processingFee = Math.ceil((subtotal * 0.029) + 0.30);
+                booking.data.processingFee = subtotal > 0 ? Math.ceil((subtotal * 0.029) + 0.30) : 0;
             } else {
                 booking.data.processingFee = 0;
             }
@@ -3388,6 +3392,8 @@
                 mobileBar.classList.toggle('expanded', isExpanded);
                 summaryPanel.classList.toggle('expanded', isExpanded);
                 backdrop.classList.toggle('visible', isExpanded);
+                document.body.style.overflow = isExpanded ? 'hidden' : '';
+                if (isExpanded) setTimeout(() => { summaryPanel.scrollTop = summaryPanel.scrollHeight; }, 320);
             }
 
             function closeSummary() {
@@ -3395,6 +3401,7 @@
                 mobileBar.classList.remove('expanded');
                 summaryPanel.classList.remove('expanded');
                 backdrop.classList.remove('visible');
+                document.body.style.overflow = '';
             }
 
             expandBtn?.addEventListener('click', toggleSummary);
