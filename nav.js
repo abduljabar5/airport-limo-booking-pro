@@ -84,7 +84,10 @@
         const h1param = new URLSearchParams(location.search).get('h1');
         const h1 = document.querySelector('main h1, h1');
         if (h1param && h1) {
-            const text = h1param.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+            // Google Ads can pass {keyword} here; it arrives lowercase with + for spaces, so tidy it.
+            let text = h1param.replace(/\+/g, ' ').replace(/<[^>]*>/g, '').replace(/[^\w\s,.&'-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+            if (text === text.toLowerCase()) text = text.replace(/\b([a-z])/g, (m, c) => c.toUpperCase()).replace(/\b(To|In|And|Of|From|The|At|For)\b/g, w => w.toLowerCase()).replace(/\bMsp\b/g, 'MSP').replace(/\bMn\b/g, 'MN').replace(/\bSuv\b/g, 'SUV');
+            if (text) text = text[0].toUpperCase() + text.slice(1);
             if (text.length >= 4) {
                 const words = text.split(' ');
                 const tail = words.length > 3 ? words.splice(-2).join(' ') : '';
