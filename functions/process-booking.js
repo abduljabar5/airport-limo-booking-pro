@@ -226,11 +226,6 @@ export async function processBooking(booking) {
   const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'bookings@totaltowncar.com'; // must be on a domain verified in Resend
   const FROM_NAME = 'Total Town Car Service';
   const TWILIO_FROM = process.env.TWILIO_FROM_NUMBER || '+16129991462'; // override via env
-  // Extra people who get a copy of every new-booking alert (email + text), on top of the owner.
-  // Comma-separated lists; override via env without a code change.
-  const csv = (v) => String(v || '').split(',').map(x => x.trim()).filter(Boolean);
-  const CC_EMAILS = csv(process.env.NOTIFY_CC_EMAILS || 'abduljabar.nur.5@gmail.com').filter(e => e.toLowerCase() !== OWNER_EMAIL.toLowerCase());
-  const CC_PHONES = csv(process.env.NOTIFY_CC_PHONES || '').map(p => p.startsWith('+') ? p : '+1' + p.replace(/\D/g, '')).filter(p => p !== OWNER_PHONE);
 
   // Format data
   const formattedTotal = '$' + (booking.total || 0);
@@ -314,7 +309,7 @@ export async function processBooking(booking) {
       }),
       sendOne('owner', {
         from: `${FROM_NAME} <${FROM_EMAIL}>`,
-        to: [OWNER_EMAIL, ...CC_EMAILS],
+        to: [OWNER_EMAIL],
         reply_to: booking.email,
         subject: `NEW BOOKING - ${booking.name} - ${booking.date}`,
         html: ownerHtml,
@@ -394,14 +389,12 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
     });
 
     try {
-      const [customerRes, ownerRes, ...ccRes] = await Promise.all([
+      const [customerRes, ownerRes] = await Promise.all([
         sendSms(customerPhone, customerSms),
-        sendSms(OWNER_PHONE, ownerSms),
-        ...CC_PHONES.map(p => sendSms(p, ownerSms))
+        sendSms(OWNER_PHONE, ownerSms)
       ]);
       if (!customerRes.ok) console.error('Customer SMS failed:', await customerRes.text());
       if (!ownerRes.ok) console.error('Owner SMS failed:', await ownerRes.text());
-      for (const r of ccRes) if (!r.ok) console.error('CC SMS failed:', await r.text());
       return {
         customer: customerRes.ok ? 'sent' : 'failed',
         owner: ownerRes.ok ? 'sent' : 'failed'
