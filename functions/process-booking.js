@@ -458,7 +458,15 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
 
       const now = new Date();
       const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-      const inWindow = (d) => d > now && (d.getTime() - now.getTime()) < THIRTY_DAYS_MS;
+      // parseBookingDateTime returns Central wall-clock time; convert to the real
+      // instant before comparing with `now`, otherwise same-day bookings (made
+      // within ~6 hours of pickup) skip their reminders and the review text.
+      // Twilio and Resend both refuse sends scheduled less than ~15 minutes out.
+      const MIN_LEAD_MS = 16 * 60 * 1000;
+      const inWindow = (d) => {
+        const lead = new Date(centralToUTCISO(d)).getTime() - now.getTime();
+        return lead > MIN_LEAD_MS && lead < THIRTY_DAYS_MS;
+      };
       const reminder24h = new Date(bookingDate.getTime() - 24 * 60 * 60 * 1000);
       const reminder1h = new Date(bookingDate.getTime() - 60 * 60 * 1000);
       const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
