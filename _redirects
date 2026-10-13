@@ -1,0 +1,5 @@
+# Old domain: send every URL to the same path on the primary domain.
+https://totaltowncarserviceandtaximsp.com/*      https://totaltowncar.com/:splat  301!
+https://www.totaltowncarserviceandtaximsp.com/*  https://totaltowncar.com/:splat  301!
+http://totaltowncarserviceandtaximsp.com/*       https://totaltowncar.com/:splat  301!
+http://www.totaltowncarserviceandtaximsp.com/*   https://totaltowncar.com/:splat  301!
