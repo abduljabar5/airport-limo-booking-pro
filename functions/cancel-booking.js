@@ -5,6 +5,7 @@
 // as cancelled. The Stripe refund is intentionally manual (left to the owner).
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
+import { scheduleAllReminders } from './process-booking.js';
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || 'totaltowncarservice@gmail.com'; // override via env
 const OWNER_PHONE = process.env.OWNER_PHONE || '+16129995382'; // override via env
@@ -246,6 +247,8 @@ export default async (req, context) => {
   const customerPhone = (customer.phone || '').startsWith('+')
     ? customer.phone
     : '+1' + (customer.phone || '').replace(/\D/g, '');
+  const leg = String(payload.leg || 'all');
+  if (leg === 'return') return cancelReturnLeg(store, rec, reason, customer, customerPhone);
 
   // Cancel scheduled reminders in parallel
   const reminderResults = await Promise.all(
@@ -316,7 +319,11 @@ export default async (req, context) => {
     } catch (e) { console.error('Owner cancel SMS error:', e); return 'error'; }
   })();
 
-  const calendarPromise = deleteCalendarEvent(rec.calendarEventId);
+  const calendarPromise = (async () => {
+    const a = await deleteCalendarEvent(rec.calendarEventId);
+    if (rec.returnCalendarEventId) await deleteCalendarEvent(rec.returnCalendarEventId);
+    return a;
+  })();
 
   const [customerEmailResult, customerSmsResult, ownerSmsResult, calendarResult] = await Promise.all([
     customerEmailPromise, customerSmsPromise, ownerSmsPromise, calendarPromise
@@ -349,3 +356,101 @@ export default async (req, context) => {
       : null
   });
 };
+
+
+// ----- Cancel only the return half of a round trip -----
+async function twilioSend(to, body) {
+  if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !to) return 'skipped';
+  try {
+    const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+    const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
+      method: 'POST',
+      headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ ...twilioSender(), To: to, Body: body })
+    });
+    return r.ok ? 'sent' : 'failed';
+  } catch (e) { console.error('SMS error:', e); return 'error'; }
+}
+
+async function cancelReturnLeg(store, rec, reason, customer, customerPhone) {
+  const c = rec.confirmationNumber;
+  if (!customer.roundTrip || !customer.returnDate) return jsonResponse(400, { error: `${c} is not a round trip.` });
+  if (rec.returnCancelled) return jsonResponse(200, { ok: true, already: true, message: `The return leg of ${c} was already cancelled at ${rec.returnCancelledAt}.` });
+
+  // Revoke everything scheduled for the return leg (reminders, confirm text,
+  // owner alert and, for round trips, the review request).
+  const keep = [];
+  const reminderResults = [];
+  for (const item of rec.scheduledItems || []) {
+    if ((item.leg || 'out') !== 'return') { keep.push(item); continue; }
+    let r;
+    if (item.kind === 'email') r = await cancelResendEmail(process.env.RESEND_API_KEY, item.id);
+    else if (item.kind === 'sms') r = await cancelTwilioMessage(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, item.sid);
+    else r = { status: 'skipped' };
+    reminderResults.push({ purpose: `return_${item.purpose}`, kind: item.kind, result: r.status, error: r.error || null });
+  }
+  // The review request lived on the return leg; put it back after the outbound.
+  const review = await scheduleAllReminders({ ...customer, confirmationNumber: c }, {
+    estimatedMinutes: rec.estimatedMinutes || 60, skipReturnLeg: true,
+    skipPurposes: ['24h_email', '1h_email', '1h_sms', 'confirm_request', 'unconfirmed_alert']
+  });
+  for (const it of review.items || []) { keep.push(it); reminderResults.push({ purpose: it.purpose, kind: it.kind, result: it.status }); }
+
+  const calendarResult = await deleteCalendarEvent(rec.returnCalendarEventId);
+
+  const reasonLine = reason ? `\nReason: ${reason}` : '';
+  const refundLine = customer.paymentMethod === 'online' ? `\nThe return portion will be refunded to your card within 5-10 business days.` : '';
+  const customerSms = `TOTAL TOWN CAR SERVICE\n\nYour return ride on ${customer.returnDate} at ${customer.returnTime} (#${c}) has been cancelled.${reasonLine}${refundLine}\n\nYour ride on ${customer.date} at ${customer.time} is unchanged.\n\nQuestions? (612) 999-5382`;
+  const customerHtml = `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #fff;">
+    <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); padding: 40px 30px; text-align: center; border-bottom: 2px solid #D4AF37;">
+        <div style="color: #D4AF37; font-size: 28px; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">TOTAL TOWN CAR SERVICE</div>
+        <div style="color: #ffffff; font-size: 18px;">Return ride cancelled</div>
+    </div>
+    <div style="padding: 30px;">
+        <div style="font-size: 22px; font-weight: 600; margin-bottom: 15px;">Hi ${escapeHtml(customer.name || '')},</div>
+        <div style="color: #a0a0a0; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">The return half of your booking <strong style="color:#D4AF37;">${escapeHtml(c)}</strong>, scheduled for ${escapeHtml(customer.returnDate)} at ${escapeHtml(customer.returnTime)}, has been cancelled.${reason ? ` Reason: ${escapeHtml(reason)}.` : ''}</div>
+        <div style="background-color: #1a1a1a; border-radius: 12px; padding: 20px; margin: 20px 0; border: 1px solid #333;">
+            <div style="color: #D4AF37; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Still booked</div>
+            <div style="font-size: 15px;">${escapeHtml(customer.date || '')} at ${escapeHtml(customer.time || '')}</div>
+            <div style="color: #a0a0a0; font-size: 14px; margin-top: 4px;">${escapeHtml(customer.pickup || '')} &rarr; ${escapeHtml(customer.dropoff || '')}</div>
+        </div>
+        ${customer.paymentMethod === 'online' ? `<div style="color: #a0a0a0; font-size: 14px;">The return portion will be refunded to your card within 5-10 business days.</div>` : ''}
+        <div style="text-align: center; padding: 25px 0; border-top: 1px solid #333; margin-top: 25px;">
+            <div style="color: #ffffff; font-size: 15px; margin-bottom: 8px;">Need the return after all, or have questions?</div>
+            <a href="tel:6129995382" style="color: #D4AF37; font-size: 22px; font-weight: 700; text-decoration: none;">(612) 999-5382</a>
+        </div>
+    </div>
+</div>`;
+
+  const emailPromise = (async () => {
+    if (!process.env.RESEND_API_KEY || !customer.email) return 'skipped';
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: `${FROM_NAME} <${FROM_EMAIL}>`, to: [customer.email], reply_to: OWNER_EMAIL, subject: `Your return ride has been cancelled — ${c}`, html: customerHtml, text: customerSms, headers: { 'X-Entity-Ref-ID': c } })
+      });
+      return r.ok ? 'sent' : 'failed';
+    } catch (e) { console.error('Return cancel email error:', e); return 'error'; }
+  })();
+  const [customerEmailResult, customerSmsResult, ownerSmsResult] = await Promise.all([
+    emailPromise,
+    twilioSend(customerPhone, customerSms),
+    twilioSend(OWNER_PHONE, `🚫 RETURN LEG CANCELLED\n\n#${c}\n${customer.name || ''}\nReturn was ${customer.returnDate} at ${customer.returnTime}\n${customer.dropoff || ''} → ${customer.pickup || ''}\n\nOutbound ${customer.date} ${customer.time} still on.${customer.paymentMethod === 'online' ? '\n\n⚠️ REFUND THE RETURN PORTION IN STRIPE' : ''}`)
+  ]);
+
+  rec.returnCancelled = true;
+  rec.returnCancelledAt = new Date().toISOString();
+  rec.returnCancelReason = reason || null;
+  rec.scheduledItems = keep;
+  rec.returnCancellationResults = { customerEmail: customerEmailResult, customerSms: customerSmsResult, ownerSms: ownerSmsResult, calendar: calendarResult, reminders: reminderResults };
+  try { await store.setJSON(c, rec); } catch (e) { console.error('Failed to update record after return cancel:', e); }
+
+  return jsonResponse(200, {
+    ok: true, leg: 'return', confirmationNumber: c,
+    customer: { name: customer.name, email: customer.email, phone: customer.phone },
+    results: rec.returnCancellationResults,
+    stripeRefundReminder: customer.paymentMethod === 'online' ? 'Paid online — refund the return portion manually in Stripe Dashboard.' : null
+  });
+}

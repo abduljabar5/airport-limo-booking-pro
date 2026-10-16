@@ -14,7 +14,7 @@ import {
   normalizePhone, formatBookingDate, formatBookingTime, sendSms
 } from '../lib/booking-links.js';
 import {
-  parseBookingDateTime, centralToUTCISO, scheduleReminders, getGoogleAccessToken, htmlToText
+  parseBookingDateTime, centralToUTCISO, scheduleAllReminders, returnLegOf, getGoogleAccessToken, htmlToText
 } from './process-booking.js';
 import { cancelResendEmail, cancelTwilioMessage } from './cancel-booking.js';
 
@@ -36,15 +36,26 @@ function pickupInstant(b) {
   return d ? new Date(centralToUTCISO(d)) : null;
 }
 
+function legState(b) {
+  const at = pickupInstant(b);
+  if (!at) return 'unparseable';
+  if (at.getTime() < Date.now()) return 'past';
+  if (at.getTime() - Date.now() < LOCK_HOURS * 3600 * 1000) return 'within24h';
+  return 'open';
+}
+
+// A booking is editable if any leg still is. Each leg locks on its own.
 function editability(rec) {
   const b = rec.booking || {};
-  if (rec.cancelled) return { editable: false, reason: 'cancelled' };
-  const at = pickupInstant(b);
-  if (!at) return { editable: false, reason: 'unparseable' };
-  if (at.getTime() < Date.now()) return { editable: false, reason: 'past' };
-  if (at.getTime() - Date.now() < LOCK_HOURS * 3600 * 1000) return { editable: false, reason: 'within24h' };
-  if ((rec.editCount || 0) >= MAX_EDITS) return { editable: false, reason: 'edits_exhausted' };
-  return { editable: true, reason: null };
+  if (rec.cancelled) return { editable: false, reason: 'cancelled', outbound: false, ret: false };
+  if ((rec.editCount || 0) >= MAX_EDITS) return { editable: false, reason: 'edits_exhausted', outbound: false, ret: false };
+  const outState = legState(b);
+  const retLeg = rec.returnCancelled ? null : returnLegOf(b);
+  const retState = retLeg ? legState(retLeg) : null;
+  const outbound = outState === 'open';
+  const ret = retState === 'open';
+  if (outbound || ret) return { editable: true, reason: null, outbound, ret, outState, retState };
+  return { editable: false, reason: retState && retState !== 'past' ? retState : outState, outbound, ret, outState, retState };
 }
 
 function summary(rec) {
@@ -66,12 +77,14 @@ function summary(rec) {
     distance: rec.distance || b.distance || 0, duration: rec.duration || b.duration || 0,
     confirmedByCustomer: !!rec.confirmedByCustomer,
     editable: e.editable, reason: e.reason, editsLeft: Math.max(0, MAX_EDITS - (rec.editCount || 0)),
+    outboundEditable: !!e.outbound, returnEditable: !!e.ret,
+    returnCancelled: !!rec.returnCancelled,
     cancelled: !!rec.cancelled
   };
 }
 
 // ----- Google Calendar: move the existing event -----
-async function patchCalendarEvent(eventId, b, estimatedMinutes) {
+async function patchCalendarEvent(eventId, b, estimatedMinutes, label = '') {
   if (!eventId || !process.env.GOOGLE_SERVICE_ACCOUNT_JSON) return 'skipped';
   try {
     const accessToken = await getGoogleAccessToken(JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON));
@@ -80,7 +93,7 @@ async function patchCalendarEvent(eventId, b, estimatedMinutes) {
     const pad = (n) => String(n).padStart(2, '0');
     const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
     const body = {
-      summary: `🚗 ${b.name} - ${b.pickup} → ${b.dropoff}`,
+      summary: `${label}🚗 ${b.name} - ${b.pickup} → ${b.dropoff}`,
       description: [
         `Confirmation: ${b.confirmationNumber}`, `Customer: ${b.name}`, `Phone: ${b.phone}`, `Email: ${b.email}`,
         `Vehicle: ${b.vehicle}`, `Passengers: ${b.passengers || '1'}`,
@@ -101,7 +114,7 @@ async function patchCalendarEvent(eventId, b, estimatedMinutes) {
 
 // ----- Notifications -----
 function changeLines(before, after) {
-  const fields = [['date', 'Date'], ['time', 'Time'], ['passengers', 'Passengers'], ['flight', 'Flight'], ['notes', 'Notes'], ['phone', 'Phone'], ['email', 'Email']];
+  const fields = [['date', 'Date'], ['time', 'Time'], ['returnDate', 'Return date'], ['returnTime', 'Return time'], ['passengers', 'Passengers'], ['flight', 'Flight'], ['notes', 'Notes'], ['phone', 'Phone'], ['email', 'Email']];
   return fields
     .filter(([k]) => String(before[k] || '') !== String(after[k] || ''))
     .map(([k, label]) => `${label}: ${before[k] || '—'} → ${after[k] || '—'}`);
@@ -125,6 +138,7 @@ function customerUpdatedHtml(b, changes, manage) {
                 <tr><td style="padding: 8px 0; color: #888;">Pickup</td><td style="padding: 8px 0; color: #fff;">${esc(b.pickup)}</td></tr>
                 <tr><td style="padding: 8px 0; color: #888;">Dropoff</td><td style="padding: 8px 0; color: #fff;">${esc(b.dropoff)}</td></tr>
                 <tr><td style="padding: 8px 0; color: #888;">Vehicle</td><td style="padding: 8px 0; color: #fff;">${esc(b.vehicle)} · ${esc(b.passengers)} passenger${b.passengers > 1 ? 's' : ''}</td></tr>
+                ${b.roundTrip && b.returnDate ? `<tr><td style="padding: 8px 0; color: #888;">Return</td><td style="padding: 8px 0; color: #D4AF37; font-weight: 700;">${esc(b.returnDate)} at ${esc(b.returnTime)}</td></tr>` : ''}
                 ${b.flight ? `<tr><td style="padding: 8px 0; color: #888;">Flight</td><td style="padding: 8px 0; color: #fff;">${esc(b.flight)}</td></tr>` : ''}
                 <tr><td style="padding: 8px 0; color: #888;">Total</td><td style="padding: 8px 0; color: #fff;">$${esc(b.total)} ${b.paymentMethod === 'online' ? '(paid online)' : '(pay driver)'}</td></tr>
             </table>
@@ -187,28 +201,45 @@ export default async (req) => {
   const after = { ...rec.booking };
 
   // Date/time: the page sends ISO date (YYYY-MM-DD) and 24h time (HH:MM).
-  if (payload.date || payload.time) {
-    const dateIso = String(payload.date || '').trim();
-    const timeIso = String(payload.time || '').trim();
-    const cur = parseBookingDateTime(before.date, before.time);
+  const applyDateTime = (curDate, curTime, dateIso, timeIso) => {
+    const cur = parseBookingDateTime(curDate, curTime) || new Date();
     let y = cur.getFullYear(), mo = cur.getMonth(), d = cur.getDate(), h = cur.getHours(), mi = cur.getMinutes();
     if (dateIso) {
-      const m = dateIso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (!m) return json(400, { error: 'Please pick a valid date.' });
+      const m = String(dateIso).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m) return { error: 'Please pick a valid date.' };
       y = +m[1]; mo = +m[2] - 1; d = +m[3];
     }
     if (timeIso) {
-      const m = timeIso.match(/^(\d{1,2}):(\d{2})$/);
-      if (!m) return json(400, { error: 'Please pick a valid time.' });
+      const m = String(timeIso).trim().match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return { error: 'Please pick a valid time.' };
       h = +m[1]; mi = +m[2];
     }
     const local = new Date(y, mo, d, h, mi, 0);
-    const instant = new Date(centralToUTCISO(local));
-    const lead = instant.getTime() - Date.now();
-    if (lead < MIN_LEAD_HOURS * 3600 * 1000) return json(400, { error: `New pickup time must be at least ${MIN_LEAD_HOURS} hours from now.` });
-    if (lead > MAX_DAYS_OUT * 86400 * 1000) return json(400, { error: 'Please pick a date within the next year.' });
-    after.date = formatBookingDate(local);
-    after.time = formatBookingTime(local);
+    const lead = new Date(centralToUTCISO(local)).getTime() - Date.now();
+    if (lead < MIN_LEAD_HOURS * 3600 * 1000) return { error: `Pickup time must be at least ${MIN_LEAD_HOURS} hours from now.` };
+    if (lead > MAX_DAYS_OUT * 86400 * 1000) return { error: 'Please pick a date within the next year.' };
+    return { date: formatBookingDate(local), time: formatBookingTime(local), local };
+  };
+  let outLocal = null, retLocal = null;
+  if (payload.date || payload.time) {
+    const r = applyDateTime(before.date, before.time, payload.date, payload.time);
+    if (r.error) return json(400, { error: r.error });
+    if (r.date !== before.date || r.time !== before.time) {
+      if (!e.outbound) return json(409, { error: 'The first pickup is less than 24 hours away, so that time can only be changed by phone: (612) 999-5382.', reason: e.outState, booking: summary(rec) });
+      after.date = r.date; after.time = r.time; outLocal = r.local;
+    }
+  }
+  if ((payload.returnDate || payload.returnTime) && before.roundTrip && !rec.returnCancelled) {
+    const r = applyDateTime(before.returnDate, before.returnTime, payload.returnDate, payload.returnTime);
+    if (r.error) return json(400, { error: 'Return: ' + r.error });
+    if (r.date !== before.returnDate || r.time !== before.returnTime) {
+      if (!e.ret) return json(409, { error: 'The return pickup is less than 24 hours away, so that time can only be changed by phone: (612) 999-5382.', reason: e.retState, booking: summary(rec) });
+      after.returnDate = r.date; after.returnTime = r.time; retLocal = r.local;
+    }
+  }
+  if (after.roundTrip && !rec.returnCancelled) {
+    const o = parseBookingDateTime(after.date, after.time), rt = parseBookingDateTime(after.returnDate, after.returnTime);
+    if (o && rt && rt.getTime() <= o.getTime() + 60 * 60 * 1000) return json(400, { error: 'The return pickup must be at least an hour after the first pickup.' });
   }
 
   if (payload.passengers !== undefined && payload.passengers !== '') {
@@ -234,7 +265,9 @@ export default async (req) => {
   if (!changes.length) return json(200, { ok: true, unchanged: true, booking: summary(rec) });
 
   // Reminders: drop the old scheduled messages, schedule fresh ones for the new time.
-  const timeChanged = before.date !== after.date || before.time !== after.time;
+  const outTimeChanged = before.date !== after.date || before.time !== after.time;
+  const retTimeChanged = before.returnDate !== after.returnDate || before.returnTime !== after.returnTime;
+  const timeChanged = outTimeChanged || retTimeChanged;
   const contactChanged = before.phone !== after.phone || before.email !== after.email;
   let scheduledItems = rec.scheduledItems || [];
   let remindersSummary = 'unchanged';
@@ -245,9 +278,9 @@ export default async (req) => {
       : null));
     const estimatedMinutes = rec.estimatedMinutes || (after.serviceType === 'hourly' ? (parseInt(after.hours) || 3) * 60 : 60);
     const bookingForReminders = { ...after, confirmationNumber: c };
-    const r = await scheduleReminders(bookingForReminders, {
+    const r = await scheduleAllReminders(bookingForReminders, {
       estimatedMinutes,
-      pickupLink: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(after.pickup || ''),
+      skipReturnLeg: !!rec.returnCancelled,
       alreadyConfirmed: !!rec.confirmedByCustomer
     });
     scheduledItems = r.items || [];
@@ -255,9 +288,14 @@ export default async (req) => {
   }
 
   const estimatedMinutes = rec.estimatedMinutes || 60;
-  const calendar = timeChanged || contactChanged || before.passengers !== after.passengers || before.flight !== after.flight || before.notes !== after.notes
-    ? await patchCalendarEvent(rec.calendarEventId, { ...after, confirmationNumber: c }, estimatedMinutes)
-    : 'unchanged';
+  const detailsChanged = contactChanged || before.passengers !== after.passengers || before.flight !== after.flight || before.notes !== after.notes;
+  let calendar = 'unchanged';
+  if (outTimeChanged || detailsChanged) calendar = await patchCalendarEvent(rec.calendarEventId, { ...after, confirmationNumber: c }, estimatedMinutes);
+  const retLeg = rec.returnCancelled ? null : returnLegOf({ ...after, confirmationNumber: c });
+  if (retLeg && rec.returnCalendarEventId && (retTimeChanged || detailsChanged)) {
+    const rc = await patchCalendarEvent(rec.returnCalendarEventId, retLeg, estimatedMinutes, 'RETURN · ');
+    calendar = `${calendar}, return: ${rc}`;
+  }
 
   // Persist
   rec.booking = after;
@@ -273,8 +311,9 @@ export default async (req) => {
   // Notify customer + owner
   const manage = manageUrl(c);
   const b = { ...after, confirmationNumber: c };
-  const customerSms = `TOTAL TOWN CAR SERVICE\n\nYour ride #${c} has been updated.\n\n${after.date} at ${after.time}\nPickup: ${after.pickup}\n${changes.join('\n')}\n\nQuestions? (612) 999-5382\nReply STOP to opt out`;
-  const ownerSms = `✏️ BOOKING EDITED by customer\n\n#${c} — ${after.name}\n📞 ${after.phone}\n\n${changes.join('\n')}\n\nNOW: ${after.date} at ${after.time}\n📍 ${after.pickup}\n🏁 ${after.dropoff}\nVehicle: ${after.vehicle} · ${after.passengers} pax\nPayment: ${after.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}`;
+  const returnLine = after.roundTrip && after.returnDate && !rec.returnCancelled ? `\nReturn: ${after.returnDate} at ${after.returnTime}` : '';
+  const customerSms = `TOTAL TOWN CAR SERVICE\n\nYour ride #${c} has been updated.\n\n${after.date} at ${after.time}\nPickup: ${after.pickup}${returnLine}\n${changes.join('\n')}\n\nQuestions? (612) 999-5382\nReply STOP to opt out`;
+  const ownerSms = `✏️ BOOKING EDITED by customer\n\n#${c} — ${after.name}\n📞 ${after.phone}\n\n${changes.join('\n')}\n\nNOW: ${after.date} at ${after.time}${returnLine}\n📍 ${after.pickup}\n🏁 ${after.dropoff}\nVehicle: ${after.vehicle} · ${after.passengers} pax\nPayment: ${after.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}`;
   const results = await Promise.all([
     sendEmail(after.email, `Your ride has been updated — ${c}`, customerUpdatedHtml(b, changes, manage), c),
     sendSms(normalizePhone(after.phone), customerSms),

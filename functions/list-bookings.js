@@ -47,6 +47,7 @@ export default async (req, context) => {
             cancelReason: rec.cancelReason || null,
             confirmedByCustomer: !!rec.confirmedByCustomer,
             editCount: rec.editCount || 0,
+            returnCancelled: !!rec.returnCancelled,
             scheduled: (rec.scheduledItems || []).map((i) => `${i.purpose}:${i.status || ''}`),
             booking: {
               name: rec.booking?.name || '',

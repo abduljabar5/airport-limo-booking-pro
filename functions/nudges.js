@@ -16,7 +16,7 @@ import {
   normalizePhone, firstName, sendSms, isTestBooking, isAirportAddress,
   bookAgainUrl, returnTripUrl
 } from '../lib/booking-links.js';
-import { parseBookingDateTime, centralToUTCISO, scheduleReminders } from './process-booking.js';
+import { parseBookingDateTime, centralToUTCISO, scheduleAllReminders, returnLegOf } from './process-booking.js';
 
 export const config = { schedule: '0 16 * * *' };
 
@@ -120,23 +120,30 @@ export default async (req) => {
     }
 
     // Reminder backfill. Twilio and Resend cannot schedule more than ~30 days
-    // out, so a ride booked further ahead has nothing scheduled. Once pickup
-    // is within 29 days, create whatever is missing (keyed by purpose, so a
-    // half-finished run or a ride booked right at the edge never double-sends).
-    for (const { r, at } of upcoming) {
+    // out, so a ride booked further ahead has nothing scheduled. Once a leg's
+    // pickup is within 29 days, create whatever is missing for that leg (keyed
+    // by leg and purpose, so a half-finished run never double-sends).
+    for (const r of live) {
       const b = r.booking;
-      const leadMs = new Date(centralToUTCISO(at)).getTime() - nowMs;
-      if (leadMs > 29 * DAY || leadMs < 2 * 3600 * 1000) continue;
-      const present = new Set((r.scheduledItems || []).filter((i) => i.status !== 'failed').map((i) => i.purpose));
-      const wanted = ['24h_email', '1h_email', '1h_sms', 'review_email', 'review_sms'];
-      if (b.paymentMethod !== 'online' && !r.confirmedByCustomer) wanted.push('confirm_request', 'unconfirmed_alert');
-      if (wanted.every((p) => present.has(p))) continue;
-      if (dry) { results.backfill.push({ c: r.confirmationNumber, missing: wanted.filter((p) => !present.has(p)), status: 'dry' }); continue; }
-      const out = await scheduleReminders({ ...b, confirmationNumber: r.confirmationNumber }, {
+      const ret = r.returnCancelled ? null : returnLegOf(b);
+      const legs = [{ leg: 'out', at: pickupLocal(b) }, ...(ret ? [{ leg: 'return', at: pickupLocal(ret) }] : [])].filter((l) => l.at);
+      const present = new Set((r.scheduledItems || []).filter((i) => i.status !== 'failed').map((i) => `${i.leg || 'out'}:${i.purpose}`));
+      const missing = [];
+      for (const { leg, at } of legs) {
+        const leadMs = new Date(centralToUTCISO(at)).getTime() - nowMs;
+        if (leadMs > 29 * DAY || leadMs < 2 * 3600 * 1000) continue;
+        const wanted = ['24h_email', '1h_email', '1h_sms'];
+        if (!ret || leg === 'return') wanted.push('review_email', 'review_sms');
+        if (b.paymentMethod !== 'online' && !r.confirmedByCustomer) wanted.push('confirm_request', 'unconfirmed_alert');
+        for (const p of wanted) if (!present.has(`${leg}:${p}`)) missing.push(`${leg}:${p}`);
+      }
+      if (!missing.length) continue;
+      if (dry) { results.backfill.push({ c: r.confirmationNumber, missing, status: 'dry' }); continue; }
+      const out = await scheduleAllReminders({ ...b, confirmationNumber: r.confirmationNumber }, {
         estimatedMinutes: r.estimatedMinutes || (b.serviceType === 'hourly' ? (parseInt(b.hours) || 3) * 60 : 60),
         skipPurposes: [...present],
-        alreadyConfirmed: !!r.confirmedByCustomer,
-        pickupLink: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(b.pickup || '')
+        skipReturnLeg: !ret,
+        alreadyConfirmed: !!r.confirmedByCustomer
       });
       if (out.items && out.items.length) {
         r.scheduledItems = [...(r.scheduledItems || []), ...out.items];

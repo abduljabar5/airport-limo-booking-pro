@@ -105,7 +105,7 @@ export async function getGoogleAccessToken(serviceAccount) {
   return data.access_token;
 }
 
-async function createCalendarEvent(accessToken, booking, estimatedMinutes) {
+async function createCalendarEvent(accessToken, booking, estimatedMinutes, label = '') {
   const bookingDate = parseBookingDateTime(booking.date, booking.time);
   if (!bookingDate) throw new Error('Could not parse booking date/time');
   const endDate = new Date(bookingDate.getTime() + estimatedMinutes * 60 * 1000);
@@ -113,7 +113,7 @@ async function createCalendarEvent(accessToken, booking, estimatedMinutes) {
   const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
   const event = {
-    summary: `🚗 ${booking.name} - ${booking.pickup} → ${booking.dropoff}`,
+    summary: `${label}🚗 ${booking.name} - ${booking.pickup} → ${booking.dropoff}`,
     description: [
       `Confirmation: ${booking.confirmationNumber}`,
       `Customer: ${booking.name}`,
@@ -232,11 +232,12 @@ export async function scheduleReminders(booking, opts = {}) {
   const {
     estimatedMinutes = 60, pickupLink = '',
     fromEmail = DEFAULT_FROM_EMAIL, fromName = 'Total Town Car Service', ownerPhone = DEFAULT_OWNER_PHONE,
-    alreadyConfirmed = false, skipPurposes = []
+    alreadyConfirmed = false, skipPurposes = [], leg = 'out'
   } = opts;
   // The daily backfill passes the purposes a record already has so nothing is
-  // scheduled twice when a far-out booking enters the 30-day window.
-  const skip = new Set(skipPurposes);
+  // scheduled twice when a far-out booking enters the 30-day window. Entries
+  // may be bare ("review_sms") or leg-qualified ("return:review_sms").
+  const skip = { has: (p) => skipPurposes.includes(p) || skipPurposes.includes(`${leg}:${p}`) };
   if (!process.env.RESEND_API_KEY) return { summary: 'skipped', items: [] };
   try {
     const bookingDate = parseBookingDateTime(booking.date, booking.time);
@@ -299,13 +300,35 @@ export async function scheduleReminders(booking, opts = {}) {
     }
 
     if (!jobs.length) return { summary: 'none_scheduled', items: [] };
-    const items = await Promise.all(jobs);
-    const summary = items.map(it => `${it.purpose}: ${it.status}`).join(', ');
+    const items = (await Promise.all(jobs)).map(it => ({ ...it, leg }));
+    const summary = items.map(it => `${leg === 'return' ? 'return_' : ''}${it.purpose}: ${it.status}`).join(', ');
     return { summary, items };
   } catch (e) {
     console.error('Reminder scheduling error:', e);
     return { summary: 'error', items: [] };
   }
+}
+
+// The return half of a round trip as its own booking-shaped object (date, time
+// and addresses swapped), or null when the booking is one-way.
+export function returnLegOf(booking) {
+  if (!booking || !booking.roundTrip || !booking.returnDate || !booking.returnTime) return null;
+  if (!parseBookingDateTime(booking.returnDate, booking.returnTime)) return null;
+  return { ...booking, date: booking.returnDate, time: booking.returnTime, pickup: booking.dropoff, dropoff: booking.pickup, stops: [], leg: 'return' };
+}
+
+// Schedules reminders for every leg of a booking. One-way rides get the usual
+// set. Round trips get reminders before each leg, the confirm text before each
+// leg, and the review request after the return instead of after the outbound.
+export async function scheduleAllReminders(booking, opts = {}) {
+  const mapsLink = (addr) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr || '');
+  const ret = opts.skipReturnLeg ? null : returnLegOf(booking);
+  const outSkip = [...(opts.skipPurposes || []), ...(ret ? ['out:review_email', 'out:review_sms'] : [])];
+  const out = await scheduleReminders(booking, { ...opts, leg: 'out', pickupLink: mapsLink(booking.pickup), skipPurposes: outSkip });
+  if (!ret) return out;
+  const back = await scheduleReminders(ret, { ...opts, leg: 'return', pickupLink: mapsLink(ret.pickup), skipPurposes: opts.skipPurposes || [] });
+  const items = [...(out.items || []), ...(back.items || [])];
+  return { summary: [out.summary, back.summary].filter(x => x && x !== 'none_scheduled').join(', ') || 'none_scheduled', items };
 }
 
 // Exported so both the HTTP handler and the Stripe webhook can call it.
@@ -518,10 +541,18 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
     const calendarPromise = (async () => {
       try {
         const eventResp = await createCalendarEvent(accessToken, booking, estimatedMinutes);
-        return { status: 'created', eventId: eventResp?.id || null };
+        let returnEventId = null;
+        const ret = returnLegOf(booking);
+        if (ret) {
+          try {
+            const r = await createCalendarEvent(accessToken, ret, estimatedMinutes, 'RETURN · ');
+            returnEventId = r?.id || null;
+          } catch (e) { console.error('Return calendar error:', e); }
+        }
+        return { status: 'created', eventId: eventResp?.id || null, returnEventId };
       } catch (e) {
         console.error('Calendar error:', e);
-        return { status: 'error', eventId: null };
+        return { status: 'error', eventId: null, returnEventId: null };
       }
     })();
 
@@ -537,10 +568,10 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
     })();
 
     const [calendarResult, sheet] = await Promise.all([calendarPromise, sheetPromise]);
-    return { calendar: calendarResult.status, calendarEventId: calendarResult.eventId, sheet };
+    return { calendar: calendarResult.status, calendarEventId: calendarResult.eventId, returnCalendarEventId: calendarResult.returnEventId || null, sheet };
   };
 
-  const remindersTask = () => scheduleReminders(booking, { estimatedMinutes, pickupLink, fromEmail: FROM_EMAIL, fromName: FROM_NAME, ownerPhone: OWNER_PHONE });
+  const remindersTask = () => scheduleAllReminders(booking, { estimatedMinutes, fromEmail: FROM_EMAIL, fromName: FROM_NAME, ownerPhone: OWNER_PHONE });
 
   // If this customer left a quote lead with a scheduled follow-up text, cancel it: they booked.
   const leadTask = async () => {
@@ -618,6 +649,8 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
         edits: [],
         scheduledItems: remindersResult.items || [],
         calendarEventId: google.calendarEventId,
+        returnCalendarEventId: google.returnCalendarEventId || null,
+        returnCancelled: false,
         notificationResults: { email, sms, calendar, sheet, reminders }
       });
       stored = 'saved';

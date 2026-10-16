@@ -81,6 +81,7 @@
                     <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">When</dt><dd class="text-white text-right" id="s-when"></dd></div>
                     <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Pickup</dt><dd class="text-white text-right" id="s-pickup"></dd></div>
                     <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Dropoff</dt><dd class="text-white text-right" id="s-dropoff"></dd></div>
+                    <div id="s-return-row" class="hidden flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Return</dt><dd class="text-white text-right" id="s-return"></dd></div>
                     <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Vehicle</dt><dd class="text-white text-right" id="s-vehicle"></dd></div>
                     <div class="flex justify-between gap-4"><dt class="text-obsidian-500">Total</dt><dd class="text-gold-400 font-semibold text-right" id="s-total"></dd></div>
                 </dl>
@@ -93,6 +94,13 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="label" for="f-date">Pickup date</label><input class="field" type="date" id="f-date"></div>
                     <div><label class="label" for="f-time">Pickup time</label><input class="field" type="time" id="f-time" step="300"></div>
+                </div>
+                <div id="return-fields" class="hidden">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="label" for="f-rdate">Return date</label><input class="field" type="date" id="f-rdate"></div>
+                        <div><label class="label" for="f-rtime">Return time</label><input class="field" type="time" id="f-rtime" step="300"></div>
+                    </div>
+                    <p id="leg-note" class="hidden text-xs text-amber-300/90 mt-2"></p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="label" for="f-passengers">Passengers</label><select class="field" id="f-passengers"></select></div>
@@ -144,6 +152,10 @@
             $('s-when').textContent = `${b.date} at ${b.time}`;
             $('s-pickup').textContent = b.pickup;
             $('s-dropoff').textContent = (b.stops && b.stops.length ? b.stops.join(' → ') + ' → ' : '') + (b.dropoff || 'As directed');
+            if (b.roundTrip && b.returnDate) {
+                $('s-return').textContent = b.returnCancelled ? `${b.returnDate} at ${b.returnTime} (cancelled)` : `${b.returnDate} at ${b.returnTime}`;
+                show('s-return-row');
+            }
             $('s-vehicle').textContent = `${b.vehicle} · ${b.passengers} passenger${b.passengers > 1 ? 's' : ''}${b.serviceType === 'hourly' ? ` · ${b.hours} hrs` : ''}`;
             $('s-total').textContent = `$${b.total}${b.paymentMethod === 'online' ? ' (paid online)' : ' (pay driver)'}`;
             $('s-note').textContent = b.confirmedByCustomer ? 'You have confirmed this ride. Thank you!' : (b.paymentMethod === 'online' ? '' : 'You will get a text the evening before asking you to confirm. Just reply 1.');
@@ -164,6 +176,15 @@
             }
             const dt = parseDisplay(b.date, b.time);
             if (dt) { $('f-date').value = dt.date; $('f-time').value = dt.time; }
+            $('f-date').disabled = !b.outboundEditable; $('f-time').disabled = !b.outboundEditable;
+            if (b.roundTrip && b.returnDate && !b.returnCancelled) {
+                const rt = parseDisplay(b.returnDate, b.returnTime);
+                if (rt) { $('f-rdate').value = rt.date; $('f-rtime').value = rt.time; }
+                $('f-rdate').disabled = !b.returnEditable; $('f-rtime').disabled = !b.returnEditable;
+                show('return-fields');
+            }
+            const lockNote = !b.outboundEditable ? 'The first pickup is within 24 hours, so only the return can be changed here.' : (b.roundTrip && !b.returnCancelled && !b.returnEditable ? 'The return pickup is within 24 hours, so it can only be changed by phone.' : '');
+            if (lockNote) { $('leg-note').textContent = lockNote; show('leg-note'); show('return-fields'); }
             const today = new Date(); const min = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             $('f-date').min = min;
             const sel = $('f-passengers'); sel.innerHTML = '';
@@ -189,7 +210,7 @@
         $('edit-form').addEventListener('submit', async (ev) => {
             ev.preventDefault();
             const btn = $('save-btn'); btn.disabled = true; btn.textContent = 'Saving…'; show('form-error', false); show('state-saved', false);
-            const payload = { c, t, date: $('f-date').value, time: $('f-time').value, passengers: $('f-passengers').value, flight: $('f-flight').value, notes: $('f-notes').value, phone: $('f-phone').value, email: $('f-email').value };
+            const payload = { c, t, date: $('f-date').disabled ? '' : $('f-date').value, time: $('f-time').disabled ? '' : $('f-time').value, returnDate: $('f-rdate').disabled ? '' : $('f-rdate').value, returnTime: $('f-rtime').disabled ? '' : $('f-rtime').value, passengers: $('f-passengers').value, flight: $('f-flight').value, notes: $('f-notes').value, phone: $('f-phone').value, email: $('f-email').value };
             try {
                 const r = await fetch('/.netlify/functions/manage-booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const d = await r.json();
