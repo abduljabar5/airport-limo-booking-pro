@@ -288,7 +288,7 @@ export async function scheduleReminders(booking, opts = {}) {
     // sms-reply the moment the customer replies 1.
     if (payDriver && hasMessagingService && !alreadyConfirmed) {
       if (inWindow(eveningBefore)) {
-        jobs.push(sms('confirm_request', customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is tomorrow at ${booking.time}.\nPickup: ${booking.pickup}\n\nReply 1 to confirm.${manage ? `\nNeed a change? ${manage}` : ''}\nReply STOP to opt out`, eveningBefore));
+        jobs.push(sms('confirm_request', customerPhone, `👉 REPLY 1 TO CONFIRM your ride tomorrow at ${booking.time}.\n\nTOTAL TOWN CAR SERVICE\nPickup: ${booking.pickup}\n#${booking.confirmationNumber}${manage ? `\nNeed a change? ${manage}` : ''}\nReply STOP to opt out`, eveningBefore));
       }
       if (inWindow(twoHoursBefore)) {
         jobs.push(sms('unconfirmed_alert', ownerPhone, `⚠️ NOT CONFIRMED by customer\n\n#${booking.confirmationNumber} — ${booking.name}\n${booking.date} at ${booking.time}\n📍 ${booking.pickup}\n📞 ${booking.phone}\n\nCall to confirm before dispatching.`, twoHoursBefore));
@@ -431,7 +431,7 @@ export async function processBooking(booking) {
 
 Booking Confirmed
 #${booking.confirmationNumber}
-
+${booking.paymentMethod === 'online' ? '' : '\n👉 REPLY 1 TO CONFIRM THIS RIDE\n'}
 WHEN: ${booking.date} at ${booking.time}
 
 PICKUP: ${booking.pickup}
@@ -441,7 +441,7 @@ ${hourlyLine}${stopsSmsLine}${roundTripLine}${returnLine}${meetGreetLine}${carSe
 Total: ${formattedTotal}${booking.paymentMethod === 'online' ? ' (Paid)' : ''}
 
 Your driver will arrive on time.
-${booking.paymentMethod === 'online' ? '' : 'Reply 1 to confirm this ride.\n'}${manage ? `Change time or details: ${manage}\n` : ''}Questions? (612) 999-5382
+${manage ? `Change time or details: ${manage}\n` : ''}Questions? (612) 999-5382
 Reply STOP to opt out`;
 
     const ownerDiscountLine = hasDiscount ? `\n🏷️ DISCOUNT: -${formattedDiscount} (${promoCode})` : '';

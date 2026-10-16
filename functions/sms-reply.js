@@ -67,22 +67,28 @@ export default async (req) => {
       return twiml(`We couldn't find an upcoming ride for this number. Need help? Call (612) 999-5382.`);
     }
     const b = target.booking;
+    const reply = `Thanks ${b.name ? b.name.split(' ')[0] : ''}! You're confirmed for ${b.date} at ${b.time}.\nPickup: ${b.pickup}\nYour driver will be on time. Questions? (612) 999-5382`;
+    // Send the reply straight away through the API rather than as the TwiML
+    // response, so the customer isn't waiting on the bookkeeping below.
+    const replyPromise = sendSms(from, reply);
     if (!target.confirmedByCustomer) {
       target.confirmedByCustomer = true;
       target.confirmedAt = new Date().toISOString();
       // The reminder-to-confirm and the owner's not-confirmed alert are no longer needed.
-      const keep = [];
-      for (const item of target.scheduledItems || []) {
+      const items = target.scheduledItems || [];
+      await Promise.all(items.map(async (item) => {
         if (item.kind === 'sms' && (item.purpose === 'confirm_request' || item.purpose === 'unconfirmed_alert')) {
           await cancelTwilioMessage(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, item.sid);
-          keep.push({ ...item, status: 'cancelled_confirmed' });
-        } else keep.push(item);
-      }
-      target.scheduledItems = keep;
-      try { await getStore('bookings').setJSON(target.confirmationNumber, target); } catch (e) { console.error('Confirm store error:', e); }
-      await sendSms(OWNER_PHONE, `✅ CONFIRMED by customer\n\n#${target.confirmationNumber} — ${b.name}\n${b.date} at ${b.time}\n📍 ${b.pickup}\n🏁 ${b.dropoff}\n📞 ${b.phone}`);
+          item.status = 'cancelled_confirmed';
+        }
+      }));
+      await Promise.all([
+        getStore('bookings').setJSON(target.confirmationNumber, target).catch((e) => console.error('Confirm store error:', e)),
+        sendSms(OWNER_PHONE, `✅ CONFIRMED by customer\n\n#${target.confirmationNumber} — ${b.name}\n${b.date} at ${b.time}\n📍 ${b.pickup}\n🏁 ${b.dropoff}\n📞 ${b.phone}`)
+      ]);
     }
-    return twiml(`Thanks ${b.name ? b.name.split(' ')[0] : ''}! You're confirmed for ${b.date} at ${b.time}.\nPickup: ${b.pickup}\nYour driver will be on time. Questions? (612) 999-5382`);
+    await replyPromise;
+    return twiml('');
   }
 
   // Anything else: hand it to the owner with context, acknowledge the customer.
