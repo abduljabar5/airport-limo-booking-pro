@@ -11,7 +11,7 @@
 // STOP / HELP never get here: the Messaging Service handles opt-outs itself.
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
-import { bookingsForPhone, normalizePhone, sendSms, isTestBooking } from '../lib/booking-links.js';
+import { bookingsForPhone, normalizePhone, sendSms } from '../lib/booking-links.js';
 import { parseBookingDateTime, centralToUTCISO } from './process-booking.js';
 import { cancelTwilioMessage } from './cancel-booking.js';
 
@@ -55,7 +55,7 @@ export default async (req) => {
   const body = String(params.Body || '').trim();
   if (!from) return twiml('');
 
-  const records = (await bookingsForPhone(from)).filter((r) => !isTestBooking(r) || from === normalizePhone(process.env.TEST_PHONE || ''));
+  const records = await bookingsForPhone(from);
   const upcoming = records
     .filter((r) => r && r.booking && !r.cancelled && pickupInstant(r.booking) > Date.now())
     .sort((a, b) => pickupInstant(a.booking) - pickupInstant(b.booking));
