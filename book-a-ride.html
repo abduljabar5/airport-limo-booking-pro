@@ -2190,6 +2190,8 @@
                 const pickup = isReturn ? d.dropoff : d.pickup;
                 const dropoff = isReturn ? d.pickup : d.dropoff;
                 if (!pickup || !dropoff || d.serviceType === 'hourly') return;
+                // A rebook link beats any half-finished draft from an earlier visit.
+                clearSavedForm();
                 document.getElementById('pickup').value = pickup; booking.data.pickup = pickup; booking.data.pickupValid = true;
                 document.getElementById('dropoff').value = dropoff; booking.data.dropoff = dropoff; booking.data.dropoffValid = true;
                 if (d.distance) booking.data.distance = parseFloat(d.distance);
@@ -2205,6 +2207,7 @@
                 if (typeof applyCapacity === 'function') applyCapacity('vehicle');
                 if (booking.data.distance > 0) recalculatePrice(); else calculateDistance();
                 updateSummary();
+                saveFormData();
                 document.getElementById('restore-banner')?.classList.add('hidden');
                 const banner = document.createElement('div');
                 banner.className = 'bg-gold-400/10 border border-gold-400/25 rounded-xl p-4 mb-6 text-sm text-gold-300';
