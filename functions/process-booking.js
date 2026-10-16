@@ -232,8 +232,11 @@ export async function scheduleReminders(booking, opts = {}) {
   const {
     estimatedMinutes = 60, pickupLink = '',
     fromEmail = DEFAULT_FROM_EMAIL, fromName = 'Total Town Car Service', ownerPhone = DEFAULT_OWNER_PHONE,
-    alreadyConfirmed = false, onlyConfirm = false
+    alreadyConfirmed = false, skipPurposes = []
   } = opts;
+  // The daily backfill passes the purposes a record already has so nothing is
+  // scheduled twice when a far-out booking enters the 30-day window.
+  const skip = new Set(skipPurposes);
   if (!process.env.RESEND_API_KEY) return { summary: 'skipped', items: [] };
   try {
     const bookingDate = parseBookingDateTime(booking.date, booking.time);
@@ -266,19 +269,19 @@ export async function scheduleReminders(booking, opts = {}) {
       .then(r => ({ purpose, kind: 'sms', sid: r.sid, status: r.status }));
 
     const jobs = [];
-    if (!onlyConfirm) {
-      if (inWindow(reminder24h)) {
+    {
+      if (!skip.has('24h_email') && inWindow(reminder24h)) {
         jobs.push(email('24h_email', `Ride reminder: tomorrow at ${booking.time}`, generateReminderEmail(booking, 'tomorrow', pickupLink, manage), reminder24h));
       }
       if (inWindow(reminder1h)) {
-        jobs.push(email('1h_email', `Ride reminder: ${booking.time} today`, generateReminderEmail(booking, 'in 1 hour', pickupLink, manage), reminder1h));
-        if (hasMessagingService) {
+        if (!skip.has('1h_email')) jobs.push(email('1h_email', `Ride reminder: ${booking.time} today`, generateReminderEmail(booking, 'in 1 hour', pickupLink, manage), reminder1h));
+        if (hasMessagingService && !skip.has('1h_sms')) {
           jobs.push(sms('1h_sms', customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382\nReply STOP to opt out`, reminder1h));
         }
       }
       if (inWindow(rideEnd)) {
-        jobs.push(email('review_email', 'How was your ride with Total Town Car?', generateReviewEmail(booking, againUrl), rideEnd));
-        if (hasMessagingService) {
+        if (!skip.has('review_email')) jobs.push(email('review_email', 'How was your ride with Total Town Car?', generateReviewEmail(booking, againUrl), rideEnd));
+        if (hasMessagingService && !skip.has('review_sms')) {
           jobs.push(sms('review_sms', customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nNeed a ride again? Book in one tap: ${againUrl}\nReply STOP to opt out`, rideEnd));
         }
       }
@@ -287,10 +290,10 @@ export async function scheduleReminders(booking, opts = {}) {
     // warn the owner two hours out if nobody answered. Both are cancelled by
     // sms-reply the moment the customer replies 1.
     if (payDriver && hasMessagingService && !alreadyConfirmed) {
-      if (inWindow(eveningBefore)) {
+      if (!skip.has('confirm_request') && inWindow(eveningBefore)) {
         jobs.push(sms('confirm_request', customerPhone, `👉 REPLY 1 TO CONFIRM your ride tomorrow at ${booking.time}.\n\nTOTAL TOWN CAR SERVICE\nPickup: ${booking.pickup}\n#${booking.confirmationNumber}${manage ? `\nNeed a change? ${manage}` : ''}\nReply STOP to opt out`, eveningBefore));
       }
-      if (inWindow(twoHoursBefore)) {
+      if (!skip.has('unconfirmed_alert') && inWindow(twoHoursBefore)) {
         jobs.push(sms('unconfirmed_alert', ownerPhone, `⚠️ NOT CONFIRMED by customer\n\n#${booking.confirmationNumber} — ${booking.name}\n${booking.date} at ${booking.time}\n📍 ${booking.pickup}\n📞 ${booking.phone}\n\nCall to confirm before dispatching.`, twoHoursBefore));
       }
     }

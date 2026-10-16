@@ -6,8 +6,9 @@
 //   ninety_day - 90 days after a customer's most recent ride with nothing booked since
 //   peak       - a week or two before Thanksgiving, Christmas, spring break and MEA,
 //                to everyone who rode in the past year
-// Also backfills the "reply 1 to confirm" texts for pay-driver bookings that
-// were made more than 30 days out (Twilio cannot schedule that far ahead).
+// Also backfills reminders (and the "reply 1 to confirm" texts) for bookings
+// made more than 30 days out, once the ride is within 29 days: Twilio and
+// Resend cannot schedule further ahead than that.
 //
 // Run by hand for a dry run: GET /.netlify/functions/nudges?dry=1&token=<CANCEL_ADMIN_TOKEN>
 import { getStore } from '@netlify/blobs';
@@ -74,7 +75,7 @@ export default async (req) => {
     byPhone.get(p).push(rec);
   }
 
-  const results = { day_after: [], ninety_day: [], peak: [], confirm_backfill: [], skipped: 0 };
+  const results = { day_after: [], ninety_day: [], peak: [], backfill: [], skipped: 0 };
   const nowMs = Date.now();
 
   for (const [phone, recs] of byPhone) {
@@ -118,23 +119,31 @@ export default async (req) => {
       }
     }
 
-    // Confirm-text backfill: pay-driver bookings now inside the 30-day window
-    // whose confirm_request was never scheduled (booked too far out).
+    // Reminder backfill. Twilio and Resend cannot schedule more than ~30 days
+    // out, so a ride booked further ahead has nothing scheduled. Once pickup
+    // is within 29 days, create whatever is missing (keyed by purpose, so a
+    // half-finished run or a ride booked right at the edge never double-sends).
     for (const { r, at } of upcoming) {
       const b = r.booking;
-      if (b.paymentMethod === 'online' || r.confirmedByCustomer || r.confirmBackfilled) continue;
-      const hasConfirm = (r.scheduledItems || []).some((i) => i.purpose === 'confirm_request');
       const leadMs = new Date(centralToUTCISO(at)).getTime() - nowMs;
-      if (hasConfirm || leadMs > 29 * DAY || leadMs < 2 * 3600 * 1000) continue;
-      if (dry) { results.confirm_backfill.push({ c: r.confirmationNumber, status: 'dry' }); continue; }
+      if (leadMs > 29 * DAY || leadMs < 2 * 3600 * 1000) continue;
+      const present = new Set((r.scheduledItems || []).filter((i) => i.status !== 'failed').map((i) => i.purpose));
+      const wanted = ['24h_email', '1h_email', '1h_sms', 'review_email', 'review_sms'];
+      if (b.paymentMethod !== 'online' && !r.confirmedByCustomer) wanted.push('confirm_request', 'unconfirmed_alert');
+      if (wanted.every((p) => present.has(p))) continue;
+      if (dry) { results.backfill.push({ c: r.confirmationNumber, missing: wanted.filter((p) => !present.has(p)), status: 'dry' }); continue; }
       const out = await scheduleReminders({ ...b, confirmationNumber: r.confirmationNumber }, {
-        estimatedMinutes: r.estimatedMinutes || 60, onlyConfirm: true,
+        estimatedMinutes: r.estimatedMinutes || (b.serviceType === 'hourly' ? (parseInt(b.hours) || 3) * 60 : 60),
+        skipPurposes: [...present],
+        alreadyConfirmed: !!r.confirmedByCustomer,
         pickupLink: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(b.pickup || '')
       });
-      r.scheduledItems = [...(r.scheduledItems || []), ...(out.items || [])];
-      r.confirmBackfilled = true;
-      try { await bookings.setJSON(r.confirmationNumber, r); } catch (e) { console.error('backfill store', e); }
-      results.confirm_backfill.push({ c: r.confirmationNumber, status: out.summary });
+      if (out.items && out.items.length) {
+        r.scheduledItems = [...(r.scheduledItems || []), ...out.items];
+        r.backfilledAt = new Date().toISOString();
+        try { await bookings.setJSON(r.confirmationNumber, r); } catch (e) { console.error('backfill store', e); }
+      }
+      results.backfill.push({ c: r.confirmationNumber, status: out.summary });
     }
   }
 
