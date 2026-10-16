@@ -260,9 +260,14 @@
         const leg = entry.leg || 'out';
         const b = leg === 'return' ? returnLeg(rec.booking) : (rec.booking || {});
         const legCancelled = rec.cancelled || (leg === 'return' && rec.returnCancelled);
+        const legPast = !legCancelled && tripTime(b) && tripTime(b) < Date.now();
         const fade = legCancelled ? 'opacity-50' : '';
+        // No cancel button on past legs: cancelling after the fact would email
+        // and text the customer about a ride that already happened.
         const cancelBtn = legCancelled
             ? `<span class="text-[11px] text-obsidian-600 italic">cancelled</span>`
+            : legPast
+                ? `<span class="text-[11px] text-obsidian-600 italic">completed</span>`
             : leg === 'return'
                 ? `<button data-conf="${escapeHtml(rec.confirmationNumber)}" data-leg="return" class="row-cancel text-[11px] uppercase tracking-luxe px-3 py-1.5 rounded-md bg-red-500/15 hover:bg-red-500/25 text-red-200 transition-colors">Cancel return</button>`
                 : `<button data-conf="${escapeHtml(rec.confirmationNumber)}" data-leg="all" class="row-cancel text-[11px] uppercase tracking-luxe px-3 py-1.5 rounded-md bg-red-500/15 hover:bg-red-500/25 text-red-200 transition-colors">Cancel</button>`;
