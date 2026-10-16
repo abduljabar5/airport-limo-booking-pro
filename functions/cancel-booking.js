@@ -25,7 +25,7 @@ function tokensMatch(a, b) {
 }
 
 // ----- Resend / Twilio cancellation helpers -----
-async function cancelResendEmail(apiKey, emailId) {
+export async function cancelResendEmail(apiKey, emailId) {
   if (!emailId) return { status: 'no_id' };
   try {
     const r = await fetch(`https://api.resend.com/emails/${emailId}/cancel`, {
@@ -43,7 +43,7 @@ async function cancelResendEmail(apiKey, emailId) {
   }
 }
 
-async function cancelTwilioMessage(accountSid, authToken, messageSid) {
+export async function cancelTwilioMessage(accountSid, authToken, messageSid) {
   if (!messageSid) return { status: 'no_sid' };
   try {
     const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
@@ -93,7 +93,7 @@ async function getGoogleAccessToken(serviceAccount) {
   return data.access_token;
 }
 
-async function deleteCalendarEvent(eventId) {
+export async function deleteCalendarEvent(eventId) {
   if (!eventId) return 'no_id';
   if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) return 'skipped';
   try {

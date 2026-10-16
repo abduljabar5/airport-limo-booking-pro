@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-obsidian-950">
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TV2HRJQP');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Your Ride | Total Town Car Service</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "t0mk3hw4bx");
+    </script>
+    <link rel="icon" type="image/png" sizes="48x48" href="images/icons/icon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/icons/icon-180.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/tailwind.css">
+    <style>
+        ::selection { background: rgba(212, 175, 55, 0.3); color: #fefdf8; }
+        .field { width: 100%; background: rgba(13,13,13,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 0.8rem 1rem; color: #fff; font-size: 0.95rem; }
+        .field:focus { outline: none; border-color: rgba(212,175,55,0.6); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
+        .field::-webkit-calendar-picker-indicator { filter: invert(0.8); }
+        .label { display: block; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: #9a9a9a; margin-bottom: 0.4rem; }
+    </style>
+</head>
+<body class="text-white font-sans min-h-screen flex flex-col">
+    <div class="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
+        <img src="images/site/hero-bg.webp" alt="" class="absolute inset-0 w-full h-full object-cover object-[center_60%] opacity-20" width="1920" height="1072" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-b from-obsidian-950/70 via-obsidian-950/60 to-obsidian-950"></div>
+    </div>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TV2HRJQP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <header class="py-6 border-b border-white/5">
+        <div class="max-w-4xl mx-auto px-6 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="images/icons/logo-128.png" alt="Total Town Car Service" class="w-10 h-10 rounded-xl object-cover ring-1 ring-white/10">
+                <div>
+                    <div class="text-lg font-display font-semibold text-white tracking-wide">Total Town Car</div>
+                    <div class="text-[10px] text-gold-400 tracking-luxe uppercase">Minneapolis</div>
+                </div>
+            </a>
+            <a href="tel:6129995382" class="text-obsidian-400 hover:text-gold-400 transition-colors text-sm">(612) 999-5382</a>
+        </div>
+    </header>
+
+    <main class="flex-1 px-4 sm:px-6 py-10">
+        <div class="max-w-lg mx-auto">
+            <h1 class="text-3xl sm:text-4xl font-display font-semibold text-white mb-2 text-center">Manage your ride</h1>
+            <p class="text-obsidian-400 font-light mb-8 text-center" id="subtitle">Loading your reservation…</p>
+
+            <!-- States -->
+            <div id="state-error" class="hidden bg-rose-500/10 border border-rose-500/25 rounded-2xl p-6 text-center">
+                <p class="text-rose-300 text-sm" id="error-text">This link is not valid.</p>
+                <p class="text-obsidian-400 text-sm mt-3">Call <a href="tel:6129995382" class="text-gold-400">(612) 999-5382</a> and we'll sort it out.</p>
+            </div>
+
+            <div id="state-locked" class="hidden bg-obsidian-900/40 border border-white/[0.06] rounded-2xl p-6 text-center">
+                <p class="text-white text-sm" id="locked-text"></p>
+                <a href="tel:6129995382" class="inline-flex mt-4 items-center justify-center bg-gradient-to-r from-gold-400 to-gold-500 text-obsidian-950 font-semibold py-3 px-6 rounded-xl">Call (612) 999-5382</a>
+            </div>
+
+            <!-- Ride summary -->
+            <div id="summary" class="hidden bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 mb-4 text-left">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-semibold text-white uppercase tracking-wide">Your ride</h2>
+                    <span class="font-mono text-gold-400 text-sm" id="s-conf"></span>
+                </div>
+                <dl class="space-y-3 text-sm">
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">When</dt><dd class="text-white text-right" id="s-when"></dd></div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Pickup</dt><dd class="text-white text-right" id="s-pickup"></dd></div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Dropoff</dt><dd class="text-white text-right" id="s-dropoff"></dd></div>
+                    <div class="flex justify-between gap-4 pb-3 border-b border-white/[0.04]"><dt class="text-obsidian-500">Vehicle</dt><dd class="text-white text-right" id="s-vehicle"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-obsidian-500">Total</dt><dd class="text-gold-400 font-semibold text-right" id="s-total"></dd></div>
+                </dl>
+                <p class="text-[11px] text-obsidian-500 mt-4" id="s-note"></p>
+            </div>
+
+            <!-- Edit form -->
+            <form id="edit-form" class="hidden bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 text-left space-y-5" novalidate>
+                <h2 class="text-sm font-semibold text-white uppercase tracking-wide">Change details</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="label" for="f-date">Pickup date</label><input class="field" type="date" id="f-date"></div>
+                    <div><label class="label" for="f-time">Pickup time</label><input class="field" type="time" id="f-time" step="300"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="label" for="f-passengers">Passengers</label><select class="field" id="f-passengers"></select></div>
+                    <div><label class="label" for="f-flight">Flight number</label><input class="field" type="text" id="f-flight" placeholder="DL 1234" maxlength="40"></div>
+                </div>
+                <div><label class="label" for="f-phone">Mobile phone</label><input class="field" type="tel" id="f-phone" placeholder="(612) 555-0123"></div>
+                <div><label class="label" for="f-email">Email</label><input class="field" type="email" id="f-email"></div>
+                <div><label class="label" for="f-notes">Notes for your driver</label><textarea class="field" id="f-notes" rows="3" maxlength="500"></textarea></div>
+                <p class="text-xs text-obsidian-500">Need a different pickup address, dropoff, vehicle or to cancel? Call <a href="tel:6129995382" class="text-gold-400">(612) 999-5382</a>.</p>
+                <div id="form-error" class="hidden text-sm text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3"></div>
+                <button type="submit" id="save-btn" class="w-full bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold py-4 rounded-xl transition-all duration-300 disabled:opacity-50">Save changes</button>
+                <p class="text-[11px] text-obsidian-500 text-center" id="edits-left"></p>
+            </form>
+
+            <div id="state-saved" class="hidden bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-6 text-center mt-4">
+                <div class="text-emerald-300 font-semibold mb-1">Changes saved</div>
+                <p class="text-sm text-obsidian-300">We've sent you an updated confirmation and moved your reminders.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 border-t border-white/5">
+        <div class="max-w-4xl mx-auto px-6 text-center text-xs text-obsidian-500">Total Town Car Service · Minneapolis · <a href="tel:6129995382" class="text-gold-400">(612) 999-5382</a></div>
+    </footer>
+
+    <script>
+    (function () {
+        const qs = new URLSearchParams(location.search);
+        const c = (qs.get('c') || '').toUpperCase();
+        const t = qs.get('t') || '';
+        const $ = (id) => document.getElementById(id);
+        const show = (id, on = true) => $(id).classList.toggle('hidden', !on);
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        let booking = null;
+
+        function parseDisplay(dateStr, timeStr) {
+            const dm = (dateStr || '').replace(/^[A-Za-z]+,\s*/, '').match(/([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
+            const tm = (timeStr || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+            if (!dm || !tm) return null;
+            let h = parseInt(tm[1], 10); const mi = tm[2]; const p = tm[3].toUpperCase();
+            if (p === 'PM' && h !== 12) h += 12; if (p === 'AM' && h === 12) h = 0;
+            const mo = MONTHS.indexOf(dm[1].slice(0, 3));
+            return { date: `${dm[3]}-${String(mo + 1).padStart(2, '0')}-${String(dm[2]).padStart(2, '0')}`, time: `${String(h).padStart(2, '0')}:${mi}` };
+        }
+
+        function render(b) {
+            booking = b;
+            $('s-conf').textContent = b.confirmationNumber;
+            $('s-when').textContent = `${b.date} at ${b.time}`;
+            $('s-pickup').textContent = b.pickup;
+            $('s-dropoff').textContent = (b.stops && b.stops.length ? b.stops.join(' → ') + ' → ' : '') + (b.dropoff || 'As directed');
+            $('s-vehicle').textContent = `${b.vehicle} · ${b.passengers} passenger${b.passengers > 1 ? 's' : ''}${b.serviceType === 'hourly' ? ` · ${b.hours} hrs` : ''}`;
+            $('s-total').textContent = `$${b.total}${b.paymentMethod === 'online' ? ' (paid online)' : ' (pay driver)'}`;
+            $('s-note').textContent = b.confirmedByCustomer ? 'You have confirmed this ride. Thank you!' : (b.paymentMethod === 'online' ? '' : 'You will get a text the evening before asking you to confirm. Just reply 1.');
+            show('summary');
+            $('subtitle').textContent = b.cancelled ? 'This reservation was cancelled.' : 'Here is your reservation.';
+
+            if (!b.editable) {
+                const msgs = {
+                    cancelled: 'This ride was cancelled. To book again, call us or visit totaltowncar.com.',
+                    past: 'This ride has already happened. Thanks for riding with us!',
+                    within24h: 'Your pickup is less than 24 hours away, so changes now go through dispatch. Give us a quick call and we will take care of it.',
+                    edits_exhausted: 'This ride has been changed twice online. For any further changes, give us a quick call.',
+                    unparseable: 'We could not read this reservation. Please call us.'
+                };
+                $('locked-text').textContent = msgs[b.reason] || 'Changes to this ride go through dispatch.';
+                show('state-locked');
+                return;
+            }
+            const dt = parseDisplay(b.date, b.time);
+            if (dt) { $('f-date').value = dt.date; $('f-time').value = dt.time; }
+            const today = new Date(); const min = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            $('f-date').min = min;
+            const sel = $('f-passengers'); sel.innerHTML = '';
+            for (let i = 1; i <= (b.maxPassengers || 6); i++) { const o = document.createElement('option'); o.value = i; o.textContent = `${i} passenger${i > 1 ? 's' : ''}`; if (i === b.passengers) o.selected = true; sel.appendChild(o); }
+            $('f-flight').value = b.flight || '';
+            $('f-phone').value = b.phone || '';
+            $('f-email').value = b.email || '';
+            $('f-notes').value = b.notes || '';
+            $('edits-left').textContent = `${b.editsLeft} online change${b.editsLeft === 1 ? '' : 's'} remaining · free up to 24 hours before pickup`;
+            show('edit-form');
+        }
+
+        async function load() {
+            if (!c || !t) { $('subtitle').textContent = ''; show('state-error'); return; }
+            try {
+                const r = await fetch(`/.netlify/functions/manage-booking?c=${encodeURIComponent(c)}&t=${encodeURIComponent(t)}`);
+                const d = await r.json();
+                if (!r.ok) { $('error-text').textContent = d.error || 'This link is not valid.'; $('subtitle').textContent = ''; show('state-error'); return; }
+                render(d);
+            } catch (e) { $('error-text').textContent = 'Could not load your reservation.'; show('state-error'); }
+        }
+
+        $('edit-form').addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const btn = $('save-btn'); btn.disabled = true; btn.textContent = 'Saving…'; show('form-error', false); show('state-saved', false);
+            const payload = { c, t, date: $('f-date').value, time: $('f-time').value, passengers: $('f-passengers').value, flight: $('f-flight').value, notes: $('f-notes').value, phone: $('f-phone').value, email: $('f-email').value };
+            try {
+                const r = await fetch('/.netlify/functions/manage-booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const d = await r.json();
+                if (!r.ok) { $('form-error').textContent = d.error || 'Could not save changes.'; show('form-error'); if (d.booking) render(d.booking); return; }
+                if (d.unchanged) { $('form-error').textContent = 'Nothing changed.'; show('form-error'); return; }
+                show('edit-form', false);
+                render(d.booking);
+                show('state-saved');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (window.dataLayer) window.dataLayer.push({ event: 'booking_edited', changes: (d.changes || []).length });
+            } catch (e) { $('form-error').textContent = 'Could not save changes. Please try again or call us.'; show('form-error'); }
+            finally { btn.disabled = false; btn.textContent = 'Save changes'; }
+        });
+
+        load();
+    })();
+    </script>
+</body>
+</html>

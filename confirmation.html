@@ -204,6 +204,20 @@
                 </dl>
             </div>
 
+            <!-- Manage ride (shown when a signed link is available) -->
+            <div id="manage-block" class="hidden bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 mb-3 text-left">
+                <h2 class="text-sm font-semibold text-white mb-2 uppercase tracking-wide">Need to change something?</h2>
+                <p class="text-sm text-obsidian-400 mb-4">Move the pickup time, fix a flight number or update your contact details, up to 24 hours before pickup. To change the route or vehicle, or to cancel, call <a href="tel:6129995382" class="text-gold-400">(612) 999-5382</a>.</p>
+                <a id="manage-link" href="#" class="inline-flex items-center justify-center gap-2 bg-obsidian-800 hover:bg-obsidian-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 border border-white/10 text-sm">Change time or details</a>
+            </div>
+
+            <!-- Return trip (airport dropoffs only) -->
+            <div id="return-block" class="hidden bg-gold-400/10 border border-gold-400/25 rounded-2xl p-6 mb-3 text-left">
+                <div class="text-[10px] tracking-luxe uppercase text-gold-400 mb-2">Flying back?</div>
+                <p class="text-sm text-white mb-4">We've saved this trip. Book the ride home in one tap and your details are already filled in.</p>
+                <a id="return-link" href="#" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-obsidian-950 font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm">Book my return ride</a>
+            </div>
+
             <!-- What's Next -->
             <div class="bg-obsidian-900/30 border border-white/[0.04] rounded-2xl p-6 mb-3 text-left">
                 <h2 class="text-sm font-semibold text-white mb-4 uppercase tracking-wide">What's Next?</h2>
@@ -304,6 +318,27 @@
                 // Non-fatal — page still works without the receipt block
                 console.warn('Could not render booking receipt:', e);
             }
+
+            // Manage link: pay-driver flow stashes it from the booking response,
+            // the Stripe flow carries the signed token on the success URL.
+            try {
+                const stashedManage = sessionStorage.getItem('ttc_manage_url');
+                const mt = urlParams.get('mt');
+                const manageHref = stashedManage || (mt ? `/manage.html?c=${encodeURIComponent(confirmation)}&t=${encodeURIComponent(mt)}` : '');
+                if (manageHref) {
+                    document.getElementById('manage-link').href = manageHref;
+                    document.getElementById('manage-block').classList.remove('hidden');
+                    const tokenMatch = manageHref.match(/[?&]t=([^&]+)/);
+                    const stashedBooking = JSON.parse(sessionStorage.getItem('ttc_last_booking') || 'null');
+                    const drop = ((stashedBooking && stashedBooking.dropoff) || '').toLowerCase();
+                    const isAirport = drop.includes('airport') || drop.includes('msp') || drop.includes('terminal');
+                    if (tokenMatch && stashedBooking && isAirport && !stashedBooking.roundTrip && stashedBooking.serviceType !== 'hourly') {
+                        document.getElementById('return-link').href = `/book-a-ride.html?rebook=${encodeURIComponent(confirmation)}&t=${tokenMatch[1]}&return=1`;
+                        document.getElementById('return-block').classList.remove('hidden');
+                    }
+                }
+                sessionStorage.removeItem('ttc_manage_url');
+            } catch (e) { console.warn('Manage link setup failed:', e); }
 
             // Clear any saved booking draft / pending booking data
             localStorage.removeItem('ttc_booking_draft');

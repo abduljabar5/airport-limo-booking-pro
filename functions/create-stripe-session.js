@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { makeManageToken } from '../lib/booking-links.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -23,6 +24,9 @@ export const handler = async (event) => {
       confirmation: confirmationNumber,
       paid: 'true'
     });
+    // Lets the confirmation page offer "manage your ride" without a round trip to the server.
+    const manageToken = makeManageToken(confirmationNumber);
+    if (manageToken) bookingParams.set('mt', manageToken);
 
     const successUrl = `${booking.success_url}?${bookingParams.toString()}`;
 

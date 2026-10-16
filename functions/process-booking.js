@@ -2,12 +2,16 @@
 // Uses Resend for emails, Twilio for SMS, Google Calendar API for events
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
+import { manageUrl, bookAgainUrl, returnTripUrl, isAirportAddress, normalizePhone, addPhoneIndex } from '../lib/booking-links.js';
+
+const DEFAULT_OWNER_PHONE = process.env.OWNER_PHONE || '+16129995382';
+const DEFAULT_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'bookings@totaltowncar.com';
 
 // ========================================
 // UTILITY FUNCTIONS
 // ========================================
 
-function parseBookingDateTime(dateStr, timeStr) {
+export function parseBookingDateTime(dateStr, timeStr) {
   const months = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
   const datePart = dateStr.replace(/^[A-Za-z]+,\s*/, '');
   const dateMatch = datePart.match(/([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
@@ -22,7 +26,7 @@ function parseBookingDateTime(dateStr, timeStr) {
   return new Date(parseInt(dateMatch[3], 10), months[dateMatch[1]], parseInt(dateMatch[2], 10), hours, minutes, 0);
 }
 
-function centralToUTCISO(localDate) {
+export function centralToUTCISO(localDate) {
   const year = localDate.getFullYear();
   const marchSecondSunday = new Date(year, 2, 1);
   marchSecondSunday.setDate(1 + (7 - marchSecondSunday.getDay()) % 7 + 7);
@@ -89,7 +93,7 @@ async function appendBookingToSheet(accessToken, sheetId, booking) {
   return await response.json();
 }
 
-async function getGoogleAccessToken(serviceAccount) {
+export async function getGoogleAccessToken(serviceAccount) {
   const jwt = createGoogleJWT(serviceAccount);
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -154,7 +158,7 @@ function generateCalendarLink(booking, estimatedMinutes) {
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=${text}&amp;dates=${dates}&amp;details=${details}&amp;location=${location}&amp;ctz=America/Chicago`;
 }
 
-async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to, body, sendAt) {
+export async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to, body, sendAt) {
   const twilioAuth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
     method: 'POST',
@@ -170,7 +174,7 @@ async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to,
   }
 }
 
-async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subject, html, text, scheduledAt, refId) {
+export async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subject, html, text, scheduledAt, refId) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -195,7 +199,7 @@ async function scheduleReminderEmail(apiKey, fromEmail, fromName, toEmail, subje
 }
 
 // Strip HTML to a safe plain-text fallback (Resend includes both for deliverability).
-function htmlToText(html) {
+export function htmlToText(html) {
   return String(html || '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
@@ -217,6 +221,90 @@ function htmlToText(html) {
 // ========================================
 // MAIN BOOKING PROCESSOR
 // ========================================
+
+// ========================================
+// REMINDERS
+// Schedules every time-based message for a booking and returns the ids so
+// the cancel and edit flows can revoke them. Used by process-booking (new
+// booking), manage-booking (after an edit) and nudges (backfill).
+// ========================================
+export async function scheduleReminders(booking, opts = {}) {
+  const {
+    estimatedMinutes = 60, pickupLink = '',
+    fromEmail = DEFAULT_FROM_EMAIL, fromName = 'Total Town Car Service', ownerPhone = DEFAULT_OWNER_PHONE,
+    alreadyConfirmed = false, onlyConfirm = false
+  } = opts;
+  if (!process.env.RESEND_API_KEY) return { summary: 'skipped', items: [] };
+  try {
+    const bookingDate = parseBookingDateTime(booking.date, booking.time);
+    if (!bookingDate) return { summary: 'parse_error', items: [] };
+
+    const now = new Date();
+    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+    // parseBookingDateTime returns Central wall-clock time; compare the real
+    // instant. Twilio and Resend both refuse sends scheduled under ~15 minutes out.
+    const MIN_LEAD_MS = 16 * 60 * 1000;
+    const inWindow = (d) => {
+      const lead = new Date(centralToUTCISO(d)).getTime() - now.getTime();
+      return lead > MIN_LEAD_MS && lead < THIRTY_DAYS_MS;
+    };
+    const reminder24h = new Date(bookingDate.getTime() - 24 * 60 * 60 * 1000);
+    const reminder1h = new Date(bookingDate.getTime() - 60 * 60 * 1000);
+    const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
+    const eveningBefore = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate() - 1, 18, 0, 0);
+    const twoHoursBefore = new Date(bookingDate.getTime() - 2 * 60 * 60 * 1000);
+    const hasMessagingService = !!process.env.TWILIO_MESSAGING_SERVICE_SID;
+    const customerPhone = normalizePhone(booking.phone);
+    const payDriver = booking.paymentMethod !== 'online';
+    const refId = booking.confirmationNumber || '';
+    const manage = manageUrl(booking.confirmationNumber);
+    const againUrl = bookAgainUrl(booking.confirmationNumber);
+
+    const email = (purpose, subject, html, at) => scheduleReminderEmail(process.env.RESEND_API_KEY, fromEmail, fromName, booking.email, subject, html, htmlToText(html), centralToUTCISO(at), refId)
+      .then(r => ({ purpose, kind: 'email', id: r.id, status: r.status }));
+    const sms = (purpose, to, body, at) => scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, to, body, centralToUTCISO(at))
+      .then(r => ({ purpose, kind: 'sms', sid: r.sid, status: r.status }));
+
+    const jobs = [];
+    if (!onlyConfirm) {
+      if (inWindow(reminder24h)) {
+        jobs.push(email('24h_email', `Ride reminder: tomorrow at ${booking.time}`, generateReminderEmail(booking, 'tomorrow', pickupLink, manage), reminder24h));
+      }
+      if (inWindow(reminder1h)) {
+        jobs.push(email('1h_email', `Ride reminder: ${booking.time} today`, generateReminderEmail(booking, 'in 1 hour', pickupLink, manage), reminder1h));
+        if (hasMessagingService) {
+          jobs.push(sms('1h_sms', customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382\nReply STOP to opt out`, reminder1h));
+        }
+      }
+      if (inWindow(rideEnd)) {
+        jobs.push(email('review_email', 'How was your ride with Total Town Car?', generateReviewEmail(booking, againUrl), rideEnd));
+        if (hasMessagingService) {
+          jobs.push(sms('review_sms', customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nNeed a ride again? Book in one tap: ${againUrl}\nReply STOP to opt out`, rideEnd));
+        }
+      }
+    }
+    // Pay-driver rides: ask the customer to confirm the evening before, and
+    // warn the owner two hours out if nobody answered. Both are cancelled by
+    // sms-reply the moment the customer replies 1.
+    if (payDriver && hasMessagingService && !alreadyConfirmed) {
+      if (inWindow(eveningBefore)) {
+        jobs.push(sms('confirm_request', customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is tomorrow at ${booking.time}.\nPickup: ${booking.pickup}\n\nReply 1 to confirm.${manage ? `\nNeed a change? ${manage}` : ''}\nReply STOP to opt out`, eveningBefore));
+      }
+      if (inWindow(twoHoursBefore)) {
+        jobs.push(sms('unconfirmed_alert', ownerPhone, `⚠️ NOT CONFIRMED by customer\n\n#${booking.confirmationNumber} — ${booking.name}\n${booking.date} at ${booking.time}\n📍 ${booking.pickup}\n📞 ${booking.phone}\n\nCall to confirm before dispatching.`, twoHoursBefore));
+      }
+    }
+
+    if (!jobs.length) return { summary: 'none_scheduled', items: [] };
+    const items = await Promise.all(jobs);
+    const summary = items.map(it => `${it.purpose}: ${it.status}`).join(', ');
+    return { summary, items };
+  } catch (e) {
+    console.error('Reminder scheduling error:', e);
+    return { summary: 'error', items: [] };
+  }
+}
+
 // Exported so both the HTTP handler and the Stripe webhook can call it.
 // All independent I/O (emails, SMS, calendar, reminders) runs in parallel.
 
@@ -264,6 +352,8 @@ export async function processBooking(booking) {
   const dropoffLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(booking.dropoff);
 
   const calendarLink = generateCalendarLink(booking, estimatedMinutes);
+  const manage = manageUrl(booking.confirmationNumber);
+  const returnUrl = (!isRoundTrip && !isHourly && isAirportAddress(booking.dropoff)) ? returnTripUrl(booking.confirmationNumber) : null;
   const customerPhone = booking.phone.startsWith('+') ? booking.phone : '+1' + booking.phone.replace(/\D/g, '');
 
   // ----------------------------------------
@@ -271,7 +361,7 @@ export async function processBooking(booking) {
   // ----------------------------------------
   const emailTask = async () => {
     if (!process.env.RESEND_API_KEY) return 'skipped';
-    const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet, calendarLink);
+    const customerHtml = generateCustomerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet, calendarLink, { manage, returnUrl });
     const ownerHtml = generateOwnerEmail(booking, formattedTotal, formattedBase, formattedDiscount, formattedTip, formattedFee, hasDiscount, hasProcessingFee, promoCode, distance, pickupLink, dropoffLink, isRoundTrip, formattedRoundTripDiscount, returnDate, returnTime, hasMeetAndGreet, formattedMeetAndGreet);
     const customerText = generateCustomerText(booking, formattedTotal, estimatedMinutes, isRoundTrip, returnDate, returnTime, hasMeetAndGreet, hasDiscount, formattedDiscount, promoCode);
     const ownerText = generateOwnerText(booking, formattedTotal, hasDiscount, formattedDiscount, promoCode, isRoundTrip, returnDate, returnTime, hasMeetAndGreet);
@@ -351,7 +441,7 @@ ${hourlyLine}${stopsSmsLine}${roundTripLine}${returnLine}${meetGreetLine}${carSe
 Total: ${formattedTotal}${booking.paymentMethod === 'online' ? ' (Paid)' : ''}
 
 Your driver will arrive on time.
-Questions? (612) 999-5382
+${booking.paymentMethod === 'online' ? '' : 'Reply 1 to confirm this ride.\n'}${manage ? `Change time or details: ${manage}\n` : ''}Questions? (612) 999-5382
 Reply STOP to opt out`;
 
     const ownerDiscountLine = hasDiscount ? `\n🏷️ DISCOUNT: -${formattedDiscount} (${promoCode})` : '';
@@ -447,68 +537,7 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
     return { calendar: calendarResult.status, calendarEventId: calendarResult.eventId, sheet };
   };
 
-  // ----------------------------------------
-  // Reminders task (parallel scheduling of all reminders)
-  // ----------------------------------------
-  const remindersTask = async () => {
-    if (!process.env.RESEND_API_KEY) return 'skipped';
-    try {
-      const bookingDate = parseBookingDateTime(booking.date, booking.time);
-      if (!bookingDate) return 'parse_error';
-
-      const now = new Date();
-      const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-      // parseBookingDateTime returns Central wall-clock time; convert to the real
-      // instant before comparing with `now`, otherwise same-day bookings (made
-      // within ~6 hours of pickup) skip their reminders and the review text.
-      // Twilio and Resend both refuse sends scheduled less than ~15 minutes out.
-      const MIN_LEAD_MS = 16 * 60 * 1000;
-      const inWindow = (d) => {
-        const lead = new Date(centralToUTCISO(d)).getTime() - now.getTime();
-        return lead > MIN_LEAD_MS && lead < THIRTY_DAYS_MS;
-      };
-      const reminder24h = new Date(bookingDate.getTime() - 24 * 60 * 60 * 1000);
-      const reminder1h = new Date(bookingDate.getTime() - 60 * 60 * 1000);
-      const rideEnd = new Date(bookingDate.getTime() + (estimatedMinutes + 15) * 60 * 1000);
-      const hasMessagingService = !!process.env.TWILIO_MESSAGING_SERVICE_SID;
-
-      const refId = booking.confirmationNumber || '';
-      // Each scheduling call returns {status, id|sid}. We tag the result with the
-      // reminder type so the cancellation flow knows what each ID is for.
-      const jobs = [];
-      if (inWindow(reminder24h)) {
-        const html24 = generateReminderEmail(booking, 'tomorrow', pickupLink);
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: tomorrow at ${booking.time}`, html24, htmlToText(html24), centralToUTCISO(reminder24h), refId)
-          .then(r => ({ purpose: '24h_email', kind: 'email', id: r.id, status: r.status })));
-      }
-      if (inWindow(reminder1h)) {
-        const html1 = generateReminderEmail(booking, 'in 1 hour', pickupLink);
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, `Ride reminder: ${booking.time} today`, html1, htmlToText(html1), centralToUTCISO(reminder1h), refId)
-          .then(r => ({ purpose: '1h_email', kind: 'email', id: r.id, status: r.status })));
-        if (hasMessagingService) {
-          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `TOTAL TOWN CAR SERVICE\n\nYour ride is in 1 hour!\n\n${booking.date} at ${booking.time}\nPickup: ${booking.pickup}\n\nQuestions? (612) 999-5382\nReply STOP to opt out`, centralToUTCISO(reminder1h))
-            .then(r => ({ purpose: '1h_sms', kind: 'sms', sid: r.sid, status: r.status })));
-        }
-      }
-      if (inWindow(rideEnd)) {
-        const htmlReview = generateReviewEmail(booking);
-        jobs.push(scheduleReminderEmail(process.env.RESEND_API_KEY, FROM_EMAIL, FROM_NAME, booking.email, 'How was your ride with Total Town Car?', htmlReview, htmlToText(htmlReview), centralToUTCISO(rideEnd), refId)
-          .then(r => ({ purpose: 'review_email', kind: 'email', id: r.id, status: r.status })));
-        if (hasMessagingService) {
-          jobs.push(scheduleSmsTwilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, process.env.TWILIO_MESSAGING_SERVICE_SID, customerPhone, `Thanks for riding with Total Town Car Service! We'd love your feedback:\n\nhttps://g.page/r/CTPz6LhEWh5bEBM/review\n\nIt takes less than a minute and means the world to us.\nReply STOP to opt out`, centralToUTCISO(rideEnd))
-            .then(r => ({ purpose: 'review_sms', kind: 'sms', sid: r.sid, status: r.status })));
-        }
-      }
-
-      if (!jobs.length) return { summary: 'none_scheduled', items: [] };
-      const items = await Promise.all(jobs);
-      const summary = items.map(it => `${it.purpose}: ${it.status}`).join(', ');
-      return { summary, items };
-    } catch (e) {
-      console.error('Reminder scheduling error:', e);
-      return { summary: 'error', items: [] };
-    }
-  };
+  const remindersTask = () => scheduleReminders(booking, { estimatedMinutes, pickupLink, fromEmail: FROM_EMAIL, fromName: FROM_NAME, ownerPhone: OWNER_PHONE });
 
   // If this customer left a quote lead with a scheduled follow-up text, cancel it: they booked.
   const leadTask = async () => {
@@ -578,11 +607,18 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
           carSeats: carSeats,
           smsConsent: booking.smsConsent === true || booking.smsConsent === 'true'
         },
+        distance: distance || 0,
+        duration: booking.duration || 0,
+        estimatedMinutes,
+        confirmedByCustomer: false,
+        editCount: 0,
+        edits: [],
         scheduledItems: remindersResult.items || [],
         calendarEventId: google.calendarEventId,
         notificationResults: { email, sms, calendar, sheet, reminders }
       });
       stored = 'saved';
+      await addPhoneIndex(booking.phone, booking.confirmationNumber);
     } catch (e) {
       console.error('Blob store error:', e);
       stored = 'error';
@@ -678,6 +714,7 @@ export default async (req, context) => {
     return jsonResponse(200, {
       success: true,
       confirmationNumber: booking.confirmationNumber,
+      manageUrl: manageUrl(booking.confirmationNumber),
       results
     });
   } catch (error) {
@@ -758,7 +795,7 @@ function generateOwnerText(booking, total, hasDiscount, discount, promoCode, isR
   return lines.filter(Boolean).join('\n');
 }
 
-function generateCustomerEmail(booking, total, baseFare, discount, tip, processingFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, roundTripDiscount, returnDate, returnTime, hasMeetAndGreet, meetAndGreetPrice, calendarLink) {
+function generateCustomerEmail(booking, total, baseFare, discount, tip, processingFee, hasDiscount, hasProcessingFee, promoCode, distance, estimatedMinutes, pickupLink, dropoffLink, isRoundTrip, roundTripDiscount, returnDate, returnTime, hasMeetAndGreet, meetAndGreetPrice, calendarLink, links = {}) {
   const hasTip = parseFloat(tip.replace('$', '')) > 0;
   const durationText = estimatedMinutes < 60
     ? `~${estimatedMinutes} minutes`
@@ -920,6 +957,21 @@ function generateCustomerEmail(booking, total, baseFare, discount, tip, processi
             <div style="color: #a0a0a0; font-size: 12px; margin-top: 8px;">Opens in Google Calendar</div>
         </div>` : ''}
 
+        ${links.manage ? `
+        <!-- MANAGE -->
+        <div style="text-align: center; padding: 0 0 20px;">
+            <a href="${links.manage}" style="display: inline-block; color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.45); padding: 12px 26px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px;">Change time or details</a>
+            <div style="color: #a0a0a0; font-size: 12px; margin-top: 8px;">Move the pickup, fix a flight number or update your contact info, up to 24 hours before pickup.</div>
+        </div>` : ''}
+
+        ${links.returnUrl ? `
+        <!-- RETURN TRIP -->
+        <div style="background: linear-gradient(135deg, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.35); border-radius: 12px; padding: 22px; margin: 5px 0 25px; text-align: center;">
+            <div style="color: #D4AF37; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Flying back?</div>
+            <div style="color: #ffffff; font-size: 15px; line-height: 1.5; margin-bottom: 14px;">We've saved your trip. Book the ride home in one tap and your details are already filled in.</div>
+            <a href="${links.returnUrl}" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #b8962e 100%); color: #0d0d0d; padding: 13px 30px; text-decoration: none; border-radius: 25px; font-weight: 700; font-size: 15px;">Book my return ride</a>
+        </div>` : ''}
+
         <!-- CONTACT -->
         <div style="text-align: center; padding: 25px 0; border-top: 1px solid #333;">
             <div style="color: #ffffff; font-size: 16px; margin-bottom: 10px;">Questions or changes?</div>
@@ -1070,7 +1122,7 @@ function generateOwnerEmail(booking, total, baseFare, discount, tip, processingF
 </div>`;
 }
 
-function generateReminderEmail(booking, hoursBeforeText, pickupLink) {
+export function generateReminderEmail(booking, hoursBeforeText, pickupLink, manage = null) {
   return `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d;">
     <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); padding: 40px 30px; text-align: center; border-bottom: 2px solid #D4AF37;">
@@ -1096,6 +1148,7 @@ function generateReminderEmail(booking, hoursBeforeText, pickupLink) {
             <a href="${pickupLink}" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #b8962e 100%); color: #0d0d0d; padding: 14px 30px; text-decoration: none; border-radius: 25px; font-weight: 700; font-size: 15px;">View Pickup Location</a>
         </div>
         <div style="text-align: center; padding: 20px 0; border-top: 1px solid #333;">
+            ${manage ? `<div style="margin-bottom: 14px;"><a href="${manage}" style="display: inline-block; color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.45); padding: 10px 22px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 13px;">Change time or details</a></div>` : ''}
             <div style="color: #ffffff; font-size: 15px; margin-bottom: 8px;">Need to make changes?</div>
             <a href="tel:6129995382" style="color: #D4AF37; font-size: 22px; font-weight: 700; text-decoration: none;">(612) 999-5382</a>
         </div>
@@ -1107,7 +1160,7 @@ function generateReminderEmail(booking, hoursBeforeText, pickupLink) {
 </div>`;
 }
 
-function generateReviewEmail(booking) {
+export function generateReviewEmail(booking, againUrl = 'https://totaltowncar.com/book-a-ride.html') {
   return `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d;">
     <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); padding: 40px 30px; text-align: center; border-bottom: 2px solid #D4AF37;">
@@ -1132,8 +1185,8 @@ function generateReviewEmail(booking) {
             <div style="color: #888; font-size: 12px; margin-top: 5px;">Confirmation: ${booking.confirmationNumber}</div>
         </div>
         <div style="text-align: center; padding: 25px 0; border-top: 1px solid #333; margin-top: 25px;">
-            <div style="color: #ffffff; font-size: 15px; margin-bottom: 5px;">Book your next ride</div>
-            <a href="https://totaltowncar.com/book-a-ride.html" style="color: #D4AF37; font-size: 16px; font-weight: 700; text-decoration: none;">totaltowncar.com</a>
+            <div style="color: #ffffff; font-size: 15px; margin-bottom: 10px;">Need a ride again? Your details are saved.</div>
+            <a href="${againUrl}" style="display: inline-block; color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.45); padding: 12px 26px; border-radius: 25px; text-decoration: none; font-weight: 700; font-size: 15px;">Book again in one tap</a>
         </div>
     </div>
     <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-top: 1px solid #333;">

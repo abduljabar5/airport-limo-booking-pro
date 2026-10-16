@@ -213,9 +213,11 @@
 
     function statusBadge(rec) {
         if (rec.cancelled) return '<span class="text-[10px] tracking-luxe uppercase bg-red-500/15 text-red-300 px-2 py-0.5 rounded">Cancelled</span>';
+        const extras = (rec.confirmedByCustomer ? ' <span class="text-[10px] tracking-luxe uppercase bg-gold-400/15 text-gold-300 px-2 py-0.5 rounded">Customer confirmed</span>' : '')
+            + (rec.editCount ? ` <span class="text-[10px] tracking-luxe uppercase bg-sky-500/15 text-sky-300 px-2 py-0.5 rounded">Edited ×${rec.editCount}</span>` : '');
         const tt = tripTime(rec.booking);
-        if (tt && tt < Date.now()) return '<span class="text-[10px] tracking-luxe uppercase bg-obsidian-700 text-obsidian-300 px-2 py-0.5 rounded">Past</span>';
-        return '<span class="text-[10px] tracking-luxe uppercase bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded">Upcoming</span>';
+        if (tt && tt < Date.now()) return '<span class="text-[10px] tracking-luxe uppercase bg-obsidian-700 text-obsidian-300 px-2 py-0.5 rounded">Past</span>' + extras;
+        return '<span class="text-[10px] tracking-luxe uppercase bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded">Upcoming</span>' + extras;
     }
 
     // Live countdown / "X ago" string. For cancelled bookings, returns null.
