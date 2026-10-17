@@ -6,6 +6,7 @@
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
 import { scheduleAllReminders } from './process-booking.js';
+import { twilioBasicAuth } from '../lib/booking-links.js';
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || 'totaltowncarservice@gmail.com'; // override via env
 const OWNER_PHONE = process.env.OWNER_PHONE || '+16129995382'; // override via env
@@ -47,7 +48,7 @@ export async function cancelResendEmail(apiKey, emailId) {
 export async function cancelTwilioMessage(accountSid, authToken, messageSid) {
   if (!messageSid) return { status: 'no_sid' };
   try {
-    const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+    const auth = twilioBasicAuth() || Buffer.from(`${accountSid}:${authToken}`).toString('base64');
     const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages/${messageSid}.json`, {
       method: 'POST',
       headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -295,7 +296,7 @@ export default async (req, context) => {
     const refundLine = customer.paymentMethod === 'online' ? `\nOnline payments refund within 5-10 business days.` : '';
     const body = `TOTAL TOWN CAR SERVICE\n\nYour booking #${rec.confirmationNumber} for ${customer.date || ''} at ${customer.time || ''} has been cancelled.${reasonLine}${refundLine}\n\nQuestions? (612) 999-5382`;
     try {
-      const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+      const auth = twilioBasicAuth();
       const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -309,7 +310,7 @@ export default async (req, context) => {
     if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) return 'skipped';
     const body = `🚫 BOOKING CANCELLED\n\n#${rec.confirmationNumber}\n${customer.name || ''}\n${customer.date || ''} at ${customer.time || ''}\n${customer.pickup || ''} → ${customer.dropoff || ''}${customer.paymentMethod === 'online' ? '\n\n⚠️ REFUND THE PAYMENT IN STRIPE' : ''}`;
     try {
-      const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+      const auth = twilioBasicAuth();
       const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -362,7 +363,7 @@ export default async (req, context) => {
 async function twilioSend(to, body) {
   if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !to) return 'skipped';
   try {
-    const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+    const auth = twilioBasicAuth();
     const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
       method: 'POST',
       headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },

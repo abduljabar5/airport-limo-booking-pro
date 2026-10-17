@@ -3,6 +3,7 @@
 // Twilio Messaging Service is configured, schedules ONE text 30 minutes later with the
 // quote and a resume link. process-booking.js cancels that text if the booking completes.
 import { getStore } from '@netlify/blobs';
+import { twilioBasicAuth } from '../lib/booking-links.js';
 
 const SITE = 'https://totaltowncar.com';
 const DELAY_MIN = 30;
@@ -57,7 +58,7 @@ export default async (req) => {
     const body = `Total Town Car Service: your quote for ${route} on ${lead.date} is $${lead.fare}${lead.vehicle ? ` (${lead.vehicle})` : ''}. Finish booking in a minute: ${SITE}/book-a-ride.html?continue=true\nQuestions? (612) 999-5382\nReply STOP to opt out`;
     const sendAt = new Date(Date.now() + DELAY_MIN * 60 * 1000).toISOString();
     try {
-      const auth = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64');
+      const auth = twilioBasicAuth();
       const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`, {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },

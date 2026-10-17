@@ -2,7 +2,7 @@
 // Uses Resend for emails, Twilio for SMS, Google Calendar API for events
 import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
-import { manageUrl, bookAgainUrl, returnTripUrl, isAirportAddress, normalizePhone, addPhoneIndex } from '../lib/booking-links.js';
+import { manageUrl, bookAgainUrl, returnTripUrl, isAirportAddress, normalizePhone, addPhoneIndex, twilioBasicAuth } from '../lib/booking-links.js';
 
 const DEFAULT_OWNER_PHONE = process.env.OWNER_PHONE || '+16129995382';
 const DEFAULT_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'bookings@totaltowncar.com';
@@ -159,7 +159,7 @@ function generateCalendarLink(booking, estimatedMinutes) {
 }
 
 export async function scheduleSmsTwilio(accountSid, authToken, messagingServiceSid, to, body, sendAt) {
-  const twilioAuth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+  const twilioAuth = twilioBasicAuth() || Buffer.from(`${accountSid}:${authToken}`).toString('base64');
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
     method: 'POST',
     headers: { 'Authorization': `Basic ${twilioAuth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -495,7 +495,7 @@ Payment: ${booking.paymentMethod === 'online' ? 'Paid Online' : 'Cash'}${booking
 
 Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.confirmationNumber || '')}${process.env.CANCEL_ADMIN_TOKEN ? `&token=${encodeURIComponent(process.env.CANCEL_ADMIN_TOKEN)}` : ''}`;
 
-    const twilioAuth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+    const twilioAuth = twilioBasicAuth();
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`;
     const sendSms = (to, body) => fetch(twilioUrl, {
       method: 'POST',
@@ -581,7 +581,7 @@ Admin: https://totaltowncar.com/admin.html?focus=${encodeURIComponent(booking.co
       if (!lead) return 'none';
       let cancelled = 'n/a';
       if (lead.followUp && lead.followUp.sid && lead.followUp.status === 'scheduled' && process.env.TWILIO_ACCOUNT_SID) {
-        const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+        const auth = twilioBasicAuth();
         const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages/${lead.followUp.sid}.json`, {
           method: 'POST', headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ Status: 'canceled' })
