@@ -27,12 +27,16 @@ function tokensMatch(a, b) {
 }
 
 // ----- Resend / Twilio cancellation helpers -----
+// Cancelling a scheduled email needs a full-access Resend key; the sending key
+// (RESEND_API_KEY) is restricted to sending only. RESEND_CANCEL_API_KEY is used
+// here and nowhere else, so the broader key stays out of the sending paths.
 export async function cancelResendEmail(apiKey, emailId) {
   if (!emailId) return { status: 'no_id' };
+  const key = process.env.RESEND_CANCEL_API_KEY || apiKey;
   try {
     const r = await fetch(`https://api.resend.com/emails/${emailId}/cancel`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${apiKey}` }
+      headers: { 'Authorization': `Bearer ${key}` }
     });
     if (r.ok) return { status: 'cancelled' };
     if (r.status === 404) return { status: 'not_found', error: `id ${emailId} not found in Resend` };
