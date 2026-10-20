@@ -257,6 +257,13 @@
         return { ...b, date: b.returnDate, time: b.returnTime, pickup: b.dropoff, dropoff: b.pickup, stops: [] };
     }
 
+    // Address as a link that opens the Maps app on a phone (Google Maps on
+    // Android and iOS when installed, otherwise the web map).
+    function mapLink(addr, label) {
+        if (!addr || addr === 'As directed') return escapeHtml(label || addr || '');
+        return `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" rel="noopener" class="text-gold-400 hover:text-gold-300 underline decoration-gold-400/30 underline-offset-2" onclick="event.stopPropagation()">${escapeHtml(label || addr)}</a>`;
+    }
+
     // "Fri, Oct 23, 2026" -> "Fri, Oct 23"
     function shortDate(d) { return String(d || '').replace(/,\s*\d{4}$/, ''); }
 
@@ -301,9 +308,9 @@
             ? `<span class="text-emerald-300">Yes${rec.confirmedAt ? ' · ' + escapeHtml(rec.confirmedAt.slice(0, 16).replace('T', ' ')) + ' UTC' : ''}</span>`
             : (full.paymentMethod === 'online' ? '<span class="text-obsidian-400">Not needed (paid)</span>' : '<span class="text-amber-300">Not yet</span>');
         const trip = [
-            row('Pickup', escapeHtml(b.pickup)),
-            stops.length ? row('Stops', stops.map(escapeHtml).join('<br>')) : '',
-            row('Dropoff', escapeHtml(b.dropoff || (full.serviceType === 'hourly' ? 'As directed' : ''))),
+            row('Pickup', mapLink(b.pickup)),
+            stops.length ? row('Stops', stops.map(x => mapLink(x)).join('<br>')) : '',
+            row('Dropoff', mapLink(b.dropoff || (full.serviceType === 'hourly' ? 'As directed' : ''))),
             row('Vehicle', `${escapeHtml(full.vehicle)} · ${escapeHtml(full.passengers || '1')} passenger${(parseInt(full.passengers) || 1) > 1 ? 's' : ''}${full.carSeats ? ` · ${full.carSeats} car seat${full.carSeats > 1 ? 's' : ''}` : ''}${full.meetAndGreet ? ' · Meet &amp; greet' : ''}`),
             full.serviceType === 'hourly' ? row('Service', `Hourly · ${escapeHtml(full.hours)} hrs as directed`) : row('Distance', rec.distance ? `${escapeHtml(rec.distance)} mi · about ${escapeHtml(rec.estimatedMinutes || Math.round(rec.distance * 1.5))} min` : ''),
             full.roundTrip ? row('Round trip', `${leg === 'return' ? 'Outbound' : 'Return'}: ${escapeHtml(leg === 'return' ? full.date + ' at ' + full.time : full.returnDate + ' at ' + full.returnTime)}${rec.returnCancelled ? ' <span class="text-red-300">(return cancelled)</span>' : ''}`) : '',
@@ -381,7 +388,7 @@
                         <span class="font-mono text-[11px] text-gold-400/80">${escapeHtml(rec.confirmationNumber)}</span>
                     </div>
                     <div class="text-sm text-white mt-2">${escapeHtml(b.name || '(no name)')} · <a href="tel:${escapeHtml(String(b.phone || '').replace(/\D/g, ''))}" class="text-gold-400 hover:text-gold-300" onclick="event.stopPropagation()">${escapeHtml(b.phone || '')}</a> · ${escapeHtml(rec.booking.vehicle || '')}</div>
-                    <div class="text-xs text-obsidian-300 truncate mt-1">${escapeHtml(shortLoc(b.pickup))} → ${escapeHtml(shortLoc(b.dropoff || 'As directed'))}</div>
+                    <div class="text-xs text-obsidian-300 truncate mt-1">${mapLink(b.pickup, shortLoc(b.pickup))} → ${mapLink(b.dropoff || 'As directed', shortLoc(b.dropoff || 'As directed'))}</div>
                     ${otherLeg}
                 </div>
                 <div class="flex flex-col items-end gap-2 flex-shrink-0">
