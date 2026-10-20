@@ -1061,8 +1061,8 @@ function generateOwnerEmail(booking, total, baseFare, discount, tip, processingF
         </div>
         ${hasDiscount ? `<div style="margin-top: 10px; color: #ff6b6b; font-size: 13px;">⚠️ Promo code used: ${promoCode}</div>` : ''}
         <div style="margin-top: 15px;">
-            <span style="background-color: ${booking.paymentMethod === 'online' ? '#D4AF37' : '#ff9900'}; color: #0d0d0d; padding: 10px 25px; border-radius: 25px; font-size: 14px; font-weight: 800; display: inline-block;">
-                ${booking.paymentMethod === 'online' ? '✅ PAID ONLINE' : '💵 COLLECT FROM CUSTOMER'}
+            <span style="background-color: ${booking.paymentMethod === 'online' ? '#D4AF37' : '#dc2626'}; color: ${booking.paymentMethod === 'online' ? '#0d0d0d' : '#ffffff'}; padding: 10px 25px; border-radius: 25px; font-size: 14px; font-weight: 800; display: inline-block;">
+                ${booking.paymentMethod === 'online' ? '✅ PAID ONLINE' : `💵 COLLECT ${total} FROM CUSTOMER`}
             </span>
         </div>
     </div>

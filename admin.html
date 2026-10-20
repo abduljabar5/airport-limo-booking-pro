@@ -296,7 +296,7 @@
         const scheduled = (rec.scheduled || []).filter(x => /:scheduled$/.test(x)).length;
         const payment = full.paymentMethod === 'online'
             ? '<span class="text-emerald-300 font-semibold">Paid online</span>'
-            : '<span class="text-amber-300 font-semibold">Collect from customer (cash / card to driver)</span>';
+            : '<span class="text-red-300 font-semibold">💵 Collect from customer (cash / card to driver)</span>';
         const confirmed = rec.confirmedByCustomer
             ? `<span class="text-emerald-300">Yes${rec.confirmedAt ? ' · ' + escapeHtml(rec.confirmedAt.slice(0, 16).replace('T', ' ')) + ' UTC' : ''}</span>`
             : (full.paymentMethod === 'online' ? '<span class="text-obsidian-400">Not needed (paid)</span>' : '<span class="text-amber-300">Not yet</span>');
@@ -357,7 +357,7 @@
             : '';
         const payBadge = rec.booking.paymentMethod === 'online'
             ? '<span class="text-[10px] tracking-luxe uppercase bg-emerald-500/10 text-emerald-300 px-2 py-0.5 rounded">Paid</span>'
-            : '<span class="text-[10px] tracking-luxe uppercase bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded">Collect $' + escapeHtml(rec.booking.total) + '</span>';
+            : '<span class="text-[10px] tracking-luxe uppercase bg-red-500/20 text-red-200 ring-1 ring-red-400/40 font-semibold px-2 py-0.5 rounded">💵 Collect $' + escapeHtml(rec.booking.total) + '</span>';
         const otherLeg = leg === 'out' && rec.booking && rec.booking.roundTrip && rec.booking.returnDate
             ? `<div class="text-[11px] text-obsidian-500 mt-1">↩ Return ${escapeHtml(rec.booking.returnDate)} at ${escapeHtml(rec.booking.returnTime || '')}${rec.returnCancelled ? ' (cancelled)' : ''}</div>`
             : (leg === 'return' ? `<div class="text-[11px] text-obsidian-500 mt-1">↪ Outbound ${escapeHtml(rec.booking.date)} at ${escapeHtml(rec.booking.time || '')}</div>` : '');
