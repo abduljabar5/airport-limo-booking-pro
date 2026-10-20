@@ -48,7 +48,11 @@ export default async (req, context) => {
             confirmedByCustomer: !!rec.confirmedByCustomer,
             editCount: rec.editCount || 0,
             returnCancelled: !!rec.returnCancelled,
-            scheduled: (rec.scheduledItems || []).map((i) => `${i.purpose}:${i.status || ''}`),
+            scheduled: (rec.scheduledItems || []).map((i) => `${i.leg && i.leg !== 'out' ? i.leg + ':' : ''}${i.purpose}:${i.status || ''}`),
+            confirmedAt: rec.confirmedAt || null,
+            edits: rec.edits || [],
+            estimatedMinutes: rec.estimatedMinutes || 0,
+            distance: rec.distance || 0,
             booking: {
               name: rec.booking?.name || '',
               email: rec.booking?.email || '',
@@ -63,7 +67,15 @@ export default async (req, context) => {
               paymentMethod: rec.booking?.paymentMethod || '',
               roundTrip: !!rec.booking?.roundTrip,
               returnDate: rec.booking?.returnDate || '',
-              returnTime: rec.booking?.returnTime || ''
+              returnTime: rec.booking?.returnTime || '',
+              flight: rec.booking?.flight || '',
+              notes: rec.booking?.notes || '',
+              stops: Array.isArray(rec.booking?.stops) ? rec.booking.stops : [],
+              carSeats: parseInt(rec.booking?.carSeats) || 0,
+              serviceType: rec.booking?.serviceType || 'transfer',
+              hours: rec.booking?.hours || 0,
+              meetAndGreet: !!rec.booking?.meetAndGreet,
+              smsConsent: rec.booking?.smsConsent === true
             }
           };
         } catch (e) {

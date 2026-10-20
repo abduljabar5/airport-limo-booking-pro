@@ -49,7 +49,7 @@
         <!-- Auth gate -->
         <section id="auth-gate" class="hidden bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-6 max-w-xl mx-auto">
             <h2 class="text-red-400 font-semibold mb-2">Admin token required</h2>
-            <p class="text-sm text-obsidian-300 mb-4">Append <code class="text-gold-400">?k=YOUR_TOKEN</code> to the URL, or paste it below to save in this browser.</p>
+            <p class="text-sm text-obsidian-300 mb-4">Append <code class="text-gold-400">?token=YOUR_TOKEN</code> to the URL, or paste it below to save in this browser.</p>
             <div class="flex gap-2">
                 <input id="manual-token" type="password" placeholder="Paste admin token" class="flex-1 px-4 py-3 bg-obsidian-800/40 border border-white/[0.06] rounded-xl text-white placeholder-obsidian-600 focus:outline-none focus:border-gold-400/30 text-sm">
                 <button onclick="saveToken()" class="px-5 py-3 bg-gold-400 hover:bg-gold-500 text-obsidian-950 rounded-xl font-medium text-sm">Save</button>
@@ -61,7 +61,7 @@
             <div class="flex items-end justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-display font-semibold mb-1">Bookings</h1>
-                    <p class="text-obsidian-400 font-light text-sm">Click <strong class="text-red-300">Cancel</strong> on any row to send the customer a cancellation email + SMS, cancel scheduled reminders, and remove the calendar event.</p>
+                    <p class="text-obsidian-400 font-light text-sm">Click a card for full details and the route map. <strong class="text-red-300">Cancel</strong> sends the customer a cancellation email + SMS, cancels scheduled reminders, and removes the calendar event.</p>
                 </div>
                 <button type="button" onclick="clearToken()" class="text-[11px] text-obsidian-500 hover:text-gold-400 transition-colors uppercase tracking-luxe">Sign out</button>
             </div>
@@ -129,12 +129,14 @@
 
     function getToken() {
         const url = new URLSearchParams(window.location.search);
-        const fromUrl = url.get('k');
+        // The owner's booking alerts link here with ?token=; older links used ?k=.
+        const fromUrl = url.get('k') || url.get('token');
         if (fromUrl) {
             localStorage.setItem(TOKEN_STORAGE_KEY, fromUrl);
             // Strip just the token from the URL so it doesn't sit in history/screenshots.
             // Preserve any other params (e.g., focus=TTC-XXXXXX from an email link).
             url.delete('k');
+            url.delete('token');
             const newSearch = url.toString();
             const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '');
             window.history.replaceState({}, '', newUrl);
@@ -252,7 +254,81 @@
     // listed on its own date with the route reversed.
     function returnLeg(b) {
         if (!b || !b.roundTrip || !b.returnDate) return null;
-        return { ...b, date: b.returnDate, time: b.returnTime, pickup: b.dropoff, dropoff: b.pickup };
+        return { ...b, date: b.returnDate, time: b.returnTime, pickup: b.dropoff, dropoff: b.pickup, stops: [] };
+    }
+
+    // "Fri, Oct 23, 2026" -> "Fri, Oct 23"
+    function shortDate(d) { return String(d || '').replace(/,\s*\d{4}$/, ''); }
+
+    // Countdown pill: text plus a class set that reflects urgency.
+    //   past            grey "done"
+    //   > 24h           muted
+    //   2h to 24h       amber
+    //   < 2h            red, pulsing
+    function countdownState(tt, cancelled) {
+        if (cancelled || !tt) return { text: '', cls: 'hidden' };
+        const diff = tt - Date.now();
+        const base = 'countdown inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold tracking-wide whitespace-nowrap';
+        if (diff <= 0) {
+            const m = Math.floor(-diff / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
+            const text = d >= 1 ? `${d}d ago` : h >= 1 ? `${h}h ago` : `${m}m ago`;
+            return { text, cls: `${base} bg-obsidian-800 text-obsidian-400` };
+        }
+        const minutes = Math.floor(diff / 60000), hours = Math.floor(minutes / 60), days = Math.floor(hours / 24);
+        if (days >= 1) return { text: `in ${days}d ${hours % 24}h`, cls: `${base} bg-obsidian-800 text-obsidian-200` };
+        if (hours >= 2) return { text: `in ${hours}h ${minutes % 60}m`, cls: `${base} bg-amber-500/15 text-amber-300 ring-1 ring-amber-400/30` };
+        if (minutes >= 1) return { text: `in ${hours >= 1 ? `${hours}h ` : ''}${minutes % 60}m`, cls: `${base} bg-red-500/20 text-red-200 ring-1 ring-red-400/40 animate-pulse` };
+        return { text: 'NOW', cls: `${base} bg-red-500/30 text-red-100 ring-1 ring-red-400/60 animate-pulse` };
+    }
+
+    function mapsEmbedUrl(b) {
+        const stops = Array.isArray(b.stops) ? b.stops.filter(Boolean) : [];
+        const dest = b.dropoff && b.dropoff !== 'As directed' ? b.dropoff : b.pickup;
+        const daddr = [...stops, dest].join(' to:');
+        return `https://www.google.com/maps?output=embed&saddr=${encodeURIComponent(b.pickup || '')}&daddr=${encodeURIComponent(daddr)}`;
+    }
+
+    function detailHtml(rec, leg, b) {
+        const full = rec.booking || {};
+        const row = (k, v, cls = '') => v ? `<div class="flex gap-3 py-1.5 border-b border-white/[0.04]"><dt class="w-28 flex-shrink-0 text-[11px] uppercase tracking-luxe text-obsidian-500 pt-0.5">${k}</dt><dd class="text-sm text-white ${cls}">${v}</dd></div>` : '';
+        const stops = Array.isArray(b.stops) ? b.stops.filter(Boolean) : [];
+        const edits = (rec.edits || []).map(e => `<div class="text-xs text-obsidian-400">${escapeHtml((e.at || '').slice(0, 16).replace('T', ' '))} UTC: ${escapeHtml((e.changes || []).join('; '))}</div>`).join('');
+        const scheduled = (rec.scheduled || []).filter(x => /:scheduled$/.test(x)).length;
+        const payment = full.paymentMethod === 'online'
+            ? '<span class="text-emerald-300 font-semibold">Paid online</span>'
+            : '<span class="text-amber-300 font-semibold">Collect from customer (cash / card to driver)</span>';
+        const confirmed = rec.confirmedByCustomer
+            ? `<span class="text-emerald-300">Yes${rec.confirmedAt ? ' · ' + escapeHtml(rec.confirmedAt.slice(0, 16).replace('T', ' ')) + ' UTC' : ''}</span>`
+            : (full.paymentMethod === 'online' ? '<span class="text-obsidian-400">Not needed (paid)</span>' : '<span class="text-amber-300">Not yet</span>');
+        const trip = [
+            row('Pickup', escapeHtml(b.pickup)),
+            stops.length ? row('Stops', stops.map(escapeHtml).join('<br>')) : '',
+            row('Dropoff', escapeHtml(b.dropoff || (full.serviceType === 'hourly' ? 'As directed' : ''))),
+            row('Vehicle', `${escapeHtml(full.vehicle)} · ${escapeHtml(full.passengers || '1')} passenger${(parseInt(full.passengers) || 1) > 1 ? 's' : ''}${full.carSeats ? ` · ${full.carSeats} car seat${full.carSeats > 1 ? 's' : ''}` : ''}${full.meetAndGreet ? ' · Meet &amp; greet' : ''}`),
+            full.serviceType === 'hourly' ? row('Service', `Hourly · ${escapeHtml(full.hours)} hrs as directed`) : row('Distance', rec.distance ? `${escapeHtml(rec.distance)} mi · about ${escapeHtml(rec.estimatedMinutes || Math.round(rec.distance * 1.5))} min` : ''),
+            full.roundTrip ? row('Round trip', `${leg === 'return' ? 'Outbound' : 'Return'}: ${escapeHtml(leg === 'return' ? full.date + ' at ' + full.time : full.returnDate + ' at ' + full.returnTime)}${rec.returnCancelled ? ' <span class="text-red-300">(return cancelled)</span>' : ''}`) : '',
+            row('Flight', escapeHtml(full.flight)),
+            row('Notes', escapeHtml(full.notes), 'whitespace-pre-wrap')
+        ].join('');
+        const customer = [
+            row('Name', escapeHtml(full.name)),
+            row('Phone', `<a href="tel:${escapeHtml(String(full.phone || '').replace(/\D/g, ''))}" class="text-gold-400 hover:text-gold-300">${escapeHtml(full.phone)}</a>${full.smsConsent ? '' : ' <span class="text-[10px] text-obsidian-500">(no SMS consent)</span>'}`),
+            row('Email', `<a href="mailto:${escapeHtml(full.email)}" class="text-gold-400 hover:text-gold-300 break-all">${escapeHtml(full.email)}</a>`),
+            row('Payment', `${payment} · $${escapeHtml(full.total)}`),
+            row('Confirmed by customer', confirmed),
+            row('Reminders', scheduled ? `${scheduled} scheduled` : '<span class="text-obsidian-400">none scheduled</span>'),
+            row('Booked', rec.createdAt ? escapeHtml(rec.createdAt.slice(0, 16).replace('T', ' ')) + ' UTC' : ''),
+            rec.editCount ? row(`Edited ×${rec.editCount}`, edits) : '',
+            rec.cancelled ? row('Cancelled', `${escapeHtml((rec.cancelledAt || '').slice(0, 16).replace('T', ' '))} UTC${rec.cancelReason ? ' · ' + escapeHtml(rec.cancelReason) : ''}`, 'text-red-300') : ''
+        ].join('');
+        return `
+            <div class="grid md:grid-cols-2 gap-x-8 gap-y-2">
+                <dl><div class="text-[10px] uppercase tracking-luxe text-gold-400 mb-1">Trip${leg === 'return' ? ' · return leg' : ''}</div>${trip}</dl>
+                <dl><div class="text-[10px] uppercase tracking-luxe text-gold-400 mb-1">Customer</div>${customer}</dl>
+            </div>
+            <div class="mt-4 rounded-xl overflow-hidden border border-white/[0.06] bg-obsidian-900/60">
+                <iframe class="trip-map w-full h-72 md:h-80" data-src="${escapeHtml(mapsEmbedUrl(b))}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Route map"></iframe>
+            </div>`;
     }
 
     function renderRow(entry) {
@@ -260,10 +336,9 @@
         const leg = entry.leg || 'out';
         const b = leg === 'return' ? returnLeg(rec.booking) : (rec.booking || {});
         const legCancelled = rec.cancelled || (leg === 'return' && rec.returnCancelled);
-        const legPast = !legCancelled && tripTime(b) && tripTime(b) < Date.now();
-        const fade = legCancelled ? 'opacity-50' : '';
-        // No cancel button on past legs: cancelling after the fact would email
-        // and text the customer about a ride that already happened.
+        const tt = entry.t || tripTime(b);
+        const legPast = !legCancelled && tt && tt < Date.now();
+        const fade = legCancelled ? 'opacity-50' : (legPast ? 'opacity-70' : '');
         const cancelBtn = legCancelled
             ? `<span class="text-[11px] text-obsidian-600 italic">cancelled</span>`
             : legPast
@@ -272,38 +347,49 @@
                 ? `<button data-conf="${escapeHtml(rec.confirmationNumber)}" data-leg="return" class="row-cancel text-[11px] uppercase tracking-luxe px-3 py-1.5 rounded-md bg-red-500/15 hover:bg-red-500/25 text-red-200 transition-colors">Cancel return</button>`
                 : `<button data-conf="${escapeHtml(rec.confirmationNumber)}" data-leg="all" class="row-cancel text-[11px] uppercase tracking-luxe px-3 py-1.5 rounded-md bg-red-500/15 hover:bg-red-500/25 text-red-200 transition-colors">Cancel</button>`;
 
-        const cd = countdownText({ ...rec, booking: b, cancelled: legCancelled });
-        const cdClass = cd.urgent ? 'text-amber-300 font-semibold' : 'text-obsidian-400';
-        const countdownHtml = cd.text
-            ? `<span class="text-obsidian-600 mx-1">·</span><span class="countdown ${cdClass}" data-tt="${tripTime(b)}" data-cancelled="${legCancelled ? '1' : '0'}">${escapeHtml(cd.text)}</span>`
-            : '';
+        const cd = countdownState(tt, legCancelled);
         const legBadge = leg === 'return'
             ? '<span class="text-[10px] tracking-luxe uppercase bg-gold-400/15 text-gold-300 px-2 py-0.5 rounded">Return leg</span>'
             : (rec.booking && rec.booking.roundTrip ? '<span class="text-[10px] tracking-luxe uppercase bg-gold-400/10 text-gold-300/80 px-2 py-0.5 rounded">Round trip</span>' : '');
+        const conflicts = (entry.conflicts || []);
+        const conflictBadge = conflicts.length
+            ? `<span class="text-[11px] font-semibold uppercase tracking-wide bg-red-500/20 text-red-200 ring-1 ring-red-400/40 px-2.5 py-1 rounded-full">⚠ Same time as ${conflicts.map(escapeHtml).join(', ')}</span>`
+            : '';
+        const payBadge = rec.booking.paymentMethod === 'online'
+            ? '<span class="text-[10px] tracking-luxe uppercase bg-emerald-500/10 text-emerald-300 px-2 py-0.5 rounded">Paid</span>'
+            : '<span class="text-[10px] tracking-luxe uppercase bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded">Collect $' + escapeHtml(rec.booking.total) + '</span>';
         const otherLeg = leg === 'out' && rec.booking && rec.booking.roundTrip && rec.booking.returnDate
             ? `<div class="text-[11px] text-obsidian-500 mt-1">↩ Return ${escapeHtml(rec.booking.returnDate)} at ${escapeHtml(rec.booking.returnTime || '')}${rec.returnCancelled ? ' (cancelled)' : ''}</div>`
             : (leg === 'return' ? `<div class="text-[11px] text-obsidian-500 mt-1">↪ Outbound ${escapeHtml(rec.booking.date)} at ${escapeHtml(rec.booking.time || '')}</div>` : '');
+        const ring = conflicts.length ? 'border-red-500/40 ring-1 ring-red-500/30' : 'border-white/[0.04] hover:border-white/10';
 
         return `
-        <div class="bookings-row ${fade} bg-obsidian-900/30 border border-white/[0.04] rounded-xl p-4 hover:border-white/10 transition-colors" data-conf="${escapeHtml(rec.confirmationNumber)}">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="bookings-row ${fade} bg-obsidian-900/30 border ${ring} rounded-xl p-4 transition-colors cursor-pointer" data-conf="${escapeHtml(rec.confirmationNumber)}" data-leg="${leg}">
+            <div class="flex items-start justify-between gap-4">
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-3 mb-1 flex-wrap">
-                        <span class="font-mono text-sm text-gold-400">${escapeHtml(rec.confirmationNumber)}</span>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <div class="text-xl md:text-2xl font-semibold text-white tracking-tight leading-none">
+                            ${escapeHtml(shortDate(b.date))} <span class="text-gold-400">${escapeHtml(b.time || '')}</span>
+                        </div>
+                        <span class="${cd.cls}" data-tt="${tt || ''}" data-cancelled="${legCancelled ? '1' : '0'}">${escapeHtml(cd.text)}</span>
+                        ${conflictBadge}
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap mt-2">
                         ${statusBadge(rec, leg)}
                         ${legBadge}
-                        <span class="text-xs text-obsidian-500">$${escapeHtml(rec.booking.total)}${rec.booking.paymentMethod === 'online' ? ' · paid' : ' · cash'}</span>
+                        ${payBadge}
+                        <span class="font-mono text-[11px] text-gold-400/80">${escapeHtml(rec.confirmationNumber)}</span>
                     </div>
-                    <div class="text-sm text-white truncate">${escapeHtml(b.name || '(no name)')} · ${escapeHtml(b.phone || '')}</div>
-                    <div class="text-xs text-obsidian-400 truncate mt-1">
-                        <span class="text-obsidian-300">${escapeHtml(b.date || '')}</span>${b.time ? ` at <span class="text-obsidian-300">${escapeHtml(b.time)}</span>` : ''}${countdownHtml}
-                        <span class="text-obsidian-600 mx-1">·</span>
-                        ${escapeHtml(shortLoc(b.pickup))} → ${escapeHtml(shortLoc(b.dropoff))}
-                    </div>
+                    <div class="text-sm text-white mt-2">${escapeHtml(b.name || '(no name)')} · <a href="tel:${escapeHtml(String(b.phone || '').replace(/\D/g, ''))}" class="text-gold-400 hover:text-gold-300" onclick="event.stopPropagation()">${escapeHtml(b.phone || '')}</a> · ${escapeHtml(rec.booking.vehicle || '')}</div>
+                    <div class="text-xs text-obsidian-300 truncate mt-1">${escapeHtml(shortLoc(b.pickup))} → ${escapeHtml(shortLoc(b.dropoff || 'As directed'))}</div>
                     ${otherLeg}
                 </div>
-                <div class="flex-shrink-0">${cancelBtn}</div>
+                <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                    ${cancelBtn}
+                    <span class="chevron text-obsidian-500 text-xs select-none">▼ details</span>
+                </div>
             </div>
+            <div class="expand hidden mt-4 pt-4 border-t border-white/[0.06] cursor-default">${detailHtml(rec, leg, b)}</div>
         </div>`;
     }
 
@@ -311,32 +397,9 @@
     // Called every minute so the times stay live.
     function updateCountdowns() {
         document.querySelectorAll('.countdown').forEach(el => {
-            const tt = parseFloat(el.dataset.tt);
-            const cancelled = el.dataset.cancelled === '1';
-            if (cancelled || !tt) { el.textContent = ''; return; }
-            const diff = tt - Date.now();
-            let text, urgent = false;
-            if (diff <= 0) {
-                const ago = Math.abs(diff);
-                const m = Math.floor(ago / 60000);
-                const h = Math.floor(m / 60);
-                const d = Math.floor(h / 24);
-                if (d >= 1) text = `${d}d ago`;
-                else if (h >= 1) text = `${h}h ago`;
-                else text = `${m}m ago`;
-            } else {
-                const minutes = Math.floor(diff / 60000);
-                const hours = Math.floor(minutes / 60);
-                const days = Math.floor(hours / 24);
-                if (days >= 1) text = `in ${days}d ${hours % 24}h`;
-                else if (hours >= 1) { text = `in ${hours}h ${minutes % 60}m`; urgent = hours < 2; }
-                else if (minutes >= 1) { text = `in ${minutes}m`; urgent = true; }
-                else { text = 'imminent'; urgent = true; }
-            }
-            el.textContent = text;
-            el.classList.toggle('text-amber-300', urgent);
-            el.classList.toggle('font-semibold', urgent);
-            el.classList.toggle('text-obsidian-400', !urgent);
+            const st = countdownState(parseFloat(el.dataset.tt), el.dataset.cancelled === '1');
+            el.textContent = st.text;
+            el.className = st.cls;
         });
     }
 
@@ -364,6 +427,16 @@
             const ret = returnLeg(rec.booking);
             if (ret) entries.push({ rec, leg: 'return', t: tripTime(ret), cancelled: rec.cancelled || rec.returnCancelled });
         }
+        // Flag legs whose time windows overlap: pickup time through the estimated
+        // ride length plus a 30-minute buffer. Only upcoming, live legs count.
+        const BUFFER = 30 * 60 * 1000;
+        const live = entries.filter(e => !e.cancelled && e.t && e.t >= Date.now());
+        for (const e of live) e.end = e.t + ((e.rec.estimatedMinutes || 60) * 60 * 1000) + BUFFER;
+        for (const a of live) {
+            a.conflicts = live
+                .filter(o => o !== a && !(o.rec === a.rec && o.leg !== a.leg) && a.t < o.end && o.t < a.end)
+                .map(o => `${o.rec.confirmationNumber}${o.leg === 'return' ? ' (return)' : ''} ${o.leg === 'return' ? returnLeg(o.rec.booking).time : o.rec.booking.time}`);
+        }
         entries.sort((a, b) => {
             const ta = a.t;
             const tb = b.t;
@@ -382,7 +455,17 @@
         } else {
             container.innerHTML = entries.map(renderRow).join('');
             container.querySelectorAll('.row-cancel').forEach(btn => {
-                btn.addEventListener('click', () => openCancelModal(btn.dataset.conf, btn.dataset.leg || 'all'));
+                btn.addEventListener('click', (ev) => { ev.stopPropagation(); openCancelModal(btn.dataset.conf, btn.dataset.leg || 'all'); });
+            });
+            container.querySelectorAll('.bookings-row').forEach(card => {
+                card.addEventListener('click', (ev) => {
+                    if (ev.target.closest('.expand') || ev.target.closest('a')) return;
+                    const panel = card.querySelector('.expand');
+                    const open = panel.classList.toggle('hidden') === false;
+                    card.querySelector('.chevron').textContent = open ? '▲ close' : '▼ details';
+                    const map = panel.querySelector('.trip-map');
+                    if (open && map && !map.src) map.src = map.dataset.src;
+                });
             });
         }
 
