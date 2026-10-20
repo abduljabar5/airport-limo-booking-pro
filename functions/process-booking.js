@@ -441,7 +441,7 @@ export async function processBooking(booking) {
   // SMS tasks (Twilio - customer + owner sent in parallel)
   // ----------------------------------------
   const smsTask = async () => {
-    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
+    if (!process.env.TWILIO_ACCOUNT_SID || !twilioBasicAuth()) {
       return { customer: 'skipped', owner: 'skipped' };
     }
 
