@@ -388,7 +388,7 @@
                         <span class="font-mono text-[11px] text-gold-400/80">${escapeHtml(rec.confirmationNumber)}</span>
                     </div>
                     <div class="text-sm text-white mt-2">${escapeHtml(b.name || '(no name)')} · <a href="tel:${escapeHtml(String(b.phone || '').replace(/\D/g, ''))}" class="text-gold-400 hover:text-gold-300" onclick="event.stopPropagation()">${escapeHtml(b.phone || '')}</a> · ${escapeHtml(rec.booking.vehicle || '')}</div>
-                    <div class="text-xs text-obsidian-300 truncate mt-1">${mapLink(b.pickup, shortLoc(b.pickup))} → ${mapLink(b.dropoff || 'As directed', shortLoc(b.dropoff || 'As directed'))}</div>
+                    <div class="text-xs text-obsidian-300 truncate mt-1">${escapeHtml(shortLoc(b.pickup))} → ${escapeHtml(shortLoc(b.dropoff || 'As directed'))}</div>
                     ${otherLeg}
                 </div>
                 <div class="flex flex-col items-end gap-2 flex-shrink-0">
