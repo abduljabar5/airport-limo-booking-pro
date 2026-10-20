@@ -9,9 +9,8 @@
 // - Anything else is forwarded to the owner's phone so replies to the
 //   confirmation text ("can we make it 9:30?") actually reach a human.
 // STOP / HELP never get here: the Messaging Service handles opt-outs itself.
-import crypto from 'crypto';
 import { getStore } from '@netlify/blobs';
-import { bookingsForPhone, normalizePhone, sendSms } from '../lib/booking-links.js';
+import { bookingsForPhone, normalizePhone, sendSms, webhookAuthorized } from '../lib/booking-links.js';
 import { parseBookingDateTime, centralToUTCISO } from './process-booking.js';
 import { cancelTwilioMessage } from './cancel-booking.js';
 
@@ -24,16 +23,6 @@ const twiml = (msg) => new Response(
   { status: 200, headers: { 'Content-Type': 'text/xml' } });
 const escapeXml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-// Twilio signs requests with the account auth token: HMAC-SHA1 over the URL
-// plus the POST params sorted by name, base64 encoded.
-function validSignature(signature, url, params) {
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  if (!token || !signature) return false;
-  const data = url + Object.keys(params).sort().map((k) => k + params[k]).join('');
-  const expected = crypto.createHmac('sha1', token).update(Buffer.from(data, 'utf8')).digest('base64');
-  try { return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature)); } catch (_) { return false; }
-}
-
 function pickupInstant(b) {
   const d = parseBookingDateTime(b.date || '', b.time || '');
   return d ? new Date(centralToUTCISO(d)).getTime() : 0;
@@ -43,11 +32,8 @@ export default async (req) => {
   if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
   const raw = await req.text();
   const params = Object.fromEntries(new URLSearchParams(raw));
-  const sig = req.headers.get('x-twilio-signature') || '';
-  // Netlify may present the request under the deploy URL; validate against the
-  // public URL Twilio was configured with, then fall back to the request URL.
-  if (!validSignature(sig, PUBLIC_URL, params) && !validSignature(sig, req.url, params)) {
-    console.error('sms-reply: bad Twilio signature');
+  if (!webhookAuthorized(req, params, PUBLIC_URL)) {
+    console.error('sms-reply: unauthorized webhook call');
     return new Response('Forbidden', { status: 403 });
   }
 

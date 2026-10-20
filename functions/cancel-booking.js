@@ -295,7 +295,7 @@ export default async (req, context) => {
   })();
 
   const customerSmsPromise = (async () => {
-    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !customerPhone) return 'skipped';
+    if (!process.env.TWILIO_ACCOUNT_SID || !twilioBasicAuth() || !customerPhone) return 'skipped';
     const reasonLine = reason ? `\nReason: ${reason}` : '';
     const refundLine = customer.paymentMethod === 'online' ? `\nOnline payments refund within 5-10 business days.` : '';
     const body = `TOTAL TOWN CAR SERVICE\n\nYour booking #${rec.confirmationNumber} for ${customer.date || ''} at ${customer.time || ''} has been cancelled.${reasonLine}${refundLine}\n\nQuestions? (612) 999-5382`;
@@ -311,7 +311,7 @@ export default async (req, context) => {
   })();
 
   const ownerSmsPromise = (async () => {
-    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) return 'skipped';
+    if (!process.env.TWILIO_ACCOUNT_SID || !twilioBasicAuth()) return 'skipped';
     const body = `🚫 BOOKING CANCELLED\n\n#${rec.confirmationNumber}\n${customer.name || ''}\n${customer.date || ''} at ${customer.time || ''}\n${customer.pickup || ''} → ${customer.dropoff || ''}${customer.paymentMethod === 'online' ? '\n\n⚠️ REFUND THE PAYMENT IN STRIPE' : ''}`;
     try {
       const auth = twilioBasicAuth();
@@ -365,7 +365,7 @@ export default async (req, context) => {
 
 // ----- Cancel only the return half of a round trip -----
 async function twilioSend(to, body) {
-  if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !to) return 'skipped';
+  if (!process.env.TWILIO_ACCOUNT_SID || !twilioBasicAuth() || !to) return 'skipped';
   try {
     const auth = twilioBasicAuth();
     const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {

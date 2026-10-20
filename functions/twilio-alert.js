@@ -3,29 +3,18 @@
 // Twilio calls this URL when a usage trigger fires (for example: more than
 // $5 of messaging in a day). It emails the owner and the backup address so a
 // leaked credential or a runaway loop is noticed within the hour, not on the
-// next invoice. Request signatures are verified with the account auth token.
-import crypto from 'crypto';
+// next invoice. Calls are authorized by the secret in the webhook URL (see webhookAuthorized).
+import { webhookAuthorized } from '../lib/booking-links.js';
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || 'totaltowncarservice@gmail.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'bookings@totaltowncar.com';
 const PUBLIC_URL = 'https://totaltowncar.com/.netlify/functions/twilio-alert';
 
-function validSignature(signature, url, params) {
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  if (!token || !signature) return false;
-  const data = url + Object.keys(params).sort().map((k) => k + params[k]).join('');
-  const expected = crypto.createHmac('sha1', token).update(Buffer.from(data, 'utf8')).digest('base64');
-  try { return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature)); } catch (_) { return false; }
-}
-
 export default async (req) => {
   if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
   const raw = await req.text();
   const p = Object.fromEntries(new URLSearchParams(raw));
-  const sig = req.headers.get('x-twilio-signature') || '';
-  if (!validSignature(sig, PUBLIC_URL, p) && !validSignature(sig, req.url, p)) {
-    return new Response('Forbidden', { status: 403 });
-  }
+  if (!webhookAuthorized(req, p, PUBLIC_URL)) return new Response('Forbidden', { status: 403 });
 
   const lines = [
     `Trigger: ${p.FriendlyName || p.UsageTriggerSid || ''}`,

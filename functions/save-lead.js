@@ -50,8 +50,8 @@ export default async (req) => {
     }
   } catch (_) { /* first lead for this phone */ }
 
-  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } = process.env;
-  if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_MESSAGING_SERVICE_SID && lead.fare > 0) {
+  const { TWILIO_ACCOUNT_SID, TWILIO_MESSAGING_SERVICE_SID } = process.env;
+  if (TWILIO_ACCOUNT_SID && twilioBasicAuth() && TWILIO_MESSAGING_SERVICE_SID && lead.fare > 0) {
     const route = lead.serviceType === 'hourly'
       ? `${lead.hours} hrs as directed from ${lead.pickup}`
       : `${lead.pickup} to ${lead.dropoff}`;
